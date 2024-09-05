@@ -9,6 +9,8 @@ if ( $queried_object_id ) {
 	if ( !$meta_fields[ 'title' ] )       $meta_fields[ 'title' ]       = get_the_title( $queried_object_id );
 	if ( !$meta_fields[ 'description' ] ) $meta_fields[ 'description' ] = get_the_excerpt( $queried_object_id );
 
+	if ( has_post_thumbnail() ) $meta_fields[ 'image_url' ] = get_the_post_thumbnail_url( $queried_object_id, 'full' );
+
 	$meta_fields = apply_filters( 'ymfseo_meta_fields', $meta_fields );
 
 	// Print
@@ -38,6 +40,9 @@ if ( $queried_object_id ) {
 	}
 	if ( $meta_fields[ 'canonical_url' ] ) {
 		printf( '<meta property="og:url" content="%s">', esc_attr( $meta_fields[ 'canonical_url' ] ) );
+	}
+	if ( $meta_fields[ 'image_url' ] ) {
+		printf( '<meta property="og:image" content="%s">', esc_attr( $meta_fields[ 'image_url' ] ) );
 	}
 
 	do_action( 'ymfseo_after_print_metas' );
