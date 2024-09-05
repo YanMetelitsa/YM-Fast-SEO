@@ -45,5 +45,16 @@ if ( $queried_object_id ) {
 		printf( '<meta property="og:image" content="%s">', esc_attr( $meta_fields[ 'image_url' ] ) );
 	}
 
+	// Twitter
+	if ( $meta_fields[ 'title' ] ) {
+		printf( '<meta name="twitter:title" content="%s">', esc_attr( $meta_fields[ 'title' ] ) );
+	}
+	if ( $meta_fields[ 'description' ] ) {
+		printf( '<meta name="twitter:description" content="%s">', esc_attr( $meta_fields[ 'description' ] ) );
+	}
+	if ( $meta_fields[ 'image_url' ] ) {
+		printf( '<meta name="twitter:image" content="%s">', esc_attr( $meta_fields[ 'image_url' ] ) );
+	}
+
 	do_action( 'ymfseo_after_print_metas' );
 }
