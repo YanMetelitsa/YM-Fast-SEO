@@ -1,0 +1,40 @@
+#ymfseo_fields > .inside {
+  margin-top: 0;
+  padding: 16px;
+}
+#ymfseo_fields > .inside .ymfseo-box__page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+#ymfseo_fields > .inside .ymfseo-box__field-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#ymfseo_fields > .inside .ymfseo-box__field-box label {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-transform: uppercase;
+  display: inline-block;
+}
+#ymfseo_fields > .inside .ymfseo-box__field-box textarea {
+  height: auto;
+}
+#ymfseo_fields > .inside .ymfseo-box__field-box p {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: rgb(117, 117, 117);
+}
+#ymfseo_fields:has(.ymfseo-box_gutenberg) > .postbox-header h2 {
+  padding: 0 16px !important;
+  font-size: 13px;
+}
+#ymfseo_fields:has(.ymfseo-box_gutenberg) > .inside {
+  padding: 5px 16px 16px 16px !important;
+}
+
+.postbox-container #side-sortables:has(.ymfseo-box) #ymfseo_fields > .inside {
+  padding: 12px;
+}/*# sourceMappingURL=ymfseo-style.css.map */
