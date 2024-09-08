@@ -27,6 +27,11 @@
   font-size: 12px;
   color: rgb(117, 117, 117);
 }
+#ymfseo_fields > .inside .ymfseo-box__check-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 #ymfseo_fields:has(.ymfseo-box_gutenberg) > .postbox-header h2 {
   padding: 0 16px !important;
   font-size: 13px;

@@ -32,6 +32,12 @@
 					color: rgb( 117, 117, 117 );
 				}
 			}
+
+			&__check-box {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+			}
 		}
 	}
 

@@ -17,7 +17,7 @@
 if ( !defined( 'ABSPATH' ) ) exit;
 
 /** Get plugin data */
-if( !function_exists( 'get_plugin_data' ) ) {
+if ( !function_exists( 'get_plugin_data' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
 $YMFSEO_plugin_data = get_plugin_data( __FILE__ );
@@ -30,6 +30,7 @@ define( 'YMFSEO_ROOT_URI',    plugin_dir_url( __FILE__ ) );
 /** Connects styles and scripts */
 add_action( 'admin_enqueue_scripts', function () {
 	wp_enqueue_style( 'ymfseo-styles', YMFSEO_ROOT_URI . 'assets/css/ymfseo-style.css', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
+	wp_enqueue_script( 'ymfseo-scripts', YMFSEO_ROOT_URI . 'assets/js/ymfseo-script.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
 });
 
 /** Adds meta boxes to public post types */
@@ -71,19 +72,43 @@ add_action( 'save_post', function ( $post_id ) {
 	
 	// Set meta data object
 	$ymfseo_fields_data = [
-		'title'         => ymfseo_sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]         ?? '' ) ),
-		'description'   => ymfseo_sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ]   ?? '' ) ),
-		'keywords'      => ymfseo_sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-keywords' ]      ?? '' ) ),
-		'canonical_url' => ymfseo_sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-canonical-url' ] ?? '' ) ),
+		'title'            => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-title' ]            ?? '' ),
+		'use_in_title_tag' => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-use-in-title-tag' ] ?? 'On' ),
+		'remove_sitename'  => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-remove-sitename' ]  ?? 'On' ),
+		'description'      => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-description' ]      ?? '' ),
+		'keywords'         => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-keywords' ]         ?? '' ),
+		'canonical_url'    => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ]    ?? '' ),
 	];
 
 	// Update post meta
-	update_post_meta( $post_id, 'ymfseo_fields', wp_json_encode( $ymfseo_fields_data ) );
+	update_post_meta( $post_id, 'ymfseo_fields', $ymfseo_fields_data );
 });
 
 /** Adds metas to head */
 add_action( 'wp_head', function () {
 	include plugin_dir_path( __FILE__ ) . 'head.php';
+});
+
+/** Modifies title tag content */
+add_filter( 'document_title_parts', function ( $title ) {
+	$queried_object_id = get_queried_object_id();
+
+	if ( $queried_object_id ) {
+		$meta_fields = ymfseo_get_post_meta_fields( $queried_object_id );
+
+		if ( $meta_fields[ 'title' ] ) {
+			if ( $meta_fields[ 'use_in_title_tag' ] ) {
+				$title[ 'title' ] = $meta_fields[ 'title' ];
+
+				if ( $meta_fields[ 'remove_sitename' ] ) {
+					if ( isset( $title[ 'site' ] ) )    unset( $title[ 'site' ] );
+					if ( isset( $title[ 'tagline' ] ) ) unset( $title[ 'tagline' ] );
+				}
+			}
+		}
+	}
+
+	return $title;
 });
 
 /**
@@ -109,19 +134,19 @@ function ymfseo_get_public_post_types () : array {
  * @return array Meta fields values.
  */
 function ymfseo_get_post_meta_fields ( int $post_id ) : array {
-	// Set empty feilds values
-	$empty_meta_fields = [
-		'title'         => '',
-		'description'   => '',
-		'keywords'      => '',
-		'canonical_url' => '',
-	];
-
 	// Get meta fields
 	$meta_fields = get_post_meta( $post_id, 'ymfseo_fields', true );
-	$meta_fields = empty( $meta_fields ) ? [] : json_decode( $meta_fields, true );
+	$meta_fields = empty( $meta_fields ) ? [] : $meta_fields;
+	$meta_fields = wp_parse_args( $meta_fields, [
+		'title'            => '',
+		'use_in_title_tag' => 'on',
+		'remove_sitename'  => 'on',
+		'description'      => '',
+		'keywords'         => '',
+		'canonical_url'    => '',
+	]);
 
-	return array_merge( $empty_meta_fields, $meta_fields );
+	return $meta_fields;
 }
 
 /**
@@ -132,8 +157,8 @@ function ymfseo_get_post_meta_fields ( int $post_id ) : array {
  * @return string Sanitized string.
  */
 function ymfseo_sanitize_text_field ( string $str ) : string {
+	$str = wp_unslash( $str );
 	$str = sanitize_text_field( $str );
-	$str = stripslashes( $str );
 
 	return $str;
 }
