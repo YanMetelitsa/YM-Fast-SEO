@@ -1,3 +1,35 @@
+/* Posts columns */
+.manage-column.column-ymfseo {
+  width: 40px;
+  text-align: center;
+}
+
+td.ymfseo.column-ymfseo {
+  vertical-align: middle;
+}
+
+.ymfseo-status-dot {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ymfseo-status-dot span {
+  background-color: #f0f0f0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: block;
+}
+.ymfseo-status-dot span.good {
+  background-color: #46B450;
+}
+.ymfseo-status-dot span.bad {
+  background-color: #dc3232;
+}
+
+/* Meta box */
 #ymfseo_fields > .inside {
   margin-top: 0;
   padding: 16px;
@@ -49,6 +81,18 @@
 }
 #ymfseo_fields:has(.ymfseo-box_gutenberg) .ymfseo-box__check-box {
   gap: 10px;
+}
+
+.ymfseo-tags-table {
+  margin: -5px 0;
+  border-spacing: 0 4px;
+}
+.ymfseo-tags-table tr td:first-child span {
+  background-color: #f0f0f0;
+  margin-right: 6px;
+  padding: 1px 4px 3px 4px;
+  border-radius: 4px;
+  display: block;
 }
 
 .postbox-container #side-sortables:has(.ymfseo-box) #ymfseo_fields > .inside {

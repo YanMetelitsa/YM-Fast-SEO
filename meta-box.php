@@ -2,7 +2,7 @@
 	/** Exit if accessed directly */
 	if ( !defined( 'ABSPATH' ) ) exit;
 
-	$fields = ymfseo_get_post_meta_fields( $post->ID );
+	$fields = YMFSEO::get_post_meta_fields( $post->ID );
 
 	global $current_screen;
 	$is_gutenberg = $current_screen->is_block_editor();
@@ -17,15 +17,15 @@
 				'ymfseo-title',
 				'components-text-control__input',
 				esc_attr( $fields[ 'title' ] ),
-				'Title',
+				esc_attr__( 'Title', 'ym-fast-seo' ),
 			); ?>
 		</div>
 		<div class="ymfseo-box__check-box" style="margin-top:-6px">
-			<span class="components-form-toggle <?= ymfseo_parse_checkbox_value( $fields[ 'use_in_title_tag' ] ) ? 'is-checked' : ''; ?>">
+			<span class="components-form-toggle <?php echo YMFSEO::parse_checkbox_value( $fields[ 'use_in_title_tag' ] ) ? 'is-checked' : ''; ?>">
 				<?php printf( '<input name="%1$s" id="%1$s" class="%2$s" type="checkbox" %3$s>',
 					'ymfseo-use-in-title-tag',
 					'components-form-toggle__input',
-					checked( ymfseo_parse_checkbox_value( $fields[ 'use_in_title_tag' ] ), true, false ),
+					checked( YMFSEO::parse_checkbox_value( $fields[ 'use_in_title_tag' ] ), true, false ),
 				); ?>
 
 				<span class="components-form-toggle__track"></span>
@@ -35,11 +35,11 @@
 			<label for="ymfseo-use-in-title-tag"><?php _e( 'Use in title tag', 'ym-fast-seo' ); ?></label>
 		</div>
 		<div class="ymfseo-box__check-box" style="margin-top:-6px">
-			<span class="components-form-toggle <?= ymfseo_parse_checkbox_value( $fields[ 'remove_sitename' ] ) ? 'is-checked' : ''; ?>">
+			<span class="components-form-toggle <?php echo YMFSEO::parse_checkbox_value( $fields[ 'remove_sitename' ] ) ? 'is-checked' : ''; ?>">
 				<?php printf( '<input name="%1$s" id="%1$s" class="%2$s" type="checkbox" %3$s>',
 					'ymfseo-remove-sitename',
 					'components-form-toggle__input',
-					checked( ymfseo_parse_checkbox_value( $fields[ 'remove_sitename' ] ), true, false ),
+					checked( YMFSEO::parse_checkbox_value( $fields[ 'remove_sitename' ] ), true, false ),
 				); ?>
 
 				<span class="components-form-toggle__track"></span>
@@ -56,13 +56,13 @@
 				'ymfseo-description',
 				'components-text-control__input',
 				esc_attr( $fields[ 'description' ] ),
-				'Description',
+				esc_textarea( __( 'Description', 'ym-fast-seo' ) ),
 			); ?>
 		</div>
 
 		<!-- Additional -->
 		<details>
-			<summary>Additional</summary>
+			<summary><?php esc_html_e( 'Additional', 'ym-fast-seo' ); ?></summary>
 
 			<!-- Canonical -->
 			<div class="ymfseo-box__field-box">
@@ -78,7 +78,7 @@
 
 		<!-- Deprecated -->
 		<details>
-			<summary>Deprecated</summary>
+			<summary><?php esc_html_e( 'Deprecated', 'ym-fast-seo' ); ?></summary>
 
 			<!-- Keywords -->
 			<div class="ymfseo-box__field-box">
@@ -90,6 +90,24 @@
 					'key, key',
 				); ?>
 			</div>
+		</details>
+
+		<!-- Tags -->
+		<details>
+			<summary><?php esc_html_e( 'Tags', 'ym-fast-seo' ); ?></summary>
+
+			<p><?php _e( 'Use these tags in meta fields to insert dynamic data.', 'ym-fast-seo' ); ?></p>
+
+			<table class="ymfseo-tags-table">
+				<tbody>
+					<?php foreach ( YMFSEO::$replace_tags as $tag => $value ) : ?>
+						<tr>
+							<td><span><?php echo $tag; ?></span></td>
+							<td><?php echo $value; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
 		</details>
 	</div>
 </div>
