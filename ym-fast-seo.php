@@ -59,7 +59,7 @@ add_action( 'save_post', function ( $post_id ) {
 	if ( !wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
 		return;
 	}
-		
+
 	// Is auto-save
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 		return;
@@ -72,12 +72,12 @@ add_action( 'save_post', function ( $post_id ) {
 	
 	// Set meta data object
 	$ymfseo_fields_data = [
-		'title'            => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-title' ]            ?? '' ),
-		'use_in_title_tag' => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-use-in-title-tag' ] ?? 'On' ),
-		'remove_sitename'  => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-remove-sitename' ]  ?? 'On' ),
-		'description'      => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-description' ]      ?? '' ),
-		'keywords'         => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-keywords' ]         ?? '' ),
-		'canonical_url'    => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ]    ?? '' ),
+		'title'            => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-title' ]            ?? null ),
+		'use_in_title_tag' => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-use-in-title-tag' ] ?? true ),
+		'remove_sitename'  => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-remove-sitename' ]  ?? true ),
+		'description'      => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-description' ]      ?? null ),
+		'keywords'         => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-keywords' ]         ?? null ),
+		'canonical_url'    => ymfseo_sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ]    ?? null ),
 	];
 
 	// Update post meta
@@ -97,14 +97,14 @@ add_filter( 'document_title_parts', function ( $title ) {
 		$meta_fields = ymfseo_get_post_meta_fields( $queried_object_id );
 
 		if ( $meta_fields[ 'title' ] ) {
-			if ( $meta_fields[ 'use_in_title_tag' ] ) {
+			if ( ymfseo_parse_checkbox_value( $meta_fields[ 'use_in_title_tag' ] ) ) {
 				$title[ 'title' ] = $meta_fields[ 'title' ];
-
-				if ( $meta_fields[ 'remove_sitename' ] ) {
-					if ( isset( $title[ 'site' ] ) )    unset( $title[ 'site' ] );
-					if ( isset( $title[ 'tagline' ] ) ) unset( $title[ 'tagline' ] );
-				}
 			}
+		}
+
+		if ( ymfseo_parse_checkbox_value( $meta_fields[ 'remove_sitename' ] ) ) {
+			if ( isset( $title[ 'site' ] ) )    unset( $title[ 'site' ] );
+			if ( isset( $title[ 'tagline' ] ) ) unset( $title[ 'tagline' ] );
 		}
 	}
 
@@ -118,7 +118,7 @@ add_filter( 'document_title_parts', function ( $title ) {
  */
 function ymfseo_get_public_post_types () : array {
 	$public_post_types = get_post_types([
-		'public' => 'true',
+		'public' => true,
 	]);
 
 	return array_filter( $public_post_types, function ( $value ) {
@@ -138,15 +138,34 @@ function ymfseo_get_post_meta_fields ( int $post_id ) : array {
 	$meta_fields = get_post_meta( $post_id, 'ymfseo_fields', true );
 	$meta_fields = empty( $meta_fields ) ? [] : $meta_fields;
 	$meta_fields = wp_parse_args( $meta_fields, [
-		'title'            => '',
-		'use_in_title_tag' => 'on',
-		'remove_sitename'  => 'on',
-		'description'      => '',
-		'keywords'         => '',
-		'canonical_url'    => '',
+		'title'            => null,
+		'use_in_title_tag' => true,
+		'remove_sitename'  => true,
+		'description'      => null,
+		'keywords'         => null,
+		'canonical_url'    => null,
 	]);
 
 	return $meta_fields;
+}
+
+/**
+ * Coverts default type checkbox value to bool type.
+ * 
+ * @param mixed $value Checkbox default type value.
+ * 
+ * @return bool Checkbox bool value.
+ */
+function ymfseo_parse_checkbox_value ( mixed $value ) : bool {
+	if ( is_bool( $value ) ) {
+		return $value;
+	}
+
+	if ( is_string( $value ) && strtolower( $value ) == 'on' ) {
+		return true;
+	}
+
+	return false;
 }
 
 /**

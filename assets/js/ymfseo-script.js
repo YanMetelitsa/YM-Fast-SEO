@@ -5,7 +5,13 @@ window.addEventListener( 'load', e => {
 
 	checkBoxes.forEach( checkbox => {
 		checkbox.addEventListener( 'input', e => {
-			checkbox.closest( 'span' ).classList.toggle( 'is-checked' );
+			const span = checkbox.closest( 'span' );
+
+			if ( checkbox.checked ) {
+				span.classList.add( 'is-checked' );
+			} else {
+				span.classList.remove( 'is-checked' );
+			}
 		});
 	});
 });

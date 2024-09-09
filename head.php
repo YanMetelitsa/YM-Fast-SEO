@@ -1,5 +1,8 @@
 <?php
 
+/** Exit if accessed directly */
+if ( !defined( 'ABSPATH' ) ) exit;
+
 $queried_object_id = get_queried_object_id();
 
 if ( $queried_object_id ) {
@@ -8,12 +11,14 @@ if ( $queried_object_id ) {
 	
 	if ( !$meta_fields[ 'title' ] )       $meta_fields[ 'title' ]       = get_the_title( $queried_object_id );
 	if ( !$meta_fields[ 'description' ] ) $meta_fields[ 'description' ] = get_the_excerpt( $queried_object_id );
-
+	
 	if ( has_post_thumbnail() ) $meta_fields[ 'image_url' ] = get_the_post_thumbnail_url( $queried_object_id, 'full' );
 
 	$meta_fields = apply_filters( 'ymfseo_meta_fields', $meta_fields );
 
 	// Print
+
+	echo '<!-- YM Fast SEO -->';
 
 	// Common
 	if ( $meta_fields[ 'title' ] ) {
@@ -57,4 +62,6 @@ if ( $queried_object_id ) {
 	}
 
 	do_action( 'ymfseo_after_print_metas' );
+
+	echo '<!-- YM Fast SEO -->';
 }

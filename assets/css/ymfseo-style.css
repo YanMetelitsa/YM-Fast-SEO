@@ -7,6 +7,14 @@
   flex-direction: column;
   gap: 16px;
 }
+#ymfseo_fields > .inside .ymfseo-box details:not([open]) + details {
+  margin-top: -16px;
+}
+#ymfseo_fields > .inside .ymfseo-box details summary {
+  margin-bottom: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
 #ymfseo_fields > .inside .ymfseo-box__field-box {
   display: flex;
   flex-direction: column;
@@ -30,7 +38,7 @@
 #ymfseo_fields > .inside .ymfseo-box__check-box {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
 }
 #ymfseo_fields:has(.ymfseo-box_gutenberg) > .postbox-header h2 {
   padding: 0 16px !important;
@@ -38,6 +46,9 @@
 }
 #ymfseo_fields:has(.ymfseo-box_gutenberg) > .inside {
   padding: 5px 16px 16px 16px !important;
+}
+#ymfseo_fields:has(.ymfseo-box_gutenberg) .ymfseo-box__check-box {
+  gap: 10px;
 }
 
 .postbox-container #side-sortables:has(.ymfseo-box) #ymfseo_fields > .inside {
