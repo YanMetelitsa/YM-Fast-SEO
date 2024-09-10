@@ -37,32 +37,35 @@ add_action( 'admin_enqueue_scripts', function () {
 	wp_enqueue_script( 'ymfseo-scripts', YMFSEO_ROOT_URI . 'assets/js/ymfseo-script.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
 });
 
-foreach ( YMFSEO::get_public_post_types() as $post_type ) {
-	add_filter( "manage_{$post_type}_posts_columns", function ( $columns ) {
-		$columns[ 'ymfseo' ] = 'SEO';
+/** Adds posts custom columns */
+add_action( 'init', function () {
+	foreach ( YMFSEO::get_public_post_types() as $post_type ) {
+		add_filter( "manage_{$post_type}_posts_columns", function ( $columns ) {
+			$columns[ 'ymfseo' ] = 'SEO';
+		
+			return $columns;
+		});
+		add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
+			switch ( $column ) {
+				case 'ymfseo':
+					$status = 'good';
 	
-		return $columns;
-	});
-	add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
-		switch ( $column ) {
-			case 'ymfseo':
-				$status = 'good';
-
-				$meta_fields = YMFSEO::get_post_meta_fields( $post_id, false );
-
-				if ( !$meta_fields[ 'title' ] )       $status = 'bad';
-				if ( !$meta_fields[ 'description' ] ) $status = 'bad';
-
-				?>
-					<div class="ymfseo-status-dot">
-						<span class="<?php echo $status; ?>"></span>
-					<div>
-				<?php
-
-				break;
-		}
-	}, 10, 2 );
-}
+					$meta_fields = YMFSEO::get_post_meta_fields( $post_id, false );
+	
+					if ( !$meta_fields[ 'title' ] )       $status = 'bad';
+					if ( !$meta_fields[ 'description' ] ) $status = 'bad';
+	
+					?>
+						<div class="ymfseo-status-dot">
+							<span class="<?php echo $status; ?>"></span>
+						<div>
+					<?php
+	
+					break;
+			}
+		}, 10, 2 );
+	}
+}, 20 );
 
 /** Adds meta boxes to public post types */
 add_action( 'add_meta_boxes', function () {

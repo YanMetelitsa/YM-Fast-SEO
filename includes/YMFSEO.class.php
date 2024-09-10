@@ -47,11 +47,11 @@ class YMFSEO {
 	public static function get_public_post_types () : array {
 		$public_post_types = get_post_types([
 			'public' => true,
-		]);
+		], 'names' );
 
-		return array_filter( $public_post_types, function ( $value ) {
-			return $value !== 'attachment';
-		});
+		unset( $public_post_types[ 'attachment' ] );
+
+		return $public_post_types;
 	}
 
 	/**
