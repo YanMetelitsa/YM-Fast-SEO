@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name:       YM Fast SEO
- * Description:       Flexible toolkit for basic SEO optimization of your pages and posts.
+ * Description:       Flexible toolkit for basic SEO optimization of your website.
  * Version:           1.0.0
  * Tested up to:      6.6.1
  * Requires at least: 6.4
@@ -110,10 +110,10 @@ add_action( 'save_post', function ( $post_id ) {
 	
 	// Set meta data object
 	$meta_fields = [
-		'title'            => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-title' ]            ?? null ),
-		'description'      => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-description' ]      ?? null ),
-		'keywords'         => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-keywords' ]         ?? null ),
-		'canonical_url'    => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ]    ?? null ),
+		'title'            => sanitize_text_field( $_POST[ 'ymfseo-title' ]         ?? null ),
+		'description'      => sanitize_text_field( $_POST[ 'ymfseo-description' ]   ?? null ),
+		'canonical_url'    => sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ] ?? null ),
+		'keywords'         => sanitize_text_field( $_POST[ 'ymfseo-keywords' ]      ?? null ),
 	];
 
 	// Update post meta

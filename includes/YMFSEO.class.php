@@ -20,10 +20,10 @@ class YMFSEO {
 	 * @var array
 	 */
 	public static array $default_meta_fields = [
-		'title'            => null,
-		'description'      => null,
-		'keywords'         => null,
-		'canonical_url'    => null,
+		'title'         => null,
+		'description'   => null,
+		'canonical_url' => null,
+		'keywords'      => null,
 	];
 
 	/**
@@ -31,9 +31,10 @@ class YMFSEO {
 	 */
 	public static function init () : void {
 		self::$replace_tags = [
-			'{site_name}' => get_bloginfo( 'name' ),
-			'{base_url}'  => home_url(),
-			'{separator}' => '–',
+			'{site_name}'   => get_bloginfo( 'name' ),
+			'{description}' => get_bloginfo( 'description' ),
+			'{base_url}'    => home_url(),
+			'{separator}'   => '–',
 		];
 	}
 
@@ -83,19 +84,5 @@ class YMFSEO {
 		}
 
 		return $meta_fields;
-	}
-
-	/**
-	 * Sanitizes the value of the text field before saving.
-	 * 
-	 * @param string $str String to sanitize.
-	 * 
-	 * @return string Sanitized string.
-	 */
-	public static function sanitize_text_field ( string $str ) : string {
-		$str = wp_unslash( $str );
-		$str = sanitize_text_field( $str );
-
-		return $str;
 	}
 }
