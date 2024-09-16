@@ -21,8 +21,6 @@ class YMFSEO {
 	 */
 	public static array $default_meta_fields = [
 		'title'            => null,
-		'use_in_title_tag' => true,
-		'remove_sitename'  => true,
 		'description'      => null,
 		'keywords'         => null,
 		'canonical_url'    => null,
@@ -85,25 +83,6 @@ class YMFSEO {
 		}
 
 		return $meta_fields;
-	}
-
-	/**
-	 * Coverts default type checkbox value to bool type.
-	 * 
-	 * @param mixed $value Checkbox default type value.
-	 * 
-	 * @return bool Checkbox bool value.
-	 */
-	public static function parse_checkbox_value ( mixed $value ) : bool {
-		if ( is_bool( $value ) ) {
-			return $value;
-		}
-
-		if ( is_string( $value ) && strtolower( $value ) == 'on' ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**

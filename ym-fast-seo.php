@@ -31,10 +31,14 @@ require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO.class.php';
 
 YMFSEO::init();
 
+/** Adds WordPress theme supports */
+add_action( 'after_setup_theme', function () {
+	add_theme_support( 'title-tag' );
+});
+
 /** Connects styles and scripts */
 add_action( 'admin_enqueue_scripts', function () {
 	wp_enqueue_style( 'ymfseo-styles', YMFSEO_ROOT_URI . 'assets/css/ymfseo-style.css', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
-	wp_enqueue_script( 'ymfseo-scripts', YMFSEO_ROOT_URI . 'assets/js/ymfseo-script.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
 });
 
 /** Adds posts custom columns */
@@ -107,8 +111,6 @@ add_action( 'save_post', function ( $post_id ) {
 	// Set meta data object
 	$meta_fields = [
 		'title'            => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-title' ]            ?? null ),
-		'use_in_title_tag' => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-use-in-title-tag' ] ?? true ),
-		'remove_sitename'  => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-remove-sitename' ]  ?? true ),
 		'description'      => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-description' ]      ?? null ),
 		'keywords'         => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-keywords' ]         ?? null ),
 		'canonical_url'    => YMFSEO::sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ]    ?? null ),
@@ -131,14 +133,7 @@ add_filter( 'document_title_parts', function ( $title ) {
 		$meta_fields = YMFSEO::get_post_meta_fields( $queried_object_id, false );
 
 		if ( $meta_fields[ 'title' ] ) {
-			if ( YMFSEO::parse_checkbox_value( $meta_fields[ 'use_in_title_tag' ] ) ) {
-				$title[ 'title' ] = $meta_fields[ 'title' ];
-			}
-		}
-
-		if ( YMFSEO::parse_checkbox_value( $meta_fields[ 'remove_sitename' ] ) ) {
-			if ( isset( $title[ 'site' ] ) )    unset( $title[ 'site' ] );
-			if ( isset( $title[ 'tagline' ] ) ) unset( $title[ 'tagline' ] );
+			$title[ 'title' ] = $meta_fields[ 'title' ];
 		}
 	}
 

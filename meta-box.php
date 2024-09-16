@@ -20,34 +20,6 @@
 				esc_attr__( 'Title', 'ym-fast-seo' ),
 			); ?>
 		</div>
-		<div class="ymfseo-box__check-box" style="margin-top:-6px">
-			<span class="components-form-toggle <?php echo YMFSEO::parse_checkbox_value( $fields[ 'use_in_title_tag' ] ) ? 'is-checked' : ''; ?>">
-				<?php printf( '<input name="%1$s" id="%1$s" class="%2$s" type="checkbox" %3$s>',
-					'ymfseo-use-in-title-tag',
-					'components-form-toggle__input',
-					checked( YMFSEO::parse_checkbox_value( $fields[ 'use_in_title_tag' ] ), true, false ),
-				); ?>
-
-				<span class="components-form-toggle__track"></span>
-				<span class="components-form-toggle__thumb"></span>
-			</span>
-
-			<label for="ymfseo-use-in-title-tag"><?php _e( 'Use in title tag', 'ym-fast-seo' ); ?></label>
-		</div>
-		<div class="ymfseo-box__check-box" style="margin-top:-6px">
-			<span class="components-form-toggle <?php echo YMFSEO::parse_checkbox_value( $fields[ 'remove_sitename' ] ) ? 'is-checked' : ''; ?>">
-				<?php printf( '<input name="%1$s" id="%1$s" class="%2$s" type="checkbox" %3$s>',
-					'ymfseo-remove-sitename',
-					'components-form-toggle__input',
-					checked( YMFSEO::parse_checkbox_value( $fields[ 'remove_sitename' ] ), true, false ),
-				); ?>
-
-				<span class="components-form-toggle__track"></span>
-				<span class="components-form-toggle__thumb"></span>
-			</span>
-
-			<label for="ymfseo-remove-sitename"><?php _e( 'Remove site name', 'ym-fast-seo' ); ?></label>
-		</div>
 
 		<!-- Description -->
 		<div class="ymfseo-box__field-box">
