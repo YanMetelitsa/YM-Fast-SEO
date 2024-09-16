@@ -56,7 +56,6 @@ add_action( 'init', function () {
 	
 					$meta_fields = YMFSEO::get_post_meta_fields( $post_id );
 	
-					if ( !$meta_fields[ 'title' ] )       $status = 'bad';
 					if ( !$meta_fields[ 'description' ] ) $status = 'bad';
 	
 					?>

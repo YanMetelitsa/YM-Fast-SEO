@@ -29,9 +29,9 @@ class YMFSEO {
 	/**
 	 * Meta fields cached value.
 	 * 
-	 * @var ?array
+	 * @var array[]
 	 */
-	public static ?array $meta_fields_cache = null;
+	public static array $meta_fields_cache = [];
 
 	/**
 	 * Inits YMFSEO.
@@ -70,8 +70,8 @@ class YMFSEO {
 	 */
 	public static function get_post_meta_fields ( int $post_id, bool $raw = false ) : array {
 		// Return cached value
-		if ( !is_null( self::$meta_fields_cache ) ) {
-			return self::$meta_fields_cache;
+		if ( isset( self::$meta_fields_cache[ $post_id ] ) ) {
+			return self::$meta_fields_cache[ $post_id ];
 		}
 
 		// Get values
@@ -96,6 +96,9 @@ class YMFSEO {
 				}
 			}
 		}
+
+		// Add to cache
+		self::$meta_fields_cache[ $post_id ] = $meta_fields;
 
 		return $meta_fields;
 	}
