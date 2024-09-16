@@ -84,8 +84,13 @@ td.ymfseo.column-ymfseo {
 }
 
 .ymfseo-tags-table {
+  width: 100%;
   margin: -5px 0;
   border-spacing: 0 4px;
+  table-layout: fixed;
+}
+.ymfseo-tags-table tr td:first-child {
+  display: flex;
 }
 .ymfseo-tags-table tr td:first-child span {
   background-color: #f0f0f0;
@@ -93,6 +98,9 @@ td.ymfseo.column-ymfseo {
   padding: 1px 4px 3px 4px;
   border-radius: 4px;
   display: block;
+}
+.ymfseo-tags-table tr td:last-child {
+  word-wrap: break-word;
 }
 
 .postbox-container #side-sortables:has(.ymfseo-box) #ymfseo_fields > .inside {

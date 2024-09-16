@@ -111,13 +111,17 @@ td.ymfseo.column-ymfseo {
 	}
 }
 .ymfseo-tags-table {
+	width: 100%;
     margin: -5px 0;
 
 	border-spacing: 0 4px;
+	table-layout: fixed;
 
 	tr {
 		td {
 			&:first-child {
+				display: flex;
+
 				span {
 					background-color: #f0f0f0;
 					margin-right: 6px;
@@ -126,6 +130,9 @@ td.ymfseo.column-ymfseo {
 
 					display: block;
 				}
+			}
+			&:last-child {
+				word-wrap: break-word;
 			}
 		}
 	}
