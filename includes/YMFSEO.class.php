@@ -86,7 +86,7 @@ class YMFSEO {
 		}
 
 		// Apply user filters
-		$meta_fields = apply_filters( 'ymfseo_meta_fields', $meta_fields );
+		$meta_fields = apply_filters( 'ymfseo_meta_fields', $meta_fields, $post_id );
 
 		// Replace tags
 		if ( !$raw ) {
