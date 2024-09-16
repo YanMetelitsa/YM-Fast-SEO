@@ -2,7 +2,7 @@
 	/** Exit if accessed directly */
 	if ( !defined( 'ABSPATH' ) ) exit;
 
-	$fields = YMFSEO::get_post_meta_fields( $post->ID );
+	$fields = YMFSEO::get_post_meta_fields( $post->ID, true );
 
 	global $current_screen;
 	$is_gutenberg = $current_screen->is_block_editor();

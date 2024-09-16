@@ -54,7 +54,7 @@ add_action( 'init', function () {
 				case 'ymfseo':
 					$status = 'good';
 	
-					$meta_fields = YMFSEO::get_post_meta_fields( $post_id, false );
+					$meta_fields = YMFSEO::get_post_meta_fields( $post_id );
 	
 					if ( !$meta_fields[ 'title' ] )       $status = 'bad';
 					if ( !$meta_fields[ 'description' ] ) $status = 'bad';
@@ -110,19 +110,14 @@ add_action( 'save_post', function ( $post_id ) {
 	
 	// Set meta data object
 	$meta_fields = [
-		'title'            => sanitize_text_field( $_POST[ 'ymfseo-title' ]         ?? null ),
-		'description'      => sanitize_text_field( $_POST[ 'ymfseo-description' ]   ?? null ),
-		'canonical_url'    => sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ] ?? null ),
-		'keywords'         => sanitize_text_field( $_POST[ 'ymfseo-keywords' ]      ?? null ),
+		'title'         => sanitize_text_field( $_POST[ 'ymfseo-title' ]         ?? null ),
+		'description'   => sanitize_text_field( $_POST[ 'ymfseo-description' ]   ?? null ),
+		'canonical_url' => sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ] ?? null ),
+		'keywords'      => sanitize_text_field( $_POST[ 'ymfseo-keywords' ]      ?? null ),
 	];
 
 	// Update post meta
 	update_post_meta( $post_id, 'ymfseo_fields', $meta_fields );
-});
-
-/** Adds metas to head */
-add_action( 'wp_head', function () {
-	include plugin_dir_path( __FILE__ ) . 'head.php';
 });
 
 /** Modifies title tag content */
@@ -130,7 +125,7 @@ add_filter( 'document_title_parts', function ( $title ) {
 	$queried_object_id = get_queried_object_id();
 
 	if ( $queried_object_id ) {
-		$meta_fields = YMFSEO::get_post_meta_fields( $queried_object_id, false );
+		$meta_fields = YMFSEO::get_post_meta_fields( $queried_object_id );
 
 		if ( $meta_fields[ 'title' ] ) {
 			$title[ 'title' ] = $meta_fields[ 'title' ];
@@ -142,11 +137,16 @@ add_filter( 'document_title_parts', function ( $title ) {
 
 /** Modifies canonical URL */
 add_filter( 'get_canonical_url', function ( $canonical_url, $post ) {
-	$meta_fields = YMFSEO::get_post_meta_fields( $post->ID, false );
-
+	$meta_fields = YMFSEO::get_post_meta_fields( $post->ID );
+	
 	if ( $meta_fields[ 'canonical_url' ] ) {
 		$canonical_url = $meta_fields[ 'canonical_url' ];
 	}
 
 	return $canonical_url;
 }, 10, 2 );
+
+/** Adds metas to head */
+add_action( 'wp_head', function () {
+	include plugin_dir_path( __FILE__ ) . 'head.php';
+});
