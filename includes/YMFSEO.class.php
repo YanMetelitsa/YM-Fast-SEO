@@ -22,6 +22,7 @@ class YMFSEO {
 	public static array $empty_meta_fields = [
 		'title'       => null,
 		'description' => null,
+		'image_url'   => null,
 	];
 
 	/**
