@@ -20,10 +20,8 @@ class YMFSEO {
 	 * @var array
 	 */
 	public static array $empty_meta_fields = [
-		'title'         => null,
-		'description'   => null,
-		'canonical_url' => null,
-		'keywords'      => null,
+		'title'       => null,
+		'description' => null,
 	];
 
 	/**
@@ -83,13 +81,11 @@ class YMFSEO {
 		if ( !$raw ) {
 			if ( !$meta_fields[ 'description' ] ) $meta_fields[ 'description' ] = get_the_excerpt( $post_id );
 			if ( has_post_thumbnail( $post_id ) ) $meta_fields[ 'image_url' ]   = get_the_post_thumbnail_url( $post_id, 'full' );
-		}
 
-		// Apply user filters
-		$meta_fields = apply_filters( 'ymfseo_meta_fields', $meta_fields, $post_id );
+			// Apply user filters
+			$meta_fields = apply_filters( 'ymfseo_meta_fields', $meta_fields, $post_id );
 
-		// Replace tags
-		if ( !$raw ) {
+			// Replace tags
 			foreach ( $meta_fields as $key => $meta_field ) {
 				foreach ( YMFSEO::$replace_tags as $tag => $value ) {
 					$meta_fields[ $key ] = str_replace( $tag, $value, $meta_fields[ $key ] );

@@ -29,11 +29,6 @@ if ( $queried_object_id ) {
 		printf( '<meta name="twitter:description" content="%s">', esc_attr( $meta_fields[ 'description' ] ) );
 	}
 
-	// Keywords
-	if ( $meta_fields[ 'keywords' ] ) {
-		printf( '<meta name="keywords" content="%s">', esc_attr( $meta_fields[ 'keywords' ] ) );
-	}
-
 	// Preview image
 	if ( $meta_fields[ 'image_url' ] ) {
 		printf( '<meta property="og:image" content="%s">', esc_attr( $meta_fields[ 'image_url' ] ) );

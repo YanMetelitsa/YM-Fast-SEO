@@ -109,10 +109,8 @@ add_action( 'save_post', function ( $post_id ) {
 	
 	// Set meta data object
 	$meta_fields = [
-		'title'         => sanitize_text_field( $_POST[ 'ymfseo-title' ]         ?? null ),
-		'description'   => sanitize_text_field( $_POST[ 'ymfseo-description' ]   ?? null ),
-		'canonical_url' => sanitize_text_field( $_POST[ 'ymfseo-canonical-url' ] ?? null ),
-		'keywords'      => sanitize_text_field( $_POST[ 'ymfseo-keywords' ]      ?? null ),
+		'title'       => sanitize_text_field( $_POST[ 'ymfseo-title' ]       ?? null ),
+		'description' => sanitize_text_field( $_POST[ 'ymfseo-description' ] ?? null ),
 	];
 
 	// Update post meta
@@ -133,17 +131,6 @@ add_filter( 'document_title_parts', function ( $title ) {
 
 	return $title;
 });
-
-/** Modifies canonical URL */
-add_filter( 'get_canonical_url', function ( $canonical_url, $post ) {
-	$meta_fields = YMFSEO::get_post_meta_fields( $post->ID );
-	
-	if ( $meta_fields[ 'canonical_url' ] ) {
-		$canonical_url = $meta_fields[ 'canonical_url' ];
-	}
-
-	return $canonical_url;
-}, 10, 2 );
 
 /** Adds metas to head */
 add_action( 'wp_head', function () {

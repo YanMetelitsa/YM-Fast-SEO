@@ -32,38 +32,6 @@
 			); ?>
 		</div>
 
-		<!-- Additional -->
-		<details>
-			<summary><?php esc_html_e( 'Additional', 'ym-fast-seo' ); ?></summary>
-
-			<!-- Canonical -->
-			<div class="ymfseo-box__field-box">
-				<label for="ymfseo-canonical-url"><?php esc_html_e( 'Canonical URL', 'ym-fast-seo' ); ?></label>
-				<?php printf( '<input type="url" name="%1$s" id="%1$s" class="%2$s" value="%3$s" placeholder="%4$s">',
-					'ymfseo-canonical-url',
-					'components-text-control__input',
-					esc_attr( $fields[ 'canonical_url' ] ),
-					'https://',
-				); ?>
-			</div>
-		</details>
-
-		<!-- Deprecated -->
-		<details>
-			<summary><?php esc_html_e( 'Deprecated', 'ym-fast-seo' ); ?></summary>
-
-			<!-- Keywords -->
-			<div class="ymfseo-box__field-box">
-				<label for="ymfseo-keywords"><?php esc_html_e( 'Keywords', 'ym-fast-seo' ); ?></label>
-				<?php printf( '<input type="text" name="%1$s" id="%1$s" class="%2$s" value="%3$s" placeholder="%4$s">',
-					'ymfseo-keywords',
-					'components-text-control__input',
-					esc_attr( $fields[ 'keywords' ] ),
-					'key, key',
-				); ?>
-			</div>
-		</details>
-
 		<!-- Tags -->
 		<details>
 			<summary><?php esc_html_e( 'Tags', 'ym-fast-seo' ); ?></summary>
