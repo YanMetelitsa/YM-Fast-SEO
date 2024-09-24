@@ -9,11 +9,14 @@ echo '<!-- YM Fast SEO -->';
 printf( '<meta property="og:site_name" content="%s">', esc_attr( get_bloginfo( 'sitename' ) ) );
 printf( '<meta property="og:locale" content="%s">', esc_attr( get_locale() ) );
 printf( '<meta property="og:url" content="%s">', esc_attr( wp_get_canonical_url() ) );
+printf( '<meta name="twitter:card" content="%s">', 'summary_large_image' );
 
 // Title
-printf( '<meta name="title" content="%s">', esc_attr( wp_get_document_title() ) );
-printf( '<meta property="og:title" content="%s">', esc_attr( wp_get_document_title() ) );
-printf( '<meta name="twitter:title" content="%s">', esc_attr( wp_get_document_title() ) );
+$document_title = wp_get_document_title();
+
+printf( '<meta name="title" content="%s">', esc_attr( $document_title ) );
+printf( '<meta property="og:title" content="%s">', esc_attr( $document_title ) );
+printf( '<meta name="twitter:title" content="%s">', esc_attr( $document_title ) );
 
 // Get queried object ID
 $queried_object_id = get_queried_object_id();
@@ -31,8 +34,34 @@ if ( $queried_object_id ) {
 
 	// Preview image
 	if ( $meta_fields[ 'image_url' ] ) {
+		$image_size = getimagesize( $meta_fields[ 'image_url' ] );
+
 		printf( '<meta property="og:image" content="%s">', esc_attr( $meta_fields[ 'image_url' ] ) );
+		
+		if ( $image_size ) {
+			printf( '<meta property="og:image:width" content="%s">', esc_attr( $image_size[ 0 ] ) );
+			printf( '<meta property="og:image:height" content="%s">', esc_attr( $image_size[ 1 ] ) );
+		}
+
 		printf( '<meta name="twitter:image" content="%s">', esc_attr( $meta_fields[ 'image_url' ] ) );
+	}
+
+	// Schema.org
+	if ( $meta_fields[ 'description' ] ) {
+		$schema_org = [
+			'@context'    => 'https://schema.org',
+			'@type'       => 'WebPage',
+			'headline'    => $document_title,
+			'description' => $meta_fields[ 'description' ],
+		];
+
+		if ( $meta_fields[ 'image_url' ] ) {
+			$schema_org[ 'image' ] = $meta_fields[ 'image_url' ];
+		}
+
+		echo '<script type="application/ld+json">';
+		echo wp_json_encode( $schema_org, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
+		echo '</script>';
 	}
 
 	// Do user action

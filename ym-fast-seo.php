@@ -132,6 +132,18 @@ add_filter( 'document_title_parts', function ( $title ) {
 	return $title;
 });
 
+/** Sets robots index, follow as default */
+add_filter( 'wp_robots', function ( $robots ) {
+	if ( ! $robots[ 'noindex' ] ) {
+		$robots[ 'index' ] = true;
+	}
+	if ( ! $robots[ 'nofollow' ] ) {
+		$robots[ 'follow' ] = true;
+	}
+
+    return $robots;
+});
+
 /** Adds metas to head */
 add_action( 'wp_head', function () {
 	include plugin_dir_path( __FILE__ ) . 'head.php';
