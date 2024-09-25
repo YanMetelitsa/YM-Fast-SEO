@@ -54,16 +54,16 @@ if ( $queried_object_id ) {
 		$schema_org = [
 			'@context'    => 'https://schema.org',
 			'@type'       => 'WebPage',
-			'headline'    => $document_title,
-			'description' => $meta_fields[ 'description' ],
+			'headline'    => esc_html( $document_title ),
+			'description' => esc_html( $meta_fields[ 'description' ] ),
 		];
 
 		if ( $meta_fields[ 'image_url' ] ) {
-			$schema_org[ 'image' ] = $meta_fields[ 'image_url' ];
+			$schema_org[ 'image' ] = esc_url( $meta_fields[ 'image_url' ] );
 		}
 
 		echo '<script type="application/ld+json">';
-		echo wp_json_encode( $schema_org, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE );
+		echo wp_json_encode( $schema_org );
 		echo '</script>';
 	}
 

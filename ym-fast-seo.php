@@ -59,11 +59,11 @@ add_action( 'init', function () {
 	
 					if ( ! $meta_fields[ 'description' ] ) {
 						$status = 'bad';
-						$notes[] = __( 'No description.',' ym-fast-seo' );
+						$notes[] = __( 'No description.','ym-fast-seo' );
 					}
 
 					if ( empty( $notes ) ) {
-						$notes[] = __( 'Good!',' ym-fast-seo' );
+						$notes[] = __( 'Good!','ym-fast-seo' );
 					}
 	
 					?>
