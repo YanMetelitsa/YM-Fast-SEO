@@ -1,5 +1,5 @@
 /* Posts columns */
-.manage-column.column-ymfseo {
+th.manage-column.column-ymfseo {
 	width: 40px;
 
 	text-align: center;
@@ -7,9 +7,9 @@
 td.ymfseo.column-ymfseo {
 	vertical-align: middle;
 }
-.ymfseo-status-dot {
-	width: 100%;
-	height: 100%;
+.column-ymfseo__dot {
+	width: 40px;
+	height: 40px;
 
 	display: flex;
 	align-items: center;
@@ -34,6 +34,7 @@ td.ymfseo.column-ymfseo {
 
 /* Meta box */
 #ymfseo_fields {
+	/* Common */
 	> .inside {
 		margin-top: 0;
 		padding: 16px;
@@ -59,6 +60,7 @@ td.ymfseo.column-ymfseo {
 				}
 			}
 	
+			/* Field */
 			&__field-box {
 				display: flex;
 				flex-direction: column;
@@ -82,6 +84,7 @@ td.ymfseo.column-ymfseo {
 				}
 			}
 
+			/* Checkbox */
 			&__check-box {
 				display: flex;
 				align-items: center;
@@ -90,6 +93,7 @@ td.ymfseo.column-ymfseo {
 		}
 	}
 
+	/* For Gutenberg */
 	&:has( .ymfseo-box_gutenberg ) {
 		> .postbox-header {
 			h2 {

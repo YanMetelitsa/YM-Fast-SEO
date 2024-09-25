@@ -1,6 +1,6 @@
 <?php
 	/** Exit if accessed directly */
-	if ( !defined( 'ABSPATH' ) ) exit;
+	if ( ! defined( 'ABSPATH' ) ) exit;
 
 	$fields = YMFSEO::get_post_meta_fields( $post->ID, true );
 
@@ -36,14 +36,14 @@
 		<details>
 			<summary><?php esc_html_e( 'Tags', 'ym-fast-seo' ); ?></summary>
 
-			<p><?php _e( 'Use these tags in meta fields to insert dynamic data.', 'ym-fast-seo' ); ?></p>
+			<p><?php esc_html_e( 'Use these tags in the meta fields to insert dynamic data.', 'ym-fast-seo' ); ?></p>
 
 			<table class="ymfseo-tags-table">
 				<tbody>
 					<?php foreach ( YMFSEO::$replace_tags as $tag => $value ) : ?>
 						<tr>
-							<td><span><?php echo $tag; ?></span></td>
-							<td><?php echo $value; ?></td>
+							<td><span><?php echo esc_html( $tag ); ?></span></td>
+							<td><?php echo esc_html( $value ); ?></td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>

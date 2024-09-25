@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name:       YM Fast SEO
- * Description:       Flexible toolkit for basic SEO optimization of your website.
+ * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
  * Version:           1.0.0
  * Tested up to:      6.6.1
  * Requires at least: 6.4
@@ -14,10 +14,10 @@
  */
 
 /** Exit if accessed directly */
-if ( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /** Get plugin data */
-if ( !function_exists( 'get_plugin_data' ) ) {
+if ( ! function_exists( 'get_plugin_data' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
 
@@ -53,14 +53,22 @@ add_action( 'init', function () {
 			switch ( $column ) {
 				case 'ymfseo':
 					$status = 'good';
+					$notes  = [];
 	
 					$meta_fields = YMFSEO::get_post_meta_fields( $post_id );
 	
-					if ( !$meta_fields[ 'description' ] ) $status = 'bad';
+					if ( ! $meta_fields[ 'description' ] ) {
+						$status = 'bad';
+						$notes[] = __( 'No description.',' ym-fast-seo' );
+					}
+
+					if ( empty( $notes ) ) {
+						$notes[] = __( 'Good!',' ym-fast-seo' );
+					}
 	
 					?>
-						<div class="ymfseo-status-dot">
-							<span class="<?php echo $status; ?>"></span>
+						<div class="column-ymfseo__dot" title="<?php echo esc_attr( implode( '&#013;', $notes ) ); ?>">
+							<span class="<?php echo esc_attr( $status ); ?>"></span>
 						<div>
 					<?php
 	
@@ -82,18 +90,18 @@ add_action( 'add_meta_boxes', function () {
 /** Adds action after saving post */
 add_action( 'save_post', function ( $post_id ) {
 	// Is public post type
-	if ( !in_array( get_post_type( $post_id ), YMFSEO::get_public_post_types() ) ) {
+	if ( ! in_array( get_post_type( $post_id ), YMFSEO::get_public_post_types() ) ) {
 		return;
 	}
 
 	// Check nonce
-	if ( !isset( $_POST[ 'ymfseo_edit_post_nonce' ] ) ) {
+	if ( ! isset( $_POST[ 'ymfseo_edit_post_nonce' ] ) ) {
 		return;
 	}
 
 	$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_edit_post_nonce' ] ) );
 
-	if ( !wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
+	if ( ! wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
 		return;
 	}
 
@@ -103,14 +111,14 @@ add_action( 'save_post', function ( $post_id ) {
 	}
 
 	// Check user capability
-	if( !current_user_can( 'edit_post', $post_id ) ) {
+	if( ! current_user_can( 'edit_post', $post_id ) ) {
 		return;
 	}
 	
 	// Set meta data object
 	$meta_fields = [
-		'title'       => sanitize_text_field( $_POST[ 'ymfseo-title' ]       ?? null ),
-		'description' => sanitize_text_field( $_POST[ 'ymfseo-description' ] ?? null ),
+		'title'       => sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ] ?? null ) ),
+		'description' => sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? null ) ),
 	];
 
 	// Update post meta

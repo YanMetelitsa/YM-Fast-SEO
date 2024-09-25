@@ -1,7 +1,7 @@
 <?php
 
 /** Exit if accessed directly */
-if ( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  *  Main YM Fast SEO class.
@@ -75,12 +75,12 @@ class YMFSEO {
 
 		// Get values
 		$meta_fields = get_post_meta( $post_id, 'ymfseo_fields', true );
-		$meta_fields = !is_array( $meta_fields ) || empty( $meta_fields ) ? [] : $meta_fields;
+		$meta_fields = ! is_array( $meta_fields ) || empty( $meta_fields ) ? [] : $meta_fields;
 		$meta_fields = wp_parse_args( $meta_fields, self::$empty_meta_fields );
 
 		// Set some defaults
-		if ( !$raw ) {
-			if ( !$meta_fields[ 'description' ] ) $meta_fields[ 'description' ] = get_the_excerpt( $post_id );
+		if ( ! $raw ) {
+			if ( ! $meta_fields[ 'description' ] ) $meta_fields[ 'description' ] = get_the_excerpt( $post_id );
 			if ( has_post_thumbnail( $post_id ) ) $meta_fields[ 'image_url' ]   = get_the_post_thumbnail_url( $post_id, 'full' );
 
 			// Apply user filters

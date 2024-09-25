@@ -1,5 +1,5 @@
 /* Posts columns */
-.manage-column.column-ymfseo {
+th.manage-column.column-ymfseo {
   width: 40px;
   text-align: center;
 }
@@ -8,31 +8,39 @@ td.ymfseo.column-ymfseo {
   vertical-align: middle;
 }
 
-.ymfseo-status-dot {
-  width: 100%;
-  height: 100%;
+.column-ymfseo__dot {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.ymfseo-status-dot span {
+.column-ymfseo__dot span {
   background-color: #f0f0f0;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   display: block;
 }
-.ymfseo-status-dot span.good {
+.column-ymfseo__dot span.good {
   background-color: #46B450;
 }
-.ymfseo-status-dot span.bad {
+.column-ymfseo__dot span.bad {
   background-color: #dc3232;
 }
 
 /* Meta box */
+#ymfseo_fields {
+  /* Common */
+  /* For Gutenberg */
+}
 #ymfseo_fields > .inside {
   margin-top: 0;
   padding: 16px;
+}
+#ymfseo_fields > .inside .ymfseo-box {
+  /* Field */
+  /* Checkbox */
 }
 #ymfseo_fields > .inside .ymfseo-box__page {
   display: flex;

@@ -1,9 +1,9 @@
 <?php
 
 /** Exit if accessed directly */
-if ( !defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) exit;
 
-echo '<!-- YM Fast SEO v' . YMFSEO_PLUGIN_DATA[ 'Version' ] . ' -->';
+echo '<!-- YM Fast SEO v' . esc_html( YMFSEO_PLUGIN_DATA[ 'Version' ] ) . ' -->';
 
 // Common
 printf( '<meta property="og:site_name" content="%s">', esc_attr( get_bloginfo( 'sitename' ) ) );
