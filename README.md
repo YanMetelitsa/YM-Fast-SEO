@@ -14,12 +14,12 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 # Changelog
 
-= 1.1.0 =
+## 1.1.0
 * Small improvements and optimisations
 * Meta fields length indicator
 * Basic SEO check of posts and pages
 * Ability to edit robots.txt through settings
 * Meta "robots" bug fix
 
-= 1.0.0 =
+## 1.0.0
 * Initial release
