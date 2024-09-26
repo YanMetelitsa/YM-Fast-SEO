@@ -31,6 +31,16 @@ require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO.class.php';
 
 YMFSEO::init();
 
+/** Adds settings link */
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function ( $links ) {
+	array_unshift( $links, sprintf( '<a href="%s">%s</a>',
+		menu_page_url( 'ymfseo-settings', false ),
+		__( 'SEO Settings', 'ym-fast-seo' ),
+	));
+
+	return $links;
+});
+
 /** Adds WordPress theme supports */
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );
@@ -39,6 +49,7 @@ add_action( 'after_setup_theme', function () {
 /** Connects styles and scripts */
 add_action( 'admin_enqueue_scripts', function () {
 	wp_enqueue_style( 'ymfseo-styles', YMFSEO_ROOT_URI . 'assets/css/ymfseo-style.css', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
+	wp_enqueue_script( 'ymfseo-script', YMFSEO_ROOT_URI . 'assets/js/ymfseo-scripts.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
 });
 
 /** Adds posts custom columns */
@@ -52,23 +63,11 @@ add_action( 'init', function () {
 		add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
 			switch ( $column ) {
 				case 'ymfseo':
-					$status = 'good';
-					$notes  = [];
-	
-					$meta_fields = YMFSEO::get_post_meta_fields( $post_id );
-	
-					if ( ! $meta_fields[ 'description' ] ) {
-						$status = 'bad';
-						$notes[] = __( 'No description.','ym-fast-seo' );
-					}
-
-					if ( empty( $notes ) ) {
-						$notes[] = __( 'Good!','ym-fast-seo' );
-					}
+					$check = YMFSEO::check_seo( $post_id );
 	
 					?>
-						<div class="column-ymfseo__dot" title="<?php echo esc_attr( implode( '&#013;', $notes ) ); ?>">
-							<span class="<?php echo esc_attr( $status ); ?>"></span>
+						<div class="column-ymfseo__dot" title="<?php echo esc_attr( implode( '&#013;', $check[ 'notes' ] ) ); ?>">
+							<span class="<?php echo esc_attr( $check[ 'status' ] ); ?>"></span>
 						<div>
 					<?php
 	
@@ -142,17 +141,68 @@ add_filter( 'document_title_parts', function ( $title ) {
 
 /** Sets robots index, follow as default */
 add_filter( 'wp_robots', function ( $robots ) {
-	if ( ! $robots[ 'noindex' ] ) {
-		$robots[ 'index' ] = true;
+	if ( ! isset( $robots[ 'nofollow' ] ) || ! $robots[ 'nofollow' ] ) {
+		$robots = array_merge( [ 'follow' => true ], $robots );
 	}
-	if ( ! $robots[ 'nofollow' ] ) {
-		$robots[ 'follow' ] = true;
+	if ( ! isset( $robots[ 'noindex' ] ) || ! $robots[ 'noindex' ] ) {
+		$robots = array_merge(  [ 'index' => true ], $robots );
 	}
 
-    return $robots;
+	return $robots;
 });
 
 /** Adds metas to head */
 add_action( 'wp_head', function () {
 	include plugin_dir_path( __FILE__ ) . 'head.php';
+}, 1 );
+
+/** Modifies robots.txt via settings */
+add_filter( 'robots_txt', function ( $output, $public ) {
+	$settings_robots_txt = get_option( 'ymfseo_robots_txt', false );
+
+	if ( $settings_robots_txt ) {
+		$output = $settings_robots_txt;
+	}
+
+	return $output;
+}, 10, 2 );
+
+/** Registers YMFSEO settings */
+add_action( 'admin_menu', function () {
+	add_options_page(
+		__( 'SEO Settings', 'ym-fast-seo' ),		// Title
+		__( 'SEO', 'ym-fast-seo' ),					// Label
+		'manage_options',							// Capability
+		'ymfseo-settings',							// Slug
+		function () {
+			include YMFSEO_ROOT_DIR . 'parts/settings-page.php';
+		},
+		3											// Position
+	);
+});
+add_action( 'admin_init', function () {
+	// Basic section
+	add_settings_section(
+		'ymfseo_basic_section',
+		__( 'Basic', 'ym-fast-seo' ),
+		function ( $args ) {
+			include YMFSEO_ROOT_DIR . 'parts/settings-section.php';
+		},
+		'ymfseo_settings'
+	);
+
+	// Robots.txt
+	register_setting( 'ymfseo_settings', 'ymfseo_robots_txt' );
+	add_settings_field(
+		'ymfseo_robots_txt',
+		__( 'Edit robots.txt', 'ym-fast-seo' ),
+		function ( $args ) {
+			include YMFSEO_ROOT_DIR . 'parts/settings-robots-txt-field.php';
+		},
+		'ymfseo_settings',
+		'ymfseo_basic_section',
+		[
+			'label_for' => 'ymfseo_robots_txt',
+		]
+	);
 });

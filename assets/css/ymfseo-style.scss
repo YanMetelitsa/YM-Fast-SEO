@@ -1,4 +1,4 @@
-/* Posts columns */
+/* Manage columns */
 th.manage-column.column-ymfseo {
 	width: 40px;
 
@@ -26,20 +26,27 @@ td.ymfseo.column-ymfseo {
 		&.good {
 			background-color: #46B450;
 		}
+		&.alert {
+			background-color: #f56e28;
+		}
 		&.bad {
 			background-color: #dc3232;
+		}
+		&.noindex {
+			background-color: #00a0d2;
 		}
 	}
 }
 
 /* Meta box */
-#ymfseo_fields {
+#ymfseo_fields.postbox {
 	/* Common */
 	> .inside {
 		margin-top: 0;
 		padding: 16px;
 
 		.ymfseo-box {
+			/* Page */
 			&__page {
 				display: flex;
 				flex-direction: column;
@@ -82,6 +89,34 @@ td.ymfseo.column-ymfseo {
 					font-size: 12px;
 					color: rgb( 117, 117, 117 );
 				}
+
+				/* Length range */
+				&-range {
+					background-color: rgba( 0, 0, 0, .2 );
+					height: 2px;
+	
+					position: relative;
+	
+					&::after {
+						content: '';
+	
+						background-color: #00a0d2;
+						width: var( --ymfseo-range-width );
+						max-width: 100%;
+	
+						position: absolute;
+						top: 0;
+						bottom: 0;
+						left: 0;
+					}
+
+					&.bad::after {
+						background-color: #dc3232;
+					}
+					&.good::after {
+						background-color: #46B450;
+					}
+				}
 			}
 
 			/* Checkbox */
@@ -93,7 +128,7 @@ td.ymfseo.column-ymfseo {
 		}
 	}
 
-	/* For Gutenberg */
+	/* Gutenberg fix */
 	&:has( .ymfseo-box_gutenberg ) {
 		> .postbox-header {
 			h2 {
@@ -114,33 +149,36 @@ td.ymfseo.column-ymfseo {
 		}
 	}
 }
+
+/* Tags table */
 .ymfseo-tags-table {
-	width: 100%;
-    margin: -5px 0;
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	row-gap: 5px;
 
-	border-spacing: 0 4px;
-	table-layout: fixed;
+	> div {
+		&:nth-child( odd ) {
+			display: flex;
+			align-items: flex-start;
 
-	tr {
-		td {
-			&:first-child {
-				display: flex;
+			span {
+				background-color: #f0f0f0;
+				margin-right: 6px;
+				padding: 1px 4px 3px 4px;
+				border-radius: 4px;
 
-				span {
-					background-color: #f0f0f0;
-					margin-right: 6px;
-					padding: 1px 4px 3px 4px;
-					border-radius: 4px;
+				display: block;
 
-					display: block;
-				}
+				word-wrap: nowrap;
 			}
-			&:last-child {
-				word-wrap: break-word;
-			}
+		}
+		&:nth-child( even ) {
+			overflow-wrap: anywhere;
 		}
 	}
 }
+
+/* Non-Gutenberg fix */
 .postbox-container {
 	#side-sortables:has( .ymfseo-box ) {
 		#ymfseo_fields {

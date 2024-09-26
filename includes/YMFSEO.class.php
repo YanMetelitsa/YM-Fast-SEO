@@ -37,10 +37,10 @@ class YMFSEO {
 	 */
 	public static function init () : void {
 		self::$replace_tags = [
-			'{name}'        => get_bloginfo( 'name' ),
-			'{description}' => get_bloginfo( 'description' ),
-			'{home_url}'    => home_url(),
-			'{separator}'   => '–',
+			'%name%' => get_bloginfo( 'name' ),
+			'%desc%' => get_bloginfo( 'description' ),
+			'%home%' => home_url(),
+			'%sep%'  => '–',
 		];
 	}
 
@@ -80,8 +80,11 @@ class YMFSEO {
 
 		// Set some defaults
 		if ( ! $raw ) {
+			// Description
 			if ( ! $meta_fields[ 'description' ] ) $meta_fields[ 'description' ] = get_the_excerpt( $post_id );
-			if ( has_post_thumbnail( $post_id ) ) $meta_fields[ 'image_url' ]   = get_the_post_thumbnail_url( $post_id, 'full' );
+
+			// Preview image
+			if ( has_post_thumbnail( $post_id ) ) $meta_fields[ 'image_url' ]    = get_the_post_thumbnail_url( $post_id, 'full' );
 
 			// Apply user filters
 			$meta_fields = apply_filters( 'ymfseo_meta_fields', $meta_fields, $post_id );
@@ -98,5 +101,57 @@ class YMFSEO {
 		self::$meta_fields_cache[ $post_id ] = $meta_fields;
 
 		return $meta_fields;
+	}
+
+	/**
+	 * Checks post SEO status.
+	 * 
+	 * @param int $post_id Post/page ID.
+	 * 
+	 * @return array Check result data.
+	 */
+	public static function check_seo ( int $post_id ) : array {
+		$status = 'good';
+		$notes  = [];
+
+		$meta_fields = YMFSEO::get_post_meta_fields( $post_id );
+
+		/** Too short title */
+		if ( strlen( $meta_fields[ 'title' ] ) < 30 ) {
+			$status = 'bad';
+			$notes[] = __( 'The title is too short.','ym-fast-seo' );
+		}
+		/** Too long title */
+		if ( strlen( $meta_fields[ 'title' ] ) > 70 ) {
+			$status = 'bad';
+			$notes[] = __( 'The title is too long.','ym-fast-seo' );
+		}
+
+		/** No description */
+		if ( ! $meta_fields[ 'description' ] ) {
+			$status = 'bad';
+			$notes[] = __( 'No description.','ym-fast-seo' );
+		} else {
+			/** Too short description */
+			if ( strlen( $meta_fields[ 'description' ] ) < 50 ) {
+				$status = 'bad';
+				$notes[] = __( 'The description is too short.','ym-fast-seo' );
+			}
+
+			/** Too long description */
+			if ( strlen( $meta_fields[ 'description' ] ) > 170 ) {
+				$status = 'bad';
+				$notes[] = __( 'The description is too long.','ym-fast-seo' );
+			}
+		}
+
+		if ( empty( $notes ) ) {
+			$notes[] = __( 'Good!','ym-fast-seo' );
+		}
+
+		return [
+			'status' => $status,
+			'notes'  => $notes,
+		];
 	}
 }

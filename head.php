@@ -3,14 +3,17 @@
 /** Exit if accessed directly */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+global $wp;
+
 echo '<!-- YM Fast SEO v' . esc_html( YMFSEO_PLUGIN_DATA[ 'Version' ] ) . ' -->';
 
 // Common
 printf( '<meta property="og:site_name" content="%s">', esc_attr( get_bloginfo( 'sitename' ) ) );
-printf( '<meta property="og:locale"    content="%s">', esc_attr( get_locale() ) );
 printf( '<meta property="og:url"       content="%s">', esc_attr( wp_get_canonical_url() ) );
-printf( '<meta name="twitter:card"     content="%s">', 'summary_large_image' );
+printf( '<meta property="og:locale"    content="%s">', esc_attr( get_locale() ) );
+
 printf( '<meta name="twitter:url"      content="%s">', esc_attr( wp_get_canonical_url() ) );
+printf( '<meta name="twitter:card"     content="%s">', 'summary_large_image' );
 
 // Title
 $document_title = wp_get_document_title();
@@ -41,31 +44,43 @@ if ( $queried_object_id ) {
 		$image_size = getimagesize( $meta_fields[ 'image_url' ] );
 
 		if ( $image_size ) {
+			printf( '<meta property="og:image:type"   content="%s">', esc_attr( $image_size[ 'mime' ] ) );
 			printf( '<meta property="og:image:width"  content="%s">', esc_attr( $image_size[ 0 ] ) );
 			printf( '<meta property="og:image:height" content="%s">', esc_attr( $image_size[ 1 ] ) );
 
+			printf( '<meta name="twitter:image:type"   content="%s">', esc_attr( $image_size[ 'mime' ] ) );
 			printf( '<meta name="twitter:image:width"  content="%s">', esc_attr( $image_size[ 0 ] ) );
 			printf( '<meta name="twitter:image:height" content="%s">', esc_attr( $image_size[ 1 ] ) );
 		}
 	}
 
 	// Schema.org
-	if ( $meta_fields[ 'description' ] ) {
-		$schema_org = [
-			'@context'    => 'https://schema.org',
-			'@type'       => 'WebPage',
-			'headline'    => esc_html( $document_title ),
-			'description' => esc_html( $meta_fields[ 'description' ] ),
-		];
-
-		if ( $meta_fields[ 'image_url' ] ) {
-			$schema_org[ 'image' ] = esc_url( $meta_fields[ 'image_url' ] );
-		}
-
-		echo '<script type="application/ld+json">';
-		echo wp_json_encode( $schema_org );
-		echo '</script>';
-	}
+	printf( '<script type="application/ld+json">%s</script>',
+wp_json_encode([
+			'@context' => 'https://schema.org',
+			'@graph'   => [
+				[
+					'@type'       => 'WebSite',
+					'url'         => home_url(),
+					'name'        => esc_html( get_bloginfo( 'sitename' ) ),
+					'description' => esc_html( get_bloginfo( 'description' ) ),
+					'inLanguage'  => esc_html( get_locale() ),
+				],
+				[
+					'@type'       => 'WebPage',
+					'url'         => esc_html( home_url( $wp->request ) ),
+					'name'        => esc_html( $document_title ),
+					'description' => esc_html( $meta_fields[ 'description' ] ?? null ),
+					'image'       => esc_url( $meta_fields[ 'image_url' ] ?? null ),
+					'inLanguage'  => esc_html( get_locale() ),
+					'isPartOf'    => [
+						'@type' => 'WebSite',
+						'url'   => home_url(),
+					],
+				],
+			],
+		])
+	);
 
 	// Do user action
 	do_action( 'ymfseo_after_print_metas' );
