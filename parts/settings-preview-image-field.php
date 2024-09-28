@@ -2,7 +2,8 @@
 	/** Exit if accessed directly */
 	if ( ! defined( 'ABSPATH' ) ) exit;
 
-	$preview_image_id = YMFSEO::get_option( 'preview_image_id' );
+	$preview_image_uri = false;
+	$preview_image_id  = YMFSEO::get_option( 'preview_image_id' );
 
 	if ( $preview_image_id ) {
 		$preview_image_uri = wp_get_attachment_image_url( $preview_image_id, 'full' );
