@@ -38,7 +38,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * Improvements and optimisations
 * New Schema.org "Page Type" post field
 * Possibility to disallow an individual page/post indexing
-* New Options: Clear Titles, Title Separator, Default Preview Image
+* New Settings: Clear Titles, Title Separator, Default Preview Image
 * Meta descriptions of the taxonomy pages are automatically load from the term descriptions
 * Cache bug fix
 * Edit robots.txt bug fix

@@ -48,7 +48,12 @@
 	</div>
 	
 	<p class="description">
-		<?php echo wp_kses_post( __( 'The image link will be added to the meta tags if no post/page thumbnail is set. The recommended size is <code>1200 × 630</code> pixels.', 'ym-fast-seo' ) ); ?>
+		<?php
+			/* translators: %s: Size in pixels */
+			printf( wp_kses_post( __( 'The image link will be added to the meta tags if no post/page thumbnail is set. The recommended size is %s pixels.', 'ym-fast-seo' ) ),
+				'<code>1200 × 630</code>',
+			);
+		?>
 	</p>
 
 	<script>
