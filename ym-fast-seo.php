@@ -358,7 +358,7 @@ add_action( 'admin_init', function () {
 		},
 		'ymfseo_settings',
 		[
-			'description' => __( 'Enter the values of the <code>content</code> attribute for the required service to verify the site.', 'ym-fast-seo' ),
+			'description' => __( 'Enter the values of the <code>content</code> attribute for the required services to verify the site.', 'ym-fast-seo' ),
 		]
 	);
 

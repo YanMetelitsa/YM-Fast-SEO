@@ -16,6 +16,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 # Changelog
 
+## 1.2.1
+* Schema.org UTF-8 fix
+* Undefined `$preview_image_uri` fix
+* Translation fixes
+
 ## 1.2.0
 * Improvements and optimisations
 * New Schema.org "Page Type" post field

@@ -85,15 +85,15 @@ if ( $has_meta_image_url ) {
 $schema_org = [
 	'@context'   => 'https://schema.org',
 	'@type'      => YMFSEO::$empty_meta_fields[ 'page_type' ],
-	'url'        => esc_html( home_url( $wp->request ) ),
-	'name'       => esc_html( $document_title ),
-	'inLanguage' => esc_html( get_locale() ),
+	'url'        => home_url( $wp->request ),
+	'name'       => $document_title,
+	'inLanguage' => get_locale(),
 	'isPartOf'   => [
 		'@type'       => 'WebSite',
 		'url'         => home_url(),
-		'name'        => esc_html( get_bloginfo( 'name' ) ),
-		'description' => esc_html( get_bloginfo( 'description' ) ),
-		'inLanguage'  => esc_html( get_locale() ),
+		'name'        => get_bloginfo( 'name' ),
+		'description' => get_bloginfo( 'description' ),
+		'inLanguage'  => get_locale(),
 	],
 ];
 
@@ -106,18 +106,18 @@ if ( $meta_fields ) {
 	if ( $schema_org[ '@type' ] !== $meta_fields[ 'page_type' ] ) {
 		$schema_org[ '@type' ] = [
 			$schema_org[ '@type' ],
-			$meta_fields[ 'page_type' ],
+			esc_html( $meta_fields[ 'page_type' ] ),
 		];
 	}
 	if ( $has_meta_description ) {
-		$schema_org[ 'description' ] = esc_html( $meta_fields[ 'description' ] );
+		$schema_org[ 'description' ] = $meta_fields[ 'description' ];
 	}
 	if ( $has_meta_image_url ) {
-		$schema_org[ 'image' ] = esc_url( $meta_fields[ 'image_url' ] );
+		$schema_org[ 'image' ] = $meta_fields[ 'image_url' ];
 	}
 }
 
-printf( '<script type="application/ld+json">%s</script>', wp_json_encode( $schema_org ) );
+printf( '<script type="application/ld+json">%s</script>', wp_json_encode( $schema_org, JSON_UNESCAPED_UNICODE ) );
 
 // Do user action
 do_action( 'ymfseo_after_print_metas' );
