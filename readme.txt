@@ -4,7 +4,7 @@ Tags: seo
 Tested up to: 6.6.2
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -21,7 +21,9 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * Custom Meta Title & Description Fields
 * Automated Open Graph, Twitter Card, and Schema.org Markup
 * Quick Page and Post SEO Analysis
+* Services integration
 * Useful Tools
+* Editing the robots.txt file
 * Lightweight and Extendable
 
 == Installation ==
@@ -32,12 +34,21 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 == Changelog ==
 
+= 1.2.0 =
+* Improvements and optimisations
+* New Schema.org "Page Type" post field
+* Possibility to disallow an individual page/post indexing
+* New Options: Clear Titles, Title Separator, Default Preview Image
+* Meta descriptions of the taxonomy pages are automatically load from the term descriptions
+* Cache bug fix
+* Edit robots.txt bug fix
+
 = 1.1.0 =
-* Small improvements and optimisations
 * Meta fields length indicator
 * Basic SEO check of posts and pages
 * Ability to edit robots.txt through settings
 * Meta "robots" bug fix
+* Small improvements and optimisations
 
 = 1.0.0 =
 * Initial release

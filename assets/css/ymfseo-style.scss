@@ -1,3 +1,10 @@
+:root {
+	--ymfseo-red: #dc3232;
+	--ymfseo-green: #46B450;
+	--ymfseo-yellow: #ffb900;
+	--ymfseo-blue: #0073aa;
+}
+
 /* Manage columns */
 th.manage-column.column-ymfseo {
 	width: 40px;
@@ -24,26 +31,26 @@ td.ymfseo.column-ymfseo {
 		display: block;
 
 		&.good {
-			background-color: #46B450;
+			background-color: var( --ymfseo-green );
 		}
 		&.alert {
-			background-color: #f56e28;
+			background-color: var( --ymfseo-yellow );
 		}
 		&.bad {
-			background-color: #dc3232;
+			background-color: var( --ymfseo-red );
 		}
 		&.noindex {
-			background-color: #00a0d2;
+			background-color: var( --ymfseo-blue );
 		}
 	}
 }
 
 /* Meta box */
 #ymfseo_fields.postbox {
-	/* Common */
+	/* Container */
 	> .inside {
 		margin-top: 0;
-		padding: 16px;
+		padding: 12px;
 
 		.ymfseo-box {
 			/* Page */
@@ -73,7 +80,7 @@ td.ymfseo.column-ymfseo {
 				flex-direction: column;
 				gap: 6px;
 	
-				label {
+				> label {
 					font-size: 11px;
 					font-weight: 500;
 					line-height: 1.4;
@@ -83,14 +90,6 @@ td.ymfseo.column-ymfseo {
 				textarea {
 					height: auto;
 				}
-				p {
-					margin: 2px 0 0 0;
-	
-					font-size: 12px;
-					color: rgb( 117, 117, 117 );
-				}
-
-				/* Length range */
 				&-range {
 					background-color: rgba( 0, 0, 0, .2 );
 					height: 2px;
@@ -100,7 +99,7 @@ td.ymfseo.column-ymfseo {
 					&::after {
 						content: '';
 	
-						background-color: #00a0d2;
+						background-color: var( --ymfseo-yellow );
 						width: var( --ymfseo-range-width );
 						max-width: 100%;
 	
@@ -110,48 +109,68 @@ td.ymfseo.column-ymfseo {
 						left: 0;
 					}
 
-					&.bad::after {
-						background-color: #dc3232;
-					}
 					&.good::after {
-						background-color: #46B450;
+						background-color: var( --ymfseo-green );
 					}
+					&.bad::after {
+						background-color: var( --ymfseo-red );
+					}
+				}
+				p {
+					margin: 2px 0 0 0;
+	
+					font-size: 12px;
+					color: #757575;
 				}
 			}
 
 			/* Checkbox */
-			&__check-box {
+			&__checkbox {
 				display: flex;
 				align-items: center;
-				gap: 2px;
+				gap: 8px;
+
+				> span {
+					display: flex;
+					align-items: center;
+
+					input {
+						margin: 0;
+					}
+				}
 			}
 		}
 	}
 
 	/* Gutenberg fix */
 	&:has( .ymfseo-box_gutenberg ) {
+		/* Header tab */
 		> .postbox-header {
 			h2 {
-				padding: 0 16px !important;
+				padding: 0 16px ;
 	
 				font-size: 13px;
 			}
 		}
 
+		/* Container */
 		> .inside {
-			padding: 5px 16px 16px 16px !important;
-		}
+			padding: 5px 16px 16px 16px;
 
-		.ymfseo-box {
-			&__check-box {
-				gap: 10px;
+			.ymfseo-box {
+				/* Checkbox */
+				&__checkbox {
+					margin-top: 2px;
+	
+					gap: 10px;
+				}
 			}
 		}
 	}
 }
 
 /* Tags table */
-.ymfseo-tags-table {
+.ymfseo-box__tags-table {
 	display: grid;
 	grid-template-columns: max-content 1fr;
 	row-gap: 5px;
@@ -178,12 +197,84 @@ td.ymfseo.column-ymfseo {
 	}
 }
 
-/* Non-Gutenberg fix */
-.postbox-container {
-	#side-sortables:has( .ymfseo-box ) {
-		#ymfseo_fields {
-			> .inside {
-				padding: 12px;
+/* Settings */
+.ymfseo-settings-separator-grid {
+	width: 25em;
+	margin-bottom: 10px;
+
+	display: grid;
+	grid-template-columns: repeat( 7, 1fr );
+	gap: 8px;
+
+	@media screen and ( max-width: 782px ) {
+		width: 100%;
+
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	&__item {
+		background-color: #fff;
+		max-width: 50px;
+		border-radius: 4px;
+		border: 1px solid #8c8f94;
+		aspect-ratio: 1;
+
+		position: relative;
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		@media screen and ( max-width: 782px ) {
+			width: 45px;
+		}
+
+		&:has( input:checked ) {
+			border-color: #2271b1;
+			box-shadow: 0 0 0 1px #2271b1;
+			outline: 2px solid transparent;
+		}
+
+		input {
+			width: 100%;
+			height: 100%;
+			margin: 0 !important;
+			border-radius: 0;
+
+			position: absolute;
+
+			opacity: 0;
+		}
+		span {
+			width: 100%;
+			height: 100%;
+
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			font-size: 17px;
+			color: #2c3338;
+		}
+	}
+}
+.ymfseo-settings-preview-image-section {
+	#ymfseo-preview-image-img {
+		width: 25em;
+		height: auto;
+		margin-bottom: 20px;
+		border-radius: 6px;
+
+		@media screen and ( max-width: 782px ) {
+			width: 100%;
+		}
+	}
+
+	.action-buttons {
+		button {
+			&[ hidden ] {
+				display: none;
 			}
 		}
 	}
