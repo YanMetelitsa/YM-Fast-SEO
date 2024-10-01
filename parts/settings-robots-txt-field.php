@@ -1,6 +1,6 @@
 <?php
 
-/** Exit if accessed directly */
+// Exits if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 $robots_txt_content     = '';
@@ -19,3 +19,5 @@ printf( '<textarea name="%1$s" id="%1$s" class="code" rows="8" cols="50" placeho
 	esc_attr( $robots_txt_placeholder ),
 	esc_textarea( $robots_txt_content ),
 );
+
+printf( '<p class="description">%s</p>', esc_html__( 'To restore the default value, clear this field and save.', 'ym-fast-seo' ) );

@@ -1,9 +1,9 @@
 <?php
-	/** Exit if accessed directly */
+	// Exits if accessed directly.
 	if ( ! defined( 'ABSPATH' ) ) exit;
 
+	$preview_image_id  = YMFSEO_Settings::get_option( 'preview_image_id' );
 	$preview_image_uri = false;
-	$preview_image_id  = YMFSEO::get_option( 'preview_image_id' );
 
 	if ( $preview_image_id ) {
 		$preview_image_uri = wp_get_attachment_image_url( $preview_image_id, 'full' );
@@ -33,12 +33,14 @@
 			$preview_image_uri ? 'hidden' : '',
 			esc_html__( 'Choose an Image', 'ym-fast-seo' ),
 		); ?>
+		
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			'ymfseo-preview-image-change-button',
 			'button',
 			$preview_image_uri ? '' : 'hidden',
 			esc_html__( 'Change Image', 'ym-fast-seo' ),
 		); ?>
+		
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			'ymfseo-preview-image-remove-button',
 			'button reset',
@@ -67,7 +69,7 @@
 			const changeButton = $( '#ymfseo-preview-image-change-button' );
 			const removeButton = $( '#ymfseo-preview-image-remove-button' );
 
-			/** Upload */
+			// Uploads.
 			uploadButton.add( changeButton ).click( function ( e ) {
 				e.preventDefault();
 
@@ -115,7 +117,7 @@
 				mediaUploader.open();
 			});
 
-			/** Remove */
+			// Removes.
 			removeButton.click( function ( e ) {
 				e.preventDefault();
 

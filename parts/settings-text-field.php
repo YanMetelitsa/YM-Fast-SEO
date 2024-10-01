@@ -1,10 +1,12 @@
 <?php
 
-/** Exit if accessed directly */
+// Exits if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-printf( '<input type="text" name="%1$s" id="%1$s" class="regular-text" value="%2$s" placeholder="%3$s">',
+printf( '<input type="%1$s" name="%2$s" id="%2$s" class="regular-text %3$s" value="%4$s" placeholder="%5$s">',
+	esc_attr( $args[ 'type' ] ?? 'text' ),
 	esc_attr( $args[ 'label_for' ] ),
-	esc_attr( YMFSEO::get_option( str_replace( 'ymfseo_', '', $args[ 'label_for' ] ) ) ),
+	esc_attr( $args[ 'input-class' ] ?? '' ),
+	esc_attr( YMFSEO_Settings::get_option( $args[ 'label_for' ] ) ),
 	esc_attr( $args[ 'placeholder' ] ?? null ),
 );

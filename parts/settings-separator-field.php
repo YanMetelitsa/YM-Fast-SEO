@@ -1,17 +1,17 @@
 <?php
-	/** Exit if accessed directly */
+	// Exits if accessed directly.
 	if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 
 <div class="ymfseo-settings-separator-grid">
-	<?php foreach ( $args[ 'options' ] as $value => $label ) : ?>
+	<?php foreach ( $args[ 'options' ] as $value ) : ?>
 		<div class="ymfseo-settings-separator-grid__item">
 			<?php printf( '<input type="radio" name="%s" value="%s"%s>',
 				esc_attr( $args[ 'label_for' ] ),
 				esc_attr( $value ),
-				checked( YMFSEO::get_option( str_replace( 'ymfseo_', '', $args[ 'label_for' ] ) ), $value, false ),
+				checked( YMFSEO_Settings::get_option( $args[ 'label_for' ] ), $value, false ),
 			); ?>
-			<span><?php echo esc_html( $label ); ?></span>
+			<span><?php echo esc_html( $value ); ?></span>
 		</div>
 	<?php endforeach; ?>
 </div>

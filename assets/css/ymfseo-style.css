@@ -1,4 +1,6 @@
 :root {
+  --ymfseo-settings-bg: #f9f9f9;
+  --ymfseo-settings-border-radius: 8px;
   --ymfseo-red: #dc3232;
   --ymfseo-green: #46B450;
   --ymfseo-yellow: #ffb900;
@@ -164,7 +166,64 @@ td.ymfseo.column-ymfseo {
 }
 
 /* Settings */
-.ymfseo-settings-separator-grid {
+.ymfseo-seettings-page__header {
+  background-color: var(--ymfseo-settings-bg);
+  padding: 20px;
+  border-radius: var(--ymfseo-settings-border-radius);
+  border: 1px solid #eaecf0;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.1);
+}
+.ymfseo-seettings-page__header h1 {
+  margin: 0;
+  padding-top: 0;
+}
+.ymfseo-seettings-page__header > p {
+  margin: 2px 0 0 0;
+}
+.ymfseo-seettings-page form > h2 {
+  background-color: var(--ymfseo-settings-bg);
+  margin: 20px 0 0 0;
+  padding: 20px;
+  border-radius: var(--ymfseo-settings-border-radius) var(--ymfseo-settings-border-radius) 0 0;
+  border: 1px solid #eaecf0;
+  border-bottom: none;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.1);
+}
+.ymfseo-seettings-page form > p:not(.submit) {
+  background-color: var(--ymfseo-settings-bg);
+  margin: -10px 0 0 0;
+  padding: 0 20px 10px 20px;
+  border: 1px solid #eaecf0;
+  border-top: none;
+  border-bottom: none;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.1);
+}
+.ymfseo-seettings-page form > table {
+  background-color: var(--ymfseo-settings-bg);
+  margin: 0;
+  padding: 20px;
+  border-radius: 0 0 var(--ymfseo-settings-border-radius) var(--ymfseo-settings-border-radius);
+  border: 1px solid #eaecf0;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.1);
+  display: block;
+}
+@media screen and (max-width: 782px) {
+  .ymfseo-seettings-page form > table th {
+    padding-bottom: 4px;
+  }
+  .ymfseo-seettings-page form > table tr:first-of-type th {
+    padding-top: 0;
+  }
+}
+.ymfseo-seettings-page form > table tbody {
+  width: 100%;
+  display: block;
+}
+.ymfseo-seettings-page form > table tbody tr {
+  width: 100%;
+  display: block;
+}
+.ymfseo-seettings-page .ymfseo-settings-separator-grid {
   width: 25em;
   margin-bottom: 10px;
   display: grid;
@@ -172,13 +231,13 @@ td.ymfseo.column-ymfseo {
   gap: 8px;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-settings-separator-grid {
+  .ymfseo-seettings-page .ymfseo-settings-separator-grid {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
   }
 }
-.ymfseo-settings-separator-grid__item {
+.ymfseo-seettings-page .ymfseo-settings-separator-grid__item {
   background-color: #fff;
   max-width: 50px;
   border-radius: 4px;
@@ -190,16 +249,16 @@ td.ymfseo.column-ymfseo {
   justify-content: center;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-settings-separator-grid__item {
+  .ymfseo-seettings-page .ymfseo-settings-separator-grid__item {
     width: 45px;
   }
 }
-.ymfseo-settings-separator-grid__item:has(input:checked) {
+.ymfseo-seettings-page .ymfseo-settings-separator-grid__item:has(input:checked) {
   border-color: #2271b1;
   box-shadow: 0 0 0 1px #2271b1;
   outline: 2px solid transparent;
 }
-.ymfseo-settings-separator-grid__item input {
+.ymfseo-seettings-page .ymfseo-settings-separator-grid__item input {
   width: 100%;
   height: 100%;
   margin: 0 !important;
@@ -207,7 +266,7 @@ td.ymfseo.column-ymfseo {
   position: absolute;
   opacity: 0;
 }
-.ymfseo-settings-separator-grid__item span {
+.ymfseo-seettings-page .ymfseo-settings-separator-grid__item span {
   width: 100%;
   height: 100%;
   display: flex;
@@ -216,18 +275,23 @@ td.ymfseo.column-ymfseo {
   font-size: 17px;
   color: #2c3338;
 }
-
-.ymfseo-settings-preview-image-section #ymfseo-preview-image-img {
+.ymfseo-seettings-page .ymfseo-settings-preview-image-section #ymfseo-preview-image-img {
   width: 25em;
   height: auto;
   margin-bottom: 20px;
   border-radius: 6px;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-settings-preview-image-section #ymfseo-preview-image-img {
+  .ymfseo-seettings-page .ymfseo-settings-preview-image-section #ymfseo-preview-image-img {
     width: 100%;
   }
 }
-.ymfseo-settings-preview-image-section .action-buttons button[hidden] {
+.ymfseo-seettings-page .ymfseo-settings-preview-image-section .action-buttons button[hidden] {
+  display: none;
+}
+.ymfseo-seettings-page tbody:has(tr.rep-type option[value=org][selected]) tr.rep-person {
+  display: none;
+}
+.ymfseo-seettings-page tbody:has(tr.rep-type option[value=person][selected]) tr.rep-org {
   display: none;
 }/*# sourceMappingURL=ymfseo-style.css.map */

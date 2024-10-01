@@ -1,6 +1,6 @@
 <?php
 
-/** Exit if accessed directly */
+// Exits if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( isset( $args[ 'description' ] ) ) {

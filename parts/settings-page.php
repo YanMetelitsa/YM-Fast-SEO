@@ -1,12 +1,11 @@
 <?php
-	/** Exit if accessed directly */
+	// Exits if accessed directly.
 	if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 
-<div class="wrap">
-	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-
-	<form method="POST" action="options.php">
+<div class="wrap ymfseo-seettings-page">
+	<header class="ymfseo-seettings-page__header">
+		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 		<p>
 			<?php
 				/* translators: %s: Link to general settings page */
@@ -15,10 +14,12 @@
 				);
 			?>
 		</p>
+	</header>
 
+	<form method="POST" action="options.php">
 		<?php
-			settings_fields( 'ymfseo_settings' );
-			do_settings_sections( 'ymfseo_settings' );
+			settings_fields( YMFSEO_Settings::$params[ 'page_slug' ] );
+			do_settings_sections( YMFSEO_Settings::$params[ 'page_slug' ] );
 
 			submit_button();
 		?>
