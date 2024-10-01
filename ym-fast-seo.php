@@ -131,16 +131,16 @@ add_action( 'save_post', function ( $post_id ) {
 	// Gets POST meta data.
 	$post_meta = [];
 	$post_data = [
-		'title'       => wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ),
-		'description' => wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ),
-		'page_type'   => wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ),
-		'noindex'     => wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ),
+		'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
+		'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
+		'page_type'   =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ) ),
+		'noindex'     =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ) ),
 	];
 
 	// Adds to save output if not equal to default value.
 	foreach ( $post_data as $key => $value ) {
 		if ( $value !== YMFSEO_Meta_Fields::$default_values[ $key ] ) {
-			$post_meta[ $key ] = sanitize_text_field( $value );
+			$post_meta[ $key ] = $value;
 		}
 	}
 

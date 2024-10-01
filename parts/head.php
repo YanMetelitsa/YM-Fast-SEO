@@ -85,7 +85,7 @@ if ( $meta_fields->image_uri ) {
 // Schema.org JSON-LD.
 $schema_org = YMFSEO_Meta_Fields::build_schema_org( $meta_fields, $queried_object );
 printf( '<script type="application/ld+json">%s</script>',
-	wp_unslash( wp_json_encode( $schema_org, JSON_UNESCAPED_UNICODE ) )
+	wp_kses_post( wp_unslash( wp_json_encode( $schema_org, JSON_UNESCAPED_UNICODE ) ) ),
 );
 
 // Does user action.
@@ -94,18 +94,18 @@ do_action( 'ymfseo_after_print_metas' );
 // Debug.
 if ( $queried_object ) {
 	printf( '<!-- %s-%s -->',
-		match ( get_class( $queried_object ) ) {
+		esc_html( match ( get_class( $queried_object ) ) {
 			'WP_Post'      => 'P',
 			'WP_Term'      => 'T',
 			'WP_Post_Type' => 'PT',
 			'WP_User'      => 'U',
-		},
-		match ( get_class( $queried_object ) ) {
+		}),
+		esc_html( match ( get_class( $queried_object ) ) {
 			'WP_Post'      => $queried_object->ID,
 			'WP_Term'      => $queried_object->term_id,
 			'WP_Post_Type' => $queried_object->$name,
 			'WP_User'      => $queried_object->ID,
-		},
+		}),
 	);
 }
 
