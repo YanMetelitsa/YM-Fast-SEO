@@ -234,7 +234,7 @@ add_action( 'admin_menu', function () {
 
 // Adds YM Fast SEO settings sections and options.
 add_action( 'admin_init', function () {
-	// Title section.
+	// Titles section.
 	YMFSEO_Settings::add_section( 'titles', __( 'Titles', 'ym-fast-seo' ) );
 	YMFSEO_Settings::register_option(
 		'hide_title_parts',
@@ -317,7 +317,7 @@ add_action( 'admin_init', function () {
 		);
 	}
 
-	// Preview section.
+	// Site Preview section.
 	YMFSEO_Settings::add_section( 'preview', __( 'Site Preview', 'ym-fast-seo' ) );
 	YMFSEO_Settings::register_option(
 		'preview_image_id',
@@ -340,15 +340,15 @@ add_action( 'admin_init', function () {
 		],
 	);
 
-	// Representatives section.
-	YMFSEO_Settings::add_section( 'representatives', __( 'Representative', 'ym-fast-seo' ), [
+	// Representative section.
+	YMFSEO_Settings::add_section( 'representative', __( 'Representative', 'ym-fast-seo' ), [
 		'description' => __( 'If this website represents a company or person, you can include their details. This information will not be visible to visitors but will be available to search engines.', 'ym-fast-seo' ),
 	]);
 	YMFSEO_Settings::register_option(
 		'rep_type',
 		__( 'Represented by', 'ym-fast-seo' ),
 		'string',
-		'representatives',
+		'representative',
 		'select',
 		[
 			'class'   => 'rep-type',
@@ -362,7 +362,7 @@ add_action( 'admin_init', function () {
 		'rep_org_type',
 		__( 'Organization Type', 'ym-fast-seo' ),
 		'string',
-		'representatives',
+		'representative',
 		'select',
 		[
 			'class' => 'rep-org',
@@ -380,30 +380,33 @@ add_action( 'admin_init', function () {
 		'rep_org_name',
 		__( 'Organization Name', 'ym-fast-seo' ),
 		'string',
-		'representatives',
+		'representative',
 		'text',
 		[
-			'class' => 'rep-org',
+			'class'        => 'rep-org',
+			'autocomplete' => 'organization',
 		],
 	);
 	YMFSEO_Settings::register_option(
 		'rep_person_name',
 		__( 'Person Name', 'ym-fast-seo' ),
 		'string',
-		'representatives',
+		'representative',
 		'text',
 		[
-			'class' => 'rep-person',
+			'class'        => 'rep-person',
+			'autocomplete' => 'name',
 		],
 	);
 	YMFSEO_Settings::register_option(
 		'rep_email',
 		__( 'Email', 'ym-fast-seo' ),
 		'string',
-		'representatives',
+		'representative',
 		'text',
 		[
-			'type' => 'email',
+			'type'         => 'email',
+			'autocomplete' => 'email',
 		],
 	);
 
