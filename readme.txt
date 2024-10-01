@@ -4,7 +4,7 @@ Tags: seo, search, optimisation
 Tested up to: 6.6.2
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 1. **Install and Activate** YM Fast SEO from the Plugins page
 
 == Changelog ==
+
+= 2.0.1 =
+* Default titles and descriptions bug fix
+* Multisite robots.txt edit bug fix
+* Auto adding of all network sitemaps to robots.txt
 
 = 2.0.0 =
 * Improved core

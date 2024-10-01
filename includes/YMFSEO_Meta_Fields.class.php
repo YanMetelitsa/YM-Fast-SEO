@@ -194,13 +194,26 @@ class YMFSEO_Meta_Fields {
 		$this->set_meta_fields( $meta_fields );
 	}
 
+	/**
+	 * Formats meta fields.
+	 * 
+	 * @param array  $meta_fields   Meta fields array.
+	 * @param string $title         Queried object title.
+	 * @param string $description   Queried object description.
+	 * @param string $settings_mask Settings mask.
+	 * @param array  $tags          Tags list in tag - value format.
+	 */
 	public static function queried_parse ( array &$meta_fields, string $title, string $description, string $settings_mask, array $tags ) : void {
 		// Sets title.
 		if ( empty( $meta_fields[ 'title' ] ) ) {
-			$title = YMFSEO_Settings::get_option( sprintf( $settings_mask, 'title' ) );
+			$settings_title = YMFSEO_Settings::get_option( sprintf( $settings_mask, 'title' ) );
 
-			foreach ( $tags as $tag => $value ) {
-				$title = str_replace( $tag, $value, $title );
+			if ( ! empty( $settings_title ) ) {
+				foreach ( $tags as $tag => $value ) {
+					$settings_title = str_replace( $tag, $value, $settings_title );
+				}
+
+				$title = $settings_title;
 			}
 
 			$meta_fields[ 'title' ] = $title;
@@ -209,10 +222,14 @@ class YMFSEO_Meta_Fields {
 		// Sets description.
 		if ( empty( $meta_fields[ 'description' ] ) ) {
 			if ( empty( $description ) ) {
-				$description = YMFSEO_Settings::get_option( sprintf( $settings_mask, 'description' ) );
+				$settings_description = YMFSEO_Settings::get_option( sprintf( $settings_mask, 'description' ) );
 	
-				foreach ( $tags as $tag => $value ) {
-					$description = str_replace( $tag, $value, $description );
+				if ( ! empty( $settings_description ) ) {
+					foreach ( $tags as $tag => $value ) {
+						$settings_description = str_replace( $tag, $value, $settings_description );
+					}
+
+					$description = $settings_description;
 				}
 			}
 

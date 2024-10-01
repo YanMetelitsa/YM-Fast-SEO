@@ -16,7 +16,12 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 # Changelog
 
-= 2.0.0 =
+## 2.0.1 =
+* Default titles and descriptions bug fix
+* Multisite robots.txt edit bug fix
+* Auto adding of all network sitemaps to robots.txt
+
+## 2.0.0
 * Improved core
 * Performance optimisation
 * Database space optimisation

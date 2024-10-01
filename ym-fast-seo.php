@@ -3,7 +3,7 @@
 /*
  * Plugin Name:       YM Fast SEO
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
- * Version:           2.0.0
+ * Version:           2.0.1
  * Tested up to:      6.6.2
  * Requires at least: 6.4
  * Author:            Yan Metelitsa
@@ -205,8 +205,16 @@ add_action( 'wp_head', function () {
 add_filter( 'robots_txt', function ( $output ) {
 	$settings_robots_txt = YMFSEO_Settings::get_option( 'robots_txt' );
 
-	if ( $settings_robots_txt ) {
+	if ( ! empty( $settings_robots_txt ) ) {
 		$output = $settings_robots_txt;
+	} else {
+		if ( YMFSEO::is_subdir_multisite() ) {
+			foreach ( get_sites() as $site ) {
+				if ( get_main_site_id() != intval( $site->blog_id ) ) {
+					$output .= sprintf( "Sitemap: %s\n", esc_url( get_home_url( $site->blog_id, 'wp-sitemap.xml' ) ) );
+				}
+			}
+		}
 	}
 
 	return $output;

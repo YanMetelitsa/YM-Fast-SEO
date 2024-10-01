@@ -88,6 +88,17 @@ class YMFSEO {
 	}
 
 	/**
+	 * Retrieves whether the site in a network with a subdirectory type.
+	 * 
+	 * @since 2.0.1
+	 * 
+	 * @return bool Is multisite with subdirectory structure.
+	 */
+	public static function is_subdir_multisite () : bool {
+		return is_multisite() && defined( 'SUBDOMAIN_INSTALL' ) && ! SUBDOMAIN_INSTALL;
+	}
+
+	/**
 	 * Checks post SEO status.
 	 * 
 	 * @param int $post_id Public Post/Page ID.
