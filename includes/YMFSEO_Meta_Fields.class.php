@@ -112,7 +112,7 @@ class YMFSEO_Meta_Fields {
 					// Sets post/page meta title and description.
 					if ( ! $is_raw ) {
 						$post_title   = $queried_object->post_title;
-						$post_excerpt = get_the_excerpt( $queried_object );
+						$post_excerpt = wp_trim_words( get_the_content( $queried_object ), 20 );
 						$post_type    = $queried_object->post_type;
 
 						self::queried_parse(

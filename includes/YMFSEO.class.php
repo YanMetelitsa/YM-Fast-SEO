@@ -111,15 +111,24 @@ class YMFSEO {
 
 		$meta_fields = new YMFSEO_Meta_Fields( get_post( $post_id ) );
 
+		$title_length       = mb_strlen( $meta_fields->title );
+		$description_length = mb_strlen( $meta_fields->description );
+
 		// Too short title.
-		if ( strlen( $meta_fields->title ) < 30 ) {
+		if ( $title_length < 30 ) {
 			$status = 'bad';
-			$notes[] = __( 'The title is too short.', 'ym-fast-seo' );
+			/* translators: %d: Number of symbols */
+			$notes[] = sprintf( __( 'The title is too short (%d).', 'ym-fast-seo' ),
+				esc_html( $title_length ),
+			);
 		}
 		// Too long title.
-		if ( strlen( $meta_fields->title ) > 70 ) {
+		if ( $title_length > 70 ) {
 			$status = 'bad';
-			$notes[] = __( 'The title is too long.', 'ym-fast-seo' );
+			/* translators: %d: Number of symbols */
+			$notes[] = sprintf( __( 'The title is too long (%d).', 'ym-fast-seo' ),
+				esc_html( $title_length ),
+			);
 		}
 
 		// No description.
@@ -128,15 +137,21 @@ class YMFSEO {
 			$notes[] = __( 'No description.', 'ym-fast-seo' );
 		} else {
 			// Too short description.
-			if ( strlen( $meta_fields->description ) < 50 ) {
+			if ( $description_length < 50 ) {
 				$status = 'bad';
-				$notes[] = __( 'The description is too short.', 'ym-fast-seo' );
+				/* translators: %d: Number of symbols */
+				$notes[] = sprintf( __( 'The description is too short (%d).', 'ym-fast-seo' ),
+					esc_html( $description_length ),
+				);
 			}
 
 			// Too long description.
-			if ( strlen( $meta_fields->description ) > 170 ) {
+			if ( $description_length > 170 ) {
 				$status = 'bad';
-				$notes[] = __( 'The description is too long.', 'ym-fast-seo' );
+				/* translators: %d: Number of symbols */
+				$notes[] = sprintf( __( 'The description is too long (%d).', 'ym-fast-seo' ),
+					esc_html( $description_length ),
+				);
 			}
 		}
 

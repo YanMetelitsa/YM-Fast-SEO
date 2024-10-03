@@ -38,6 +38,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * Default titles and descriptions bug fix
 * Multisite robots.txt edit bug fix
 * Auto adding of all network sitemaps to robots.txt
+* Counting symbols in UTF-8 strings during SEO checking bug fix
 
 = 2.0.0 =
 * Improved core
