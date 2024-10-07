@@ -15,6 +15,7 @@ $is_front_page    = is_front_page();
 
 $google_search_console_key = YMFSEO_Settings::get_option( 'google_search_console_key' );
 $yandex_webmaster_key      = YMFSEO_Settings::get_option( 'yandex_webmaster_key' );
+$bing_webmaster_tools_key  = YMFSEO_Settings::get_option( 'bing_webmaster_tools_key' );
 
 echo '<!-- YM Fast SEO v' . esc_html( YMFSEO_PLUGIN_DATA[ 'Version' ] ) . ' -->';
 
@@ -28,6 +29,9 @@ if ( $google_search_console_key ) {
 }
 if ( $yandex_webmaster_key ) {
 	printf( '<meta name="yandex-verification" content="%s">', esc_attr( $yandex_webmaster_key ) );
+}
+if ( $bing_webmaster_tools_key ) {
+	printf( '<meta name="msvalidate.01" content="%s">', esc_attr( $bing_webmaster_tools_key ) );
 }
 
 // Titles.
@@ -85,7 +89,7 @@ if ( $meta_fields->image_uri ) {
 // Schema.org JSON-LD.
 $schema_org = YMFSEO_Meta_Fields::build_schema_org( $meta_fields, $queried_object );
 printf( '<script type="application/ld+json">%s</script>',
-	wp_kses_post( wp_unslash( wp_json_encode( $schema_org, JSON_UNESCAPED_UNICODE ) ) ),
+wp_json_encode( $schema_org, JSON_UNESCAPED_UNICODE ),
 );
 
 // Does user action.
@@ -94,18 +98,12 @@ do_action( 'ymfseo_after_print_metas' );
 // Debug.
 if ( $queried_object ) {
 	printf( '<!-- %s-%s -->',
-		esc_html( match ( get_class( $queried_object ) ) {
-			'WP_Post'      => 'P',
-			'WP_Term'      => 'T',
-			'WP_Post_Type' => 'PT',
-			'WP_User'      => 'U',
-		}),
-		esc_html( match ( get_class( $queried_object ) ) {
-			'WP_Post'      => $queried_object->ID,
-			'WP_Term'      => $queried_object->term_id,
-			'WP_Post_Type' => $queried_object->$name,
-			'WP_User'      => $queried_object->ID,
-		}),
+		...match ( get_class( $queried_object ) ) {
+			'WP_Post'      => [ 'P',  esc_html( $queried_object->ID ) ],
+			'WP_Term'      => [ 'T',  esc_html( $queried_object->term_id ) ],
+			'WP_Post_Type' => [ 'PT', esc_html( $queried_object->name ) ],
+			'WP_User'      => [ 'U',  esc_html( $queried_object->ID ) ],
+		},
 	);
 }
 

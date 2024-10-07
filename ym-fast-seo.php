@@ -3,9 +3,10 @@
 /*
  * Plugin Name:       YM Fast SEO
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
- * Version:           2.0.1
+ * Version:           2.1.0
+ * Requires PHP:      7.4
+ * Requires at least: 6.0
  * Tested up to:      6.6.2
- * Requires at least: 6.4
  * Author:            Yan Metelitsa
  * Author URI:        https://yanmet.com/
  * License:           GPLv3
@@ -32,6 +33,47 @@ require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Meta_Fields.class.php';
 require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Settings.class.php';
 
 YMFSEO::init();
+
+// Creates SEO Editor role and adds caps.
+register_activation_hook( __FILE__, function () {
+	add_role( 'ymfseo_seo_editor', __( 'SEO Editor', 'ym-fast-seo' ), [
+		'ymfseo_edit_metas'    => true,
+		'ymfseo_edit_settings' => true,
+		'read'                 => true,
+		'upload_files'         => true,
+		'manage_options'       => true,
+		'edit_posts'           => true,
+		'edit_others_posts'    => true,
+		'edit_published_posts' => true,
+		'publish_posts'        => true,
+		'manage_categories'    => true,
+		'edit_pages'           => true,
+		'edit_others_pages'    => true,
+		'edit_published_pages' => true,
+		'publish_pages'        => true,
+	]);
+
+	$admin_role = get_role( 'administrator' );
+	$admin_role->add_cap( 'ymfseo_edit_metas' );
+	$admin_role->add_cap( 'ymfseo_edit_settings' );
+
+	$editor_role = get_role( 'editor' );
+	$editor_role->add_cap( 'ymfseo_edit_metas' );
+	$editor_role->add_cap( 'ymfseo_edit_settings' );
+});
+
+// Removes SEO Editor role and caps.
+register_deactivation_hook( __FILE__, function () {
+	remove_role( 'ymfseo_seo_editor' );
+
+	$admin_role = get_role( 'administrator' );
+	$admin_role->remove_cap( 'ymfseo_edit_metas' );
+	$admin_role->remove_cap( 'ymfseo_edit_settings' );
+
+	$editor_role = get_role( 'editor' );
+	$editor_role->remove_cap( 'ymfseo_edit_metas' );
+	$editor_role->remove_cap( 'ymfseo_edit_settings' );
+});
 
 // Adds settings link to plugin's card on Plugins page.
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function ( $links ) {
@@ -60,40 +102,60 @@ add_action( 'admin_enqueue_scripts', function () {
 	]), 'before' );
 });
 
-// Manages public posts custom SEO column.
+// Manages custom SEO column.
 add_action( 'init', function () {
+	// Post types.
 	foreach ( YMFSEO::get_public_post_types() as $post_type ) {
-		add_filter( "manage_{$post_type}_posts_columns", function ( $columns ) {
-			$columns[ 'ymfseo' ] = __( 'SEO', 'ym-fast-seo' );
-		
-			return $columns;
-		});
+		add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO::manage_seo_columns' );
 		add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
-			switch ( $column ) {
-				case 'ymfseo':
-					$check = YMFSEO::check_post_seo( $post_id );
+			if ( 'ymfseo' === $column ) {
+				$check = YMFSEO::check_seo( get_post( $post_id ) );
 
-					printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
-						esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
-						esc_attr( $check[ 'status' ] ),
-					);
-	
-					break;
+				printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
+					esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
+					esc_attr( $check[ 'status' ] ),
+				);
 			}
 		}, 10, 2 );
 	}
-}, 20 );
+
+	// Taxonomies.
+	foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
+		add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO::manage_seo_columns' );
+		add_action( "manage_{$taxonomy}_custom_column" , function ( $string, $column, $term_id  ) {
+			if ( 'ymfseo' === $column ) {
+				$check = YMFSEO::check_seo( get_term( $term_id ) );
+
+				printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
+					esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
+					esc_attr( $check[ 'status' ] ),
+				);
+			}
+		}, 10, 3 );
+	}
+}, 30 );
 
 // Adds SEO meta box to public post types.
 add_action( 'add_meta_boxes', function () {
-	add_meta_box( 'ymfseo_fields', __( 'SEO', 'ym-fast-seo' ), function ( $post ) {
-		wp_nonce_field( plugin_basename( __FILE__ ), 'ymfseo_edit_post_nonce' );
-		
-		include plugin_dir_path( __FILE__ ) . 'parts/meta-box.php';
-	}, YMFSEO::get_public_post_types(), 'side' );
+	if ( current_user_can( 'ymfseo_edit_metas' ) ) {
+		add_meta_box( 'ymfseo_fields', __( 'SEO', 'ym-fast-seo' ), function ( $post ) {
+			wp_nonce_field( plugin_basename( __FILE__ ), 'ymfseo_edit_post_nonce' );
+			
+			include plugin_dir_path( __FILE__ ) . 'parts/meta-box.php';
+		}, YMFSEO::get_public_post_types(), 'side' );
+	}
 });
 
-// Adds update post meta action after saving public post.
+// Adds SEO meta fields to public taxonomies.
+add_action( 'init', function () {
+	foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
+		add_action( "{$taxonomy}_edit_form_fields", function ( $term ) {
+			include plugin_dir_path( __FILE__ ) . 'parts/term-meta-fields.php';
+		});
+	}
+}, 30 );
+
+// Saves post metas after saving post.
 add_action( 'save_post', function ( $post_id ) {
 	// Checks is auto-save.
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -124,34 +186,35 @@ add_action( 'save_post', function ( $post_id ) {
 	}
 
 	// Checks user capability.
-	if( ! current_user_can( 'edit_post', $post_id ) ) {
+	if( ! current_user_can( 'ymfseo_edit_metas' ) ) {
 		return;
 	}
 
-	// Gets POST meta data.
-	$post_meta = [];
-	$post_data = [
+	YMFSEO::update_meta( [
 		'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
 		'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
 		'page_type'   =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ) ),
 		'noindex'     =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ) ),
-	];
-
-	// Adds to save output if not equal to default value.
-	foreach ( $post_data as $key => $value ) {
-		if ( $value !== YMFSEO_Meta_Fields::$default_values[ $key ] ) {
-			$post_meta[ $key ] = $value;
-		}
-	}
-
-	if ( $post_meta ) {
-		// Updates post meta.
-		update_post_meta( $post_id, 'ymfseo_fields', $post_meta );
-	} else {
-		// Deletes post meta.
-		delete_post_meta( $post_id, 'ymfseo_fields' );
-	}
+	], $post_id, 'post' );
 });
+
+// Saves terms metas after saving term.
+add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
+	// Checks is taxonomy public.
+	if ( ! in_array( $taxonomy, YMFSEO::get_public_taxonomies() ) ) {
+		return;
+	}
+
+	// Checks user capability.
+	if( ! current_user_can( 'ymfseo_edit_metas' ) ) {
+		return;
+	}
+
+	YMFSEO::update_meta( [
+		'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
+		'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
+	], $term_id, 'term' );
+}, 10, 3 );
 
 // Modifies title tag parts.
 add_filter( 'document_title_parts', function ( $title ) {
@@ -196,32 +259,38 @@ add_filter( 'wp_robots', function ( $robots ) {
 	return $robots;
 });
 
-// Prints metas in head.
+// Prints head metas.
 add_action( 'wp_head', function () {
 	include plugin_dir_path( __FILE__ ) . 'parts/head.php';
 }, 1 );
 
 // Modifies robots.txt file.
 add_filter( 'robots_txt', function ( $output ) {
+	// Checks settings robots.txt.
 	$settings_robots_txt = YMFSEO_Settings::get_option( 'robots_txt' );
 
 	if ( ! empty( $settings_robots_txt ) ) {
-		$output = $settings_robots_txt;
-	} else {
-		if ( YMFSEO::is_subdir_multisite() ) {
-			foreach ( get_sites() as $site ) {
-				if ( get_main_site_id() != intval( $site->blog_id ) ) {
-					$output .= sprintf( "Sitemap: %s\n", esc_url( get_home_url( $site->blog_id, 'wp-sitemap.xml' ) ) );
-				}
+		return $settings_robots_txt;
+	}
+
+	// Checks multisite sitemaps.
+	if ( YMFSEO::is_subdir_multisite() ) {
+		foreach ( get_sites() as $site ) {
+			if ( get_main_site_id() != intval( $site->blog_id ) ) {
+				$output .= sprintf( "Sitemap: %s\n", esc_url( get_home_url( $site->blog_id, 'wp-sitemap.xml' ) ) );
 			}
 		}
 	}
 
 	return $output;
-});
+}, 999 );
 
 // Registers YM Fast SEO settings page.
 add_action( 'admin_menu', function () {
+	if ( ! current_user_can( 'ymfseo_edit_settings' ) ) {
+		return;
+	}
+
 	add_options_page(
 		YMFSEO_Settings::$params[ 'page_title' ],
 		YMFSEO_Settings::$params[ 'menu_label' ],
@@ -234,36 +303,40 @@ add_action( 'admin_menu', function () {
 
 // Adds YM Fast SEO settings sections and options.
 add_action( 'admin_init', function () {
-	// Titles section.
-	YMFSEO_Settings::add_section( 'titles', __( 'Titles', 'ym-fast-seo' ) );
+	if ( ! current_user_can( 'ymfseo_edit_settings' ) ) {
+		return;
+	}
+	
+	// General section.
+	YMFSEO_Settings::add_section( 'general', __( 'General', 'ym-fast-seo' ) );
 	YMFSEO_Settings::register_option(
 		'hide_title_parts',
 		_x( 'Clear Titles', 'Verb', 'ym-fast-seo' ),
 		'boolean',
-		'titles',
+		'general',
 		'checkbox',
 		[
-			'label'       => __( 'Simplify the title tags by removing unnecessary parts', 'ym-fast-seo' ),
-			'description' => __( 'The site description on the front page and the site name on all other pages.', 'ym-fast-seo' ),
+			'label'       => __( 'Simplify title tags by removing unnecessary parts', 'ym-fast-seo' ),
+			'description' => __( 'The site description on the front page, and the site name on all other pages.', 'ym-fast-seo' ),
 		],
 	);
 	YMFSEO_Settings::register_option(
 		'title_separator',
 		__( 'Title Separator', 'ym-fast-seo' ),
 		'string',
-		'titles',
+		'general',
 		'separator',
 		[
 			'options'     => [ '|', '-', '–', '—', ':', '/', '·', '•', '⋆', '~', '«', '»', '<', '>' ],
 			/* translators: %s: Separator tag name */
-			'description' => sprintf( __( 'Specify the separator used in the titles and %s tags.', 'ym-fast-seo' ), '<code>%sep%</code>' ),
+			'description' => sprintf( __( 'Specify the separator used in titles and %s tags.', 'ym-fast-seo' ), '<code>%sep%</code>' ),
 		],
 	);
 
 	// Post Types section.
 	YMFSEO_Settings::add_section( 'post-types', __( 'Post Types', 'ym-fast-seo' ), [
 		'description' => implode( "</p><p>",[
-			__( 'These values are used on single post pages. Titles are applied if no meta titles are specified.', 'ym-fast-seo' ),
+			__( 'The default title and page type values for single post pages.', 'ym-fast-seo' ),
 			/* translators: %s: List of available tags */
 			sprintf( __( 'Available tags: %s', 'ym-fast-seo' ),
 				implode( ', ',[
@@ -282,13 +355,27 @@ add_action( 'admin_init', function () {
 			'string',
 			'post-types',
 			'text',
+			[
+				'placeholder' => '%post_title%',
+			],
+		);
+		YMFSEO_Settings::register_option(
+			"post_type_page_type_{$post_type->name}",
+			__( 'Page Type', 'ym-fasst-seo' ),
+			'string',
+			'post-types',
+			'select',
+			[
+				'class'   => 'sub-field',
+				'options' => YMFSEO::$page_types,
+			],
 		);
 	}
 
 	// Taxonomies section.
 	YMFSEO_Settings::add_section( 'taxonomies', __( 'Taxonomies', 'ym-fast-seo' ), [
 		'description' => implode( "</p><p>",[
-			__( 'These values are used on taxonomy pages. Titles always apply, and descriptions are used if the term has no description.', 'ym-fast-seo' ),
+			__( 'The default title and description values for taxonomy term pages.', 'ym-fast-seo' ),
 			/* translators: %s: List of available tags */
 			sprintf( __( 'Available tags: %s', 'ym-fast-seo' ),
 				implode( ', ',[
@@ -307,6 +394,9 @@ add_action( 'admin_init', function () {
 			'string',
 			'taxonomies',
 			'text',
+			[
+				'placeholder' => '%term_title%',
+			],
 		);
 		YMFSEO_Settings::register_option(
 			"taxonomy_description_{$taxonomy->name}",
@@ -314,6 +404,9 @@ add_action( 'admin_init', function () {
 			'string',
 			'taxonomies',
 			'textarea',
+			[
+				'class' => 'sub-field',
+			],
 		);
 	}
 
@@ -367,12 +460,12 @@ add_action( 'admin_init', function () {
 		[
 			'class' => 'rep-org',
 			'options' => [
-				'Organization'          => __( 'No Type', 'ym-fast-seo' ),
-				'OnlineBusiness'        => __( 'Online Business', 'ym-fast-seo' ),
+				'Organization'          => __( 'Regular Organization', 'ym-fast-seo' ),
 				'LocalBusiness'         => __( 'Local Business', 'ym-fast-seo' ),
+				'OnlineBusiness'        => __( 'Online Business', 'ym-fast-seo' ),
+				'NGO'                   => __( 'Non-Governmental Organization', 'ym-fast-seo' ),
 				'NewsMediaOrganization' => __( 'News/Media', 'ym-fast-seo' ),
 				'Project'               => __( 'Project', 'ym-fast-seo' ),
-				'NGO'                   => __( 'NGO', 'ym-fast-seo' ),
 			],
 		],
 	);
@@ -412,7 +505,7 @@ add_action( 'admin_init', function () {
 
 	// Integrations section.
 	YMFSEO_Settings::add_section( 'integrations', __( 'Integrations', 'ym-fast-seo' ), [
-		'description' => __( 'Enter the values of the <code>content</code> attribute for the required services to verify the site.', 'ym-fast-seo' ),
+		'description' => __( 'Enter the verification codes for the required services. They are usually found in the <code>content</code> attribute of the verification meta tag.', 'ym-fast-seo' ),
 	]);
 	YMFSEO_Settings::register_option(
 		'google_search_console_key',
@@ -427,6 +520,16 @@ add_action( 'admin_init', function () {
 	YMFSEO_Settings::register_option(
 		'yandex_webmaster_key',
 		__( 'Yandex Webmaster', 'ym-fast-seo' ),
+		'string',
+		'integrations',
+		'text',
+		[
+			'input-class' => 'code',
+		],
+	);
+	YMFSEO_Settings::register_option(
+		'bing_webmaster_tools_key',
+		__( 'Bing Webmaster Tools', 'ym-fast-seo' ),
 		'string',
 		'integrations',
 		'text',

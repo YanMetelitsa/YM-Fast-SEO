@@ -8,16 +8,37 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 class YMFSEO {
 	/**
+	 * Available page types.
+	 * 
+	 * @since 2.1.0
+	 * 
+	 * @var array
+	 */
+	public static array $page_types = [];
+
+	/**
 	 * Inits YM Fast SEO Plugin.
 	 */
 	public static function init () : void {
+		// Defines available page types.
+		self::$page_types = [
+			'WebPage'           => __( 'Regular Page', 'ym-fast-seo' ),
+			'CollectionPage'    => __( 'Collection Page', 'ym-fast-seo' ),
+			'ItemPage'          => __( 'Item Page', 'ym-fast-seo' ),
+			'AboutPage'         => __( 'About Page', 'ym-fast-seo' ),
+			'FAQPage'           => __( 'FAQ Page', 'ym-fast-seo' ),
+			'ContactPage'       => __( 'Contact Page', 'ym-fast-seo' ),
+			'CheckoutPage'      => __( 'Checkout Page', 'ym-fast-seo' ),
+			'SearchResultsPage' => __( 'Search results Page', 'ym-fast-seo' ),
+		];
+
 		// Defines replace tags.
 		YMFSEO_Meta_Fields::$default_values = [
 			'title'       => '',
 			'description' => '',
 			'image_uri'   => '',
-			'page_type'   => 'WebPage',
-			'noindex'     => false,
+			'page_type'   => 'default',
+			'noindex'     => '',
 		];
 
 		// Defines settings rguments.
@@ -33,6 +54,7 @@ class YMFSEO {
 		YMFSEO_Settings::$default_settings = [
 			'hide_title_parts'          => true,
 			'title_separator'           => '|',
+			'post_type_page_type_page'  => 'WebPage',
 			'preview_image_id'          => 0,
 			'preview_size'              => 'summary_large_image',
 			'rep_type'                  => 'org',
@@ -42,13 +64,13 @@ class YMFSEO {
 			'rep_email'                 => '',
 			'google_search_console_key' => '',
 			'yandex_webmaster_key'      => '',
+			'bing_webmaster_tools_key'  => '',
 			'robots_txt'                => '',
 		];
 
 		// Defines replace tags.
 		YMFSEO_Meta_Fields::$replace_tags = [
 			'%site_name%' => get_bloginfo( 'name' ),
-			'%site_desc%' => get_bloginfo( 'description' ),
 			'%sep%'       => YMFSEO_Settings::get_option( 'title_separator' ),
 		];
 	}
@@ -88,6 +110,49 @@ class YMFSEO {
 	}
 
 	/**
+	 * Adds SEO column.
+	 * 
+	 * @since 2.1.0
+	 * 
+	 * @param array $columns Input columns.
+	 * 
+	 * @return array Input with added SEO column.
+	 */
+	public static function manage_seo_columns ( $columns ) {
+		$columns[ 'ymfseo' ] = __( 'SEO', 'ym-fast-seo' );
+		
+		return $columns;
+	}
+
+	/**
+	 * Updates post/term meta fields after saving.
+	 * 
+	 * @since 2.1.0
+	 * 
+	 * @param array  $meta_fields Meta fields.
+	 * @param int    $id          Post/term ID.
+	 * @param string $type        'post' or 'term'.
+	 */
+	public static function update_meta ( array $meta_fields, int $id, string $type ) {
+		$meta_value = [];
+
+		$update_function_name = "update_{$type}_meta";
+		$delete_function_name = "delete_{$type}_meta";
+
+		foreach ( $meta_fields as $key => $value ) {
+			if ( $value !== YMFSEO_Meta_Fields::$default_values[ $key ] ) {
+				$meta_value[ $key ] = $value;
+			}
+		}
+
+		if ( $meta_value ) {
+			$update_function_name( $id, 'ymfseo_fields', $meta_value );
+		} else {
+			$delete_function_name( $id, 'ymfseo_fields' );
+		}
+	}
+
+	/**
 	 * Retrieves whether the site in a network with a subdirectory type.
 	 * 
 	 * @since 2.0.1
@@ -101,15 +166,15 @@ class YMFSEO {
 	/**
 	 * Checks post SEO status.
 	 * 
-	 * @param int $post_id Public Post/Page ID.
+	 * @param WP_Post|WP_Term $object Post or Term object.
 	 * 
 	 * @return array Check result data.
 	 */
-	public static function check_post_seo ( int $post_id ) : array {
+	public static function check_seo ( WP_Post|WP_Term $object ) : array {
 		$status = 'good';
 		$notes  = [];
 
-		$meta_fields = new YMFSEO_Meta_Fields( get_post( $post_id ) );
+		$meta_fields = new YMFSEO_Meta_Fields( $object );
 
 		$title_length       = mb_strlen( $meta_fields->title );
 		$description_length = mb_strlen( $meta_fields->description );
@@ -155,16 +220,18 @@ class YMFSEO {
 			}
 		}
 
-		// Not public.
-		if ( 'publish' !== get_post_status( $post_id ) ) {
-			$status = 'noindex';
-			$notes[] = __( 'Post status is "not published".', 'ym-fast-seo' );
-		}
+		if ( $object instanceof WP_Post ) {
+			// Not public.
+			if ( 'publish' !== get_post_status( $object ) ) {
+				$status = 'noindex';
+				$notes[] = __( 'Post status is "not published".', 'ym-fast-seo' );
+			}
 
-		// Noindex.
-		if ( $meta_fields->noindex ) {
-			$status = 'noindex';
-			$notes[] = __( 'Indexing has been disallowed.', 'ym-fast-seo' );
+			// Noindex.
+			if ( $meta_fields->noindex ) {
+				$status = 'noindex';
+				$notes[] = __( 'Indexing has been disallowed.', 'ym-fast-seo' );
+			}
 		}
 
 		// Good!

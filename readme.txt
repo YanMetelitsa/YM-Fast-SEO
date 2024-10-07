@@ -1,10 +1,10 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimisation
+Stable tag: 2.1.0
+Requires PHP: 7.4
+Requires at least: 6.0
 Tested up to: 6.6.2
-Requires at least: 6.4
-Requires PHP: 8.1
-Stable tag: 2.0.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -34,11 +34,19 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 == Changelog ==
 
+= 2.1.0 =
+* Terms Title & Description meta fields
+* Default Page Type for post types
+* SEO Editor role and capabilities
+* Bing Webmaster Tools integration
+* JSON-LD escaping fix
+* Small improvements and optimisations
+
 = 2.0.1 =
 * Auto adding of all network sitemaps to robots.txt
-* Multisite robots.txt edit bug fix
-* Default titles and descriptions bug fix
-* Counting symbols in UTF-8 strings during SEO checking bug fix
+* Multisite robots.txt edit fix
+* Default titles and descriptions fix
+* Counting symbols in UTF-8 strings during SEO checking fix
 
 = 2.0.0 =
 * Improved core
@@ -60,14 +68,14 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * New Settings: Clear Titles, Title Separator, Default Preview Image
 * Services integration
 * Meta descriptions of the taxonomy pages are automatically load from the term descriptions
-* Cache bug fix
-* Edit robots.txt bug fix
+* Cache fix
+* Edit robots.txt fix
 
 = 1.1.0 =
 * Meta fields length indicator
 * Basic SEO check of posts and pages
 * Ability to edit robots.txt through settings
-* Meta "robots" bug fix
+* Meta "robots" fix
 * Small improvements and optimisations
 
 = 1.0.0 =

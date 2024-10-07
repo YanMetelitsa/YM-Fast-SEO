@@ -14,13 +14,27 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * Editing the robots.txt file
 * Lightweight and Extendable
 
+# Installation
+
+1. **Visit** Plugins > Add New
+1. **Search** for "YM Fast SEO"
+1. **Install and Activate** YM Fast SEO from the Plugins page
+
 # Changelog
 
-## 2.0.1 =
-* Default titles and descriptions bug fix
-* Multisite robots.txt edit bug fix
+## 2.1.0
+* Terms Title & Description meta fields
+* Default Page Type for post types
+* SEO Editor role and capabilities
+* Bing Webmaster Tools integration
+* JSON-LD escaping fix
+* Small improvements and optimisations
+
+## 2.0.1
 * Auto adding of all network sitemaps to robots.txt
-* Counting symbols in UTF-8 strings during SEO checking bug fix
+* Multisite robots.txt edit fix
+* Default titles and descriptions fix
+* Counting symbols in UTF-8 strings during SEO checking fix
 
 ## 2.0.0
 * Improved core
@@ -42,14 +56,14 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * New Settings: Clear Titles, Title Separator, Default Preview Image
 * Services integration
 * Meta descriptions of the taxonomy pages are automatically load from the term descriptions
-* Cache bug fix
-* Edit robots.txt bug fix
+* Cache fix
+* Edit robots.txt fix
 
 ## 1.1.0
 * Meta fields length indicator
 * Basic SEO check of posts and pages
 * Ability to edit robots.txt through settings
-* Meta "robots" bug fix
+* Meta "robots" fix
 * Small improvements and optimisations
 
 ## 1.0.0

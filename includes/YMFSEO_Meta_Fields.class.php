@@ -69,9 +69,9 @@ class YMFSEO_Meta_Fields {
 	 * Class that contains meta fields values.
 	 * 
 	 * @param WP_Post|WP_Post_Type|WP_Term|WP_User|null  $queried_object Queried object.
-	 * @param bool                                       $raw            Set `true` to get raw meta data values.
+	 * @param bool                                       $format         Set `false` to get raw meta data values.
 	 */
-	public function __construct ( WP_Post|WP_Post_Type|WP_Term|WP_User|null $queried_object = null, bool $is_raw = false ) {
+	public function __construct ( WP_Post|WP_Post_Type|WP_Term|WP_User|null $queried_object = null, bool $format = true ) {
 		// Sets default meta fields.
 		$meta_fields = self::$default_values;
 
@@ -90,8 +90,8 @@ class YMFSEO_Meta_Fields {
 				'WP_Term'      => $queried_object->term_id,
 			};
 
-			// Checks cahced values.
-			$cache_slug = "{$queried_object_id}_{$queried_object_type}" . ( $is_raw ? '_raw' : '' );
+			// Checks for cache.
+			$cache_slug = "{$queried_object_id}_{$queried_object_type}" . ( $format ? '' : '_raw' );
 
 			if ( isset( self::$cache[ $cache_slug ] ) ) {
 				$this->set_meta_fields( self::$cache[ $cache_slug ] );
@@ -110,12 +110,12 @@ class YMFSEO_Meta_Fields {
 					$meta_fields[ 'image_uri' ] = get_the_post_thumbnail_url( $queried_object_id, 'full' );
 
 					// Sets post/page meta title and description.
-					if ( ! $is_raw ) {
+					if ( $format ) {
 						$post_title   = $queried_object->post_title;
 						$post_excerpt = wp_trim_words( get_the_content( $queried_object ), 20 );
 						$post_type    = $queried_object->post_type;
 
-						self::queried_parse(
+						$this->format_fields(
 							$meta_fields,
 							$post_title,
 							$post_excerpt,
@@ -125,6 +125,10 @@ class YMFSEO_Meta_Fields {
 								'%post_desc%'  => $post_excerpt,
 							],
 						);
+
+						if ( 'default' === $meta_fields[ 'page_type' ] ) {
+							$meta_fields[ 'page_type' ] = YMFSEO_Settings::get_option( "post_type_page_type_$post_type", 'ItemPage' );
+						}
 					}
 
 					break;
@@ -132,7 +136,7 @@ class YMFSEO_Meta_Fields {
 				// Post Types.
 				case 'WP_Post_Type':
 					// Sets post type meta title and description.
-					if ( ! $is_raw ) {
+					if ( $format ) {
 						if ( empty( $meta_fields[ 'title' ] ) ) {
 							$meta_fields[ 'title' ] = $queried_object->label;
 						}
@@ -145,13 +149,19 @@ class YMFSEO_Meta_Fields {
 
 				// Taxonomies/Terms.
 				case 'WP_Term':
+					// Gets term meta data.
+					$term_meta = get_term_meta( $queried_object_id, 'ymfseo_fields', true );
+					if ( ! empty( $term_meta ) ) {
+						$meta_fields = wp_parse_args( $term_meta, $meta_fields );
+					}
+
 					// Sets term meta title and description.
-					if ( ! $is_raw ) {
+					if ( $format ) {
 						$term_title       = $queried_object->name;
 						$term_description = $queried_object->description;
 						$taxonomy         = $queried_object->taxonomy;
 
-						self::queried_parse(
+						$this->format_fields(
 							$meta_fields,
 							$term_title,
 							$term_description,
@@ -174,15 +184,20 @@ class YMFSEO_Meta_Fields {
 		}
 
 		// Prepares not raw data.
-		if ( ! $is_raw ) {
+		if ( $format ) {
+			// Formats default page type.
+			if ( 'default' === $meta_fields[ 'page_type' ] ) {
+				$meta_fields[ 'page_type' ] = 'WebPage';
+			}
+
 			// Applies user filters.
 			$meta_fields = apply_filters( 'ymfseo_meta_fields', $meta_fields, $queried_object );
 
 			// Sets default preview image URI.
-			self::set_default_preview_image( $meta_fields );
+			$this->set_default_preview_image( $meta_fields );
 
 			// Replaces tags.
-			self::replace_tags( $meta_fields );
+			$this->replace_tags( $meta_fields );
 		}
 
 		// Adds meta fields to cache.
@@ -197,13 +212,15 @@ class YMFSEO_Meta_Fields {
 	/**
 	 * Formats meta fields.
 	 * 
+	 * @since 2.1.0 Is private.
+	 * 
 	 * @param array  $meta_fields   Meta fields array.
 	 * @param string $title         Queried object title.
 	 * @param string $description   Queried object description.
 	 * @param string $settings_mask Settings mask.
 	 * @param array  $tags          Tags list in tag - value format.
 	 */
-	public static function queried_parse ( array &$meta_fields, string $title, string $description, string $settings_mask, array $tags ) : void {
+	private function format_fields ( array &$meta_fields, string $title, string $description, string $settings_mask, array $tags ) : void {
 		// Sets title.
 		if ( empty( $meta_fields[ 'title' ] ) ) {
 			$settings_title = YMFSEO_Settings::get_option( sprintf( $settings_mask, 'title' ) );
@@ -240,12 +257,14 @@ class YMFSEO_Meta_Fields {
 	/**
 	 * Sets default preview image URI into 'image_uri' meta array property.
 	 * 
+	 * @since 2.1.0 Is private.
+	 * 
 	 * Checks is 'image_uri' property empty. If true – tries to get default
 	 * preview image from settings.
 	 * 
 	 * @param array $meta_fields Meta fields.
 	 */
-	public static function set_default_preview_image ( array &$meta_fields ) : void {
+	private function set_default_preview_image ( array &$meta_fields ) : void {
 		if ( empty( $meta_fields[ 'image_uri' ] ) ) {
 			$default_preview_image_id = YMFSEO_Settings::get_option( 'preview_image_id' );
 
@@ -258,9 +277,11 @@ class YMFSEO_Meta_Fields {
 	/**
 	 * Looks for and replaces tags in some meta fields.
 	 * 
+	 * @since 2.1.0 Is private.
+	 * 
 	 * @param array $meta_fields Meta fields.
 	 */
-	public static function replace_tags ( array &$meta_fields ) : void {
+	private function replace_tags ( array &$meta_fields ) : void {
 		foreach ( [ 'title', 'description' ] as $key ) {
 			foreach ( self::$replace_tags as $tag => $value ) {
 				$meta_fields[ $key ] = str_replace( $tag, $value, $meta_fields[ $key ] );
@@ -302,7 +323,7 @@ class YMFSEO_Meta_Fields {
 
 		$schema_org_blank = [
 			'WebPage' => [
-				'@type'      => YMFSEO_Meta_Fields::$default_values[ 'page_type' ],
+				'@type'      => $meta_fields->page_type,
 				'url'        => $current_url,
 				'name'       => $document_title,
 				'inLanguage' => $site_locale,
@@ -326,18 +347,6 @@ class YMFSEO_Meta_Fields {
 			],
 		];
 		
-		// Adds WebPage dates.
-		if ( $queried_object && 'WP_Post' == get_class( $queried_object ) ) {
-			$schema_org_blank[ 'WebPage' ][ 'datePublished' ] = get_the_date( 'c', $queried_object );
-			$schema_org_blank[ 'WebPage' ][ 'dateModified' ]  = get_the_modified_date( 'c', $queried_object );
-		}
-		// Adds WebPage additional type.
-		if ( $schema_org_blank[ 'WebPage' ][ '@type' ] !== $meta_fields->page_type ) {
-			$schema_org_blank[ 'WebPage' ][ '@type' ] = [
-				$schema_org_blank[ 'WebPage' ][ '@type' ],
-				esc_html( $meta_fields->page_type ),
-			];
-		}
 		// Adds WebPage description.
 		if ( $meta_fields->description ) {
 			$schema_org_blank[ 'WebPage' ][ 'description' ] = $meta_fields->description;
@@ -345,6 +354,11 @@ class YMFSEO_Meta_Fields {
 		// Adds WebPage image preview URI.
 		if ( $meta_fields->image_uri ) {
 			$schema_org_blank[ 'WebPage' ][ 'image' ] = $meta_fields->image_uri;
+		}
+		// Adds WebPage dates.
+		if ( $queried_object && 'WP_Post' == get_class( $queried_object ) ) {
+			$schema_org_blank[ 'WebPage' ][ 'datePublished' ] = get_the_date( 'c', $queried_object );
+			$schema_org_blank[ 'WebPage' ][ 'dateModified' ]  = get_the_modified_date( 'c', $queried_object );
 		}
 
 		// Adds representative.

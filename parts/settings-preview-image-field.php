@@ -80,14 +80,12 @@
 
 				mediaUploader = wp.media.frames.file_frame = wp.media({
 					title: '<?php esc_html_e( 'Choose a Preview Image', 'ym-fast-seo' ); ?>',
-					library: {
-						type: [ 'image/jpeg', 'image/png', 'image/webp' ],
-					},
 					button: {
 						text: '<?php esc_html_e( 'Set as Preview Image', 'ym-fast-seo' ); ?>',	
 					},
-					editing: true,
-					multiple: false,
+					library: {
+						type: [ 'image' ],
+					},
 				});
 
 				mediaUploader.on( 'open', function () {

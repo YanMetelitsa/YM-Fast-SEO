@@ -52,7 +52,7 @@ class YMFSEO_Settings {
 	 * @param string $type       Option type.
 	 * @param string $section    Option section slug without 'ymfseo_____section'.
 	 * @param string $field_part Option field part file name without 'parts/settings-___-field.php'.
-	 * @param array $args        Option arguments.
+	 * @param array  $args       Option arguments.
 	 */
 	public static function register_option ( string $slug, string $title, string $type, string $section, string $field_part, array $args = [] ) : void {
 		// Exits if default value no exist.
@@ -62,7 +62,7 @@ class YMFSEO_Settings {
 
 			$allowed = [
 				'post_type_title_'       => '',
-				'post_type_description_' => '',
+				'post_type_page_type_'   => 'ItemPage',
 				'taxonomy_title_'        => '',
 				'taxonomy_description_'  => '',
 			];
@@ -100,16 +100,19 @@ class YMFSEO_Settings {
 	/**
 	 * Retrieves an YMFSEO option value based on an option name.
 	 * 
-	 * @param string $option Option name. Allowed without 'ymfseo_'.
+	 * @since 2.1.0 Has `$default` argument.
+	 * 
+	 * @param string $option  Option name. Allowed without 'ymfseo_'.
+	 * @param mixed  $default Default option value.
 	 * 
 	 * @return mixed Option or default value.
 	 */
-	public static function get_option ( string $option ) : mixed {
+	public static function get_option ( string $option, mixed $default = false ) : mixed {
 		if ( 'ymfseo_' !== mb_substr( $option, 0, 7 ) ) {
 			$option = "ymfseo_$option";
 		}
 
-		$default_value = self::$default_settings[ str_replace( 'ymfseo_', '', $option ) ] ?? false;
+		$default_value = self::$default_settings[ str_replace( 'ymfseo_', '', $option ) ] ?? $default;
 
 		return get_option( $option, $default_value );
 	}
