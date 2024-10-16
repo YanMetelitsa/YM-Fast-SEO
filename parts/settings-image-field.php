@@ -2,75 +2,72 @@
 	// Exits if accessed directly.
 	if ( ! defined( 'ABSPATH' ) ) exit;
 
-	$preview_image_id  = YMFSEO_Settings::get_option( 'preview_image_id' );
-	$preview_image_uri = false;
+	$image_id  = YMFSEO_Settings::get_option( $args[ 'label_for' ] );
+	$image_uri = false;
 
-	if ( $preview_image_id ) {
-		$preview_image_uri = wp_get_attachment_image_url( $preview_image_id, 'full' );
+	if ( $image_id ) {
+		$image_uri = wp_get_attachment_image_url( $image_id, 'full' );
 	}
 ?>
 
-<div class="ymfseo-settings-preview-image-section site-icon-section">
-	<?php printf( '<input type="hidden" name="%s" id="%s" value="%s">',
-		'ymfseo_preview_image_id',
-		'ymfseo-preview-image-id',
-		esc_attr( $preview_image_id ),
+<div class="ymfseo-settings-image-section site-icon-section">
+	<?php printf( '<input type="hidden" name="%1$s" id="%1$s" value="%2$s">',
+		esc_attr( $args[ 'label_for' ] ),
+		esc_attr( $image_id ),
 	); ?>
 
-	<?php printf( '<img src="%s" alt="%s" id="%s" style="%s" %s onclick="%s">',
-		esc_url( $preview_image_uri ?? '' ),
-		esc_html__( 'Preview Image', 'ym-fast-seo' ),
-		'ymfseo-preview-image-img',
+	<?php printf( '<img src="%s" id="%s" alt="%s" style="%s" %s onclick="%s">',
+		esc_url( $image_uri ?? '' ),
+		esc_attr( "{$args[ 'label_for' ]}-img" ),
+		esc_attr__( 'Image', 'ym-fast-seo' ),
 		'cursor:pointer;',
-		$preview_image_uri ? '' : 'hidden',
-		'document.querySelector( \'#ymfseo-preview-image-change-button\' ).click()',
+		esc_attr( $image_uri ? '' : 'hidden' ),
+		"document.querySelector( '#" . esc_attr( $args[ 'label_for' ] ) . "-change-button' ).click()",
 	); ?>
 	
 	<div class="action-buttons">
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
-			'ymfseo-preview-image-upload-button',
+			esc_attr( "{$args[ 'label_for' ]}-upload-button" ),
 			'button-add-site-icon',
-			$preview_image_uri ? 'hidden' : '',
+			esc_attr( $image_uri ? 'hidden' : '' ),
 			esc_html__( 'Choose an Image', 'ym-fast-seo' ),
 		); ?>
 		
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
-			'ymfseo-preview-image-change-button',
+			esc_attr( "{$args[ 'label_for' ]}-change-button" ),
 			'button',
-			$preview_image_uri ? '' : 'hidden',
+			esc_attr( $image_uri ? '' : 'hidden' ),
 			esc_html__( 'Change Image', 'ym-fast-seo' ),
 		); ?>
 		
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
-			'ymfseo-preview-image-remove-button',
+			esc_attr( "{$args[ 'label_for' ]}-remove-button" ),
 			'button reset',
-			$preview_image_uri ? '' : 'hidden',
+			esc_attr( $image_uri ? '' : 'hidden' ),
 			esc_html__( 'Remove Image', 'ym-fast-seo' ),
 		); ?>
 	</div>
 	
-	<p class="description">
-		<?php
-			/* translators: %s: Size in pixels */
-			printf( wp_kses_post( __( 'The image link will be added to the meta tags if no post/page thumbnail is set. The recommended size is %s pixels.', 'ym-fast-seo' ) ),
-				'<code>1200 × 630</code>',
-			);
-		?>
-	</p>
+	<?php if ( isset( $args[ 'description' ] ) ) : ?>
+		<p class="description">
+			<?php echo wp_kses_post( $args[ 'description' ] ); ?>
+		</p>
+	<?php endif; ?>
 
 	<script>
 		jQuery( document ).ready( function ( $ ) {
 			let mediaUploader;
 
-			const inputElement = $( '#ymfseo-preview-image-id' );
-			const imageElement = $( '#ymfseo-preview-image-img' );
+			const inputElement = $( '[ name=<?php echo esc_attr( $args[ 'label_for' ] ); ?> ]' );
+			const imageElement = $( '#<?php echo esc_attr( $args[ 'label_for' ] ); ?>-img' );
 
-			const uploadButton = $( '#ymfseo-preview-image-upload-button' );
-			const changeButton = $( '#ymfseo-preview-image-change-button' );
-			const removeButton = $( '#ymfseo-preview-image-remove-button' );
+			const uploadButton = $( '#<?php echo esc_attr( $args[ 'label_for' ] ); ?>-upload-button' );
+			const changeButton = $( '#<?php echo esc_attr( $args[ 'label_for' ] ); ?>-change-button' );
+			const removeButton = $( '#<?php echo esc_attr( $args[ 'label_for' ] ); ?>-remove-button' );
 
 			// Uploads.
 			uploadButton.add( changeButton ).click( function ( e ) {
+				console.log(1);
 				e.preventDefault();
 
 				if ( mediaUploader ) {
@@ -79,10 +76,6 @@
 				}
 
 				mediaUploader = wp.media.frames.file_frame = wp.media({
-					title: '<?php esc_html_e( 'Choose a Preview Image', 'ym-fast-seo' ); ?>',
-					button: {
-						text: '<?php esc_html_e( 'Set as Preview Image', 'ym-fast-seo' ); ?>',	
-					},
 					library: {
 						type: [ 'image' ],
 					},

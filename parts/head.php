@@ -89,7 +89,7 @@ if ( $meta_fields->image_uri ) {
 // Schema.org JSON-LD.
 $schema_org = YMFSEO_Meta_Fields::build_schema_org( $meta_fields, $queried_object );
 printf( '<script type="application/ld+json">%s</script>',
-wp_json_encode( $schema_org, JSON_UNESCAPED_UNICODE ),
+	wp_json_encode( $schema_org, JSON_UNESCAPED_UNICODE ),
 );
 
 // Does user action.

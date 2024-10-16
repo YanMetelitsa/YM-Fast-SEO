@@ -22,6 +22,13 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 # Changelog
 
+## 2.2.0
+* Taxonomy meta fields security improving
+* SEO length check for taxonomy meta fields
+* New organization type: Online Store
+* New representative fields: Phone, City, Address, Region, Postal Code, Image
+* Small improvements and optimisations
+
 ## 2.1.0
 * Terms Title & Description meta fields
 * Default Page Type for post types

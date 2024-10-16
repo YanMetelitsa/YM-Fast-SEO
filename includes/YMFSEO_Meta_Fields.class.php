@@ -112,7 +112,7 @@ class YMFSEO_Meta_Fields {
 					// Sets post/page meta title and description.
 					if ( $format ) {
 						$post_title   = $queried_object->post_title;
-						$post_excerpt = wp_trim_words( get_the_content( $queried_object ), 20 );
+						$post_excerpt = wp_trim_words( get_the_excerpt( $queried_object ), 22 );
 						$post_type    = $queried_object->post_type;
 
 						$this->format_fields(
@@ -372,6 +372,53 @@ class YMFSEO_Meta_Fields {
 		$rep_email = YMFSEO_Settings::get_option( 'rep_email' );
 		if ( $rep_email ) $rep_data[ 'email' ] = $rep_email;
 
+		$rep_phone = YMFSEO_Settings::get_option( 'rep_phone' );
+		if ( $rep_phone ) $rep_data[ 'telephone' ] = $rep_phone;
+		
+		// Organization address.
+		if ( 'org' === $rep_type ) {
+			$address = [];
+
+			$rep_city = YMFSEO_Settings::get_option( 'rep_org_city' );
+			if ( $rep_city ) {
+				$address[ 'addressLocality' ] = $rep_city;
+			}
+
+			$rep_region = YMFSEO_Settings::get_option( 'rep_org_region' );
+			if ( $rep_region ) {
+				$address[ 'addressRegion' ] = $rep_region;
+			}
+
+			$rep_address = YMFSEO_Settings::get_option( 'rep_org_address' );
+			if ( $rep_address ) {
+				$address[ 'streetAddress' ] = $rep_address;
+			}
+
+			$rep_postal_code = YMFSEO_Settings::get_option( 'rep_org_postal_code' );
+			if ( $rep_postal_code ) {
+				$address[ 'postalCode' ] = $rep_postal_code;
+			}
+
+			if ( ! empty( $address ) ) {
+				$rep_data[ 'address' ] = array_merge(
+					[ '@type' => 'PostalAddress' ],
+					$address,
+				);
+			}
+		}
+
+		// Image.
+		$rep_image_id = YMFSEO_Settings::get_option( 'rep_image_id' );
+		if ( $rep_image_id ) {
+			$image_param_name = match ( $rep_type ) {
+				'org'    => 'logo',
+				'person' => 'image',
+			};
+
+			$rep_data[ $image_param_name ] = wp_get_attachment_url( $rep_image_id );
+		}
+
+		// Pre-build output object.
 		if ( ! empty( $rep_data ) ) {
 			$rep_data = array_merge([
 				'@type' => match ( $rep_type ) {
@@ -383,6 +430,7 @@ class YMFSEO_Meta_Fields {
 			], $rep_data );
 
 			$schema_org_blank[ 'Publisher' ] = $rep_data;
+
 			$schema_org_blank[ 'WebSite' ][ 'publisher' ] = [
 				'@id' => "$home_url#publisher",
 			];

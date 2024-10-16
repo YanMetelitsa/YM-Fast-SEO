@@ -3,7 +3,7 @@
 /*
  * Plugin Name:       YM Fast SEO
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
- * Version:           2.1.0
+ * Version:           2.2.0
  * Requires PHP:      7.4
  * Requires at least: 6.0
  * Tested up to:      6.6.2
@@ -139,7 +139,7 @@ add_action( 'init', function () {
 add_action( 'add_meta_boxes', function () {
 	if ( current_user_can( 'ymfseo_edit_metas' ) ) {
 		add_meta_box( 'ymfseo_fields', __( 'SEO', 'ym-fast-seo' ), function ( $post ) {
-			wp_nonce_field( plugin_basename( __FILE__ ), 'ymfseo_edit_post_nonce' );
+			wp_nonce_field( plugin_basename( __FILE__ ), 'ymfseo_post_nonce' );
 			
 			include plugin_dir_path( __FILE__ ) . 'parts/meta-box.php';
 		}, YMFSEO::get_public_post_types(), 'side' );
@@ -150,6 +150,8 @@ add_action( 'add_meta_boxes', function () {
 add_action( 'init', function () {
 	foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
 		add_action( "{$taxonomy}_edit_form_fields", function ( $term ) {
+			wp_nonce_field( plugin_basename( __FILE__ ), "ymfseo_term_nonce" );
+
 			include plugin_dir_path( __FILE__ ) . 'parts/term-meta-fields.php';
 		});
 	}
@@ -170,11 +172,11 @@ add_action( 'save_post', function ( $post_id ) {
     }
 
 	// Checks nonce.
-	if ( ! isset( $_POST[ 'ymfseo_edit_post_nonce' ] ) ) {
+	if ( ! isset( $_POST[ 'ymfseo_post_nonce' ] ) ) {
 		return;
 	}
 
-	$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_edit_post_nonce' ] ) );
+	$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_post_nonce' ] ) );
 
 	if ( ! wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
 		return;
@@ -200,6 +202,17 @@ add_action( 'save_post', function ( $post_id ) {
 
 // Saves terms metas after saving term.
 add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
+	// Checks nonce.
+	if ( ! isset( $_POST[ 'ymfseo_term_nonce' ] ) ) {
+		return;
+	}
+
+	$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_term_nonce' ] ) );
+
+	if ( ! wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
+		return;
+	}
+
 	// Checks is taxonomy public.
 	if ( ! in_array( $taxonomy, YMFSEO::get_public_taxonomies() ) ) {
 		return;
@@ -361,7 +374,7 @@ add_action( 'admin_init', function () {
 		);
 		YMFSEO_Settings::register_option(
 			"post_type_page_type_{$post_type->name}",
-			__( 'Page Type', 'ym-fasst-seo' ),
+			__( 'Page Type', 'ym-fast-seo' ),
 			'string',
 			'post-types',
 			'select',
@@ -417,7 +430,13 @@ add_action( 'admin_init', function () {
 		__( 'Preview Image', 'ym-fast-seo' ),
 		'integer',
 		'preview',
-		'preview-image',
+		'image',
+		[
+			/* translators: %s: Size in pixels */
+			'description' => sprintf( __( 'The image link will be added to the meta tags if no post/page thumbnail is set. The recommended size is %s pixels.', 'ym-fast-seo' ),
+				'<code>1200 × 630</code>',
+			),
+		],
 	);
 	YMFSEO_Settings::register_option(
 		'preview_size',
@@ -458,11 +477,12 @@ add_action( 'admin_init', function () {
 		'representative',
 		'select',
 		[
-			'class' => 'rep-org',
+			'class'   => 'rep-org',
 			'options' => [
 				'Organization'          => __( 'Regular Organization', 'ym-fast-seo' ),
 				'LocalBusiness'         => __( 'Local Business', 'ym-fast-seo' ),
 				'OnlineBusiness'        => __( 'Online Business', 'ym-fast-seo' ),
+				'OnlineStore'           => __( 'Online Store', 'ym-fast-seo' ),
 				'NGO'                   => __( 'Non-Governmental Organization', 'ym-fast-seo' ),
 				'NewsMediaOrganization' => __( 'News/Media', 'ym-fast-seo' ),
 				'Project'               => __( 'Project', 'ym-fast-seo' ),
@@ -500,6 +520,68 @@ add_action( 'admin_init', function () {
 		[
 			'type'         => 'email',
 			'autocomplete' => 'email',
+		],
+	);
+	YMFSEO_Settings::register_option(
+		'rep_phone',
+		__( 'Phone', 'ym-fast-seo' ),
+		'string',
+		'representative',
+		'text',
+		[
+			'type'         => 'tel',
+			'autocomplete' => 'tel',
+		],
+	);
+	YMFSEO_Settings::register_option(
+		'rep_org_city',
+		__( 'City', 'ym-fast-seo' ),
+		'string',
+		'representative',
+		'text',
+		[
+			'class' => 'rep-org',
+		],
+	);
+	YMFSEO_Settings::register_option(
+		'rep_org_region',
+		__( 'Region', 'ym-fast-seo' ),
+		'string',
+		'representative',
+		'text',
+		[
+			'class' => 'rep-org',
+		],
+	);
+	YMFSEO_Settings::register_option(
+		'rep_org_address',
+		__( 'Address', 'ym-fast-seo' ),
+		'string',
+		'representative',
+		'text',
+		[
+			'class' => 'rep-org',
+		],
+	);
+	YMFSEO_Settings::register_option(
+		'rep_org_postal_code',
+		__( 'Postal Code', 'ym-fast-seo' ),
+		'string',
+		'representative',
+		'text',
+		[
+			'class'       => 'rep-org',
+			'input-class' => 'code',
+		],
+	);
+	YMFSEO_Settings::register_option(
+		'rep_image_id',
+		__( 'Image', 'ym-fast-seo' ),
+		'integer',
+		'representative',
+		'image',
+		[
+			'description' => __( 'The representative\'s image, whether an organization logo or a person\'s avatar, will be available to search engines.', 'ym-fast-seo' ),
 		],
 	);
 

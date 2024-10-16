@@ -93,32 +93,6 @@ td.ymfseo.column-ymfseo {
 				textarea {
 					height: auto;
 				}
-				&-range {
-					background-color: rgba( 0, 0, 0, .2 );
-					height: 2px;
-	
-					position: relative;
-	
-					&::after {
-						content: '';
-	
-						background-color: var( --ymfseo-yellow );
-						width: var( --ymfseo-range-width );
-						max-width: 100%;
-	
-						position: absolute;
-						top: 0;
-						bottom: 0;
-						left: 0;
-					}
-
-					&.good::after {
-						background-color: var( --ymfseo-green );
-					}
-					&.bad::after {
-						background-color: var( --ymfseo-red );
-					}
-				}
 				p {
 					margin: 2px 0 0 0;
 	
@@ -169,6 +143,36 @@ td.ymfseo.column-ymfseo {
 				}
 			}
 		}
+	}
+}
+.ymfseo-length-checker {
+	background-color: rgba( 0, 0, 0, .2 );
+	height: 2px;
+
+	position: relative;
+
+	&::after {
+		content: '';
+
+		background-color: var( --ymfseo-yellow );
+		width: var( --ymfseo-checker-width );
+		max-width: 100%;
+
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	&_top-margin {
+		margin-top: 6px;
+	}
+
+	&.good::after {
+		background-color: var( --ymfseo-green );
+	}
+	&.bad::after {
+		background-color: var( --ymfseo-red );
 	}
 }
 
@@ -351,8 +355,8 @@ td.ymfseo.column-ymfseo {
 		}
 	}
 
-	.ymfseo-settings-preview-image-section {
-		#ymfseo-preview-image-img {
+	.ymfseo-settings-image-section {
+		img {
 			width: 25em;
 			height: auto;
 			margin-bottom: 20px;

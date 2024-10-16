@@ -1,7 +1,7 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimisation
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 Requires PHP: 7.4
 Requires at least: 6.0
 Tested up to: 6.6.2
@@ -33,6 +33,13 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 1. **Install and Activate** YM Fast SEO from the Plugins page
 
 == Changelog ==
+
+= 2.2.0 =
+* Taxonomy meta fields security improving
+* SEO length check for taxonomy meta fields
+* New organization type: Online Store
+* New representative fields: Phone, City, Address, Region, Postal Code, Image
+* Small improvements and optimisations
 
 = 2.1.0 =
 * Terms Title & Description meta fields

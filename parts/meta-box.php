@@ -10,29 +10,35 @@
 <div class="ymfseo-box <?php echo $current_screen->is_block_editor() ? 'ymfseo-box_gutenberg' : ''; ?>">
 	<div class="ymfseo-box__page">
 		<!-- Title -->
-		<div class="ymfseo-box__field-box" data-min="30" data-rec="40-60" data-max="70">
+		<div class="ymfseo-box__field-box">
 			<label for="ymfseo-title"><?php esc_html_e( 'Title', 'ym-fast-seo' ); ?></label>
 
-			<?php printf( '<input type="text" name="%1$s" id="%1$s" class="%2$s" value="%3$s">',
+			<?php printf( '<input type="text" name="%1$s" id="%1$s" class="%2$s" value="%3$s" data-min="%4$s" data-rec="%5$s" data-max="%6$s">',
 				'ymfseo-title',
 				'components-text-control__input',
 				esc_attr( $meta_fields->title ),
+				esc_attr( YMFSEO::$check_length_values[ 'title' ][ 'min' ] ),
+				esc_attr( implode( '-', YMFSEO::$check_length_values[ 'title' ][ 'rec' ] ) ),
+				esc_attr( YMFSEO::$check_length_values[ 'title' ][ 'max' ] ),
 			); ?>
 
-			<div class="ymfseo-box__field-box-range"></div>
+			<div class="ymfseo-length-checker" data-for="ymfseo-title"></div>
 		</div>
 
 		<!-- Description -->
-		<div class="ymfseo-box__field-box" data-min="50" data-rec="140-160" data-max="170">
+		<div class="ymfseo-box__field-box">
 			<label for="ymfseo-description"><?php esc_html_e( 'Description', 'ym-fast-seo' ); ?></label>
 			
-			<?php printf( '<textarea rows="4" name="%1$s" id="%1$s" class="%2$s">%3$s</textarea>',
+			<?php printf( '<textarea rows="4" name="%1$s" id="%1$s" class="%2$s" data-min="%3$s" data-rec="%4$s" data-max="%5$s">%6$s</textarea>',
 				'ymfseo-description',
 				'components-text-control__input',
+				esc_attr( YMFSEO::$check_length_values[ 'description' ][ 'min' ] ),
+				esc_attr( implode( '-', YMFSEO::$check_length_values[ 'description' ][ 'rec' ] ) ),
+				esc_attr( YMFSEO::$check_length_values[ 'description' ][ 'max' ] ),
 				esc_attr( $meta_fields->description ),
 			); ?>
 
-			<div class="ymfseo-box__field-box-range"></div>
+			<div class="ymfseo-length-checker" data-for="ymfseo-description"></div>
 		</div>
 
 		<!-- Page Type -->

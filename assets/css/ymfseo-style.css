@@ -86,27 +86,6 @@ td.ymfseo.column-ymfseo {
 #ymfseo_fields.postbox > .inside .ymfseo-box__field-box textarea {
   height: auto;
 }
-#ymfseo_fields.postbox > .inside .ymfseo-box__field-box-range {
-  background-color: rgba(0, 0, 0, 0.2);
-  height: 2px;
-  position: relative;
-}
-#ymfseo_fields.postbox > .inside .ymfseo-box__field-box-range::after {
-  content: "";
-  background-color: var(--ymfseo-yellow);
-  width: var(--ymfseo-range-width);
-  max-width: 100%;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-}
-#ymfseo_fields.postbox > .inside .ymfseo-box__field-box-range.good::after {
-  background-color: var(--ymfseo-green);
-}
-#ymfseo_fields.postbox > .inside .ymfseo-box__field-box-range.bad::after {
-  background-color: var(--ymfseo-red);
-}
 #ymfseo_fields.postbox > .inside .ymfseo-box__field-box p {
   margin: 2px 0 0 0;
   font-size: 12px;
@@ -141,6 +120,31 @@ td.ymfseo.column-ymfseo {
 #ymfseo_fields.postbox:has(.ymfseo-box_gutenberg) > .inside .ymfseo-box__checkbox {
   margin-top: 2px;
   gap: 10px;
+}
+
+.ymfseo-length-checker {
+  background-color: rgba(0, 0, 0, 0.2);
+  height: 2px;
+  position: relative;
+}
+.ymfseo-length-checker::after {
+  content: "";
+  background-color: var(--ymfseo-yellow);
+  width: var(--ymfseo-checker-width);
+  max-width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+.ymfseo-length-checker_top-margin {
+  margin-top: 6px;
+}
+.ymfseo-length-checker.good::after {
+  background-color: var(--ymfseo-green);
+}
+.ymfseo-length-checker.bad::after {
+  background-color: var(--ymfseo-red);
 }
 
 /* Tags table */
@@ -285,18 +289,18 @@ td.ymfseo.column-ymfseo {
   font-size: 17px;
   color: #2c3338;
 }
-.ymfseo-seettings-page .ymfseo-settings-preview-image-section #ymfseo-preview-image-img {
+.ymfseo-seettings-page .ymfseo-settings-image-section img {
   width: 25em;
   height: auto;
   margin-bottom: 20px;
   border-radius: 6px;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page .ymfseo-settings-preview-image-section #ymfseo-preview-image-img {
+  .ymfseo-seettings-page .ymfseo-settings-image-section img {
     width: 100%;
   }
 }
-.ymfseo-seettings-page .ymfseo-settings-preview-image-section .action-buttons button[hidden] {
+.ymfseo-seettings-page .ymfseo-settings-image-section .action-buttons button[hidden] {
   display: none;
 }
 .ymfseo-seettings-page tbody:has(tr.rep-type option[value=org][selected]) tr.rep-person {

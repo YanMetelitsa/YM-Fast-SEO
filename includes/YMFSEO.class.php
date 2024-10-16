@@ -12,9 +12,29 @@ class YMFSEO {
 	 * 
 	 * @since 2.1.0
 	 * 
-	 * @var array
+	 * @var string[]
 	 */
 	public static array $page_types = [];
+
+	/**
+	 * SEO check length values.
+	 * 
+	 * @since 2.2.0
+	 * 
+	 * @var array
+	 */
+	public static array $check_length_values = [
+		'title' => [
+			'min' => 30,
+			'rec' => [ 40, 60 ],
+			'max' => 70,
+		],
+		'description' => [
+			'min' => 50,
+			'rec' => [ 140, 160 ],
+			'max' => 170,
+		],
+	];
 
 	/**
 	 * Inits YM Fast SEO Plugin.
@@ -62,6 +82,12 @@ class YMFSEO {
 			'rep_org_name'              => '',
 			'rep_person_name'           => '',
 			'rep_email'                 => '',
+			'rep_phone'                 => '',
+			'rep_org_city'              => '',
+			'rep_org_region'            => '',
+			'rep_org_address'           => '',
+			'rep_org_postal_code'       => '',
+			'rep_image_id'              => 0,
 			'google_search_console_key' => '',
 			'yandex_webmaster_key'      => '',
 			'bing_webmaster_tools_key'  => '',
@@ -180,7 +206,7 @@ class YMFSEO {
 		$description_length = mb_strlen( $meta_fields->description );
 
 		// Too short title.
-		if ( $title_length < 30 ) {
+		if ( $title_length < self::$check_length_values[ 'title' ][ 'min' ] ) {
 			$status = 'bad';
 			/* translators: %d: Number of symbols */
 			$notes[] = sprintf( __( 'The title is too short (%d).', 'ym-fast-seo' ),
@@ -188,7 +214,7 @@ class YMFSEO {
 			);
 		}
 		// Too long title.
-		if ( $title_length > 70 ) {
+		if ( $title_length > self::$check_length_values[ 'title' ][ 'max' ] ) {
 			$status = 'bad';
 			/* translators: %d: Number of symbols */
 			$notes[] = sprintf( __( 'The title is too long (%d).', 'ym-fast-seo' ),
@@ -202,7 +228,7 @@ class YMFSEO {
 			$notes[] = __( 'No description.', 'ym-fast-seo' );
 		} else {
 			// Too short description.
-			if ( $description_length < 50 ) {
+			if ( $description_length < self::$check_length_values[ 'description' ][ 'min' ] ) {
 				$status = 'bad';
 				/* translators: %d: Number of symbols */
 				$notes[] = sprintf( __( 'The description is too short (%d).', 'ym-fast-seo' ),
@@ -211,7 +237,7 @@ class YMFSEO {
 			}
 
 			// Too long description.
-			if ( $description_length > 170 ) {
+			if ( $description_length > self::$check_length_values[ 'description' ][ 'max' ] ) {
 				$status = 'bad';
 				/* translators: %d: Number of symbols */
 				$notes[] = sprintf( __( 'The description is too long (%d).', 'ym-fast-seo' ),
