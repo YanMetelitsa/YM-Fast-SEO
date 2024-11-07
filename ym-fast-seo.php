@@ -355,7 +355,7 @@ add_action( 'admin_init', function () {
 		[
 			'options'     => [ '|', '-', '–', '—', ':', '/', '·', '•', '⋆', '~', '«', '»', '<', '>' ],
 			/* translators: %s: Separator tag name */
-			'description' => sprintf( __( 'Specify the separator used in titles and %s tags.', 'ym-fast-seo' ), '<code>%sep%</code>' ),
+			'description' => sprintf( __( 'Specify the separator used in titles and %s tag.', 'ym-fast-seo' ), '<code>%sep%</code>' ),
 		],
 	);
 	YMFSEO_Settings::register_option(
