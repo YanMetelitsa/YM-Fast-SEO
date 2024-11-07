@@ -269,7 +269,10 @@ class YMFSEO_Meta_Fields {
 			$default_preview_image_id = YMFSEO_Settings::get_option( 'preview_image_id' );
 
 			if ( $default_preview_image_id ) {
-				$meta_fields[ 'image_uri' ] = wp_get_attachment_image_url( $default_preview_image_id, 'full' );
+				$meta_fields[ 'image_uri' ] = sprintf( '%s?v=%s',
+					wp_get_attachment_image_url( $default_preview_image_id, 'full' ),
+					wp_get_theme()->Version,
+				);
 			}
 		}
 	}

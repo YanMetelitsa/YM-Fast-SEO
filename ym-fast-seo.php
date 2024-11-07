@@ -3,7 +3,7 @@
 /*
  * Plugin Name:       YM Fast SEO
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
- * Version:           2.2.0
+ * Version:           2.2.1
  * Requires PHP:      7.4
  * Requires at least: 6.0
  * Tested up to:      6.6.2
@@ -298,6 +298,19 @@ add_filter( 'robots_txt', function ( $output ) {
 	return $output;
 }, 999 );
 
+// Removes headings from post excerpts.
+add_filter( 'excerpt_allowed_blocks', function ( $allowed_blocks ) {
+	if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
+		return $allowed_blocks;
+	}
+
+	return array_filter( $allowed_blocks, function ( $block ) {
+		return ! in_array( $block, [
+			'core/heading',
+		]);
+	});
+});
+
 // Registers YM Fast SEO settings page.
 add_action( 'admin_menu', function () {
 	if ( ! current_user_can( 'ymfseo_edit_settings' ) ) {
@@ -343,6 +356,17 @@ add_action( 'admin_init', function () {
 			'options'     => [ '|', '-', '–', '—', ':', '/', '·', '•', '⋆', '~', '«', '»', '<', '>' ],
 			/* translators: %s: Separator tag name */
 			'description' => sprintf( __( 'Specify the separator used in titles and %s tags.', 'ym-fast-seo' ), '<code>%sep%</code>' ),
+		],
+	);
+	YMFSEO_Settings::register_option(
+		'clear_excerpts',
+		_x( 'Clear Excerpts', 'Verb', 'ym-fast-seo' ),
+		'boolean',
+		'general',
+		'checkbox',
+		[
+			'label'       => __( 'Enhance excerpts by removing unnecessary parts', 'ym-fast-seo' ),
+			'description' => __( 'Removes headings from excerpts.', 'ym-fast-seo' ),
 		],
 	);
 

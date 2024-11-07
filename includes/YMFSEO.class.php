@@ -52,7 +52,7 @@ class YMFSEO {
 			'SearchResultsPage' => __( 'Search results Page', 'ym-fast-seo' ),
 		];
 
-		// Defines replace tags.
+		// Defines default meta values.
 		YMFSEO_Meta_Fields::$default_values = [
 			'title'       => '',
 			'description' => '',
@@ -74,6 +74,7 @@ class YMFSEO {
 		YMFSEO_Settings::$default_settings = [
 			'hide_title_parts'          => true,
 			'title_separator'           => '|',
+			'clear_excerpts'            => true,
 			'post_type_page_type_page'  => 'WebPage',
 			'preview_image_id'          => 0,
 			'preview_size'              => 'summary_large_image',

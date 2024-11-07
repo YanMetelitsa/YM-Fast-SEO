@@ -22,6 +22,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 # Changelog
 
+## 2.2.1
+* Version of the current theme is now appends to the preview image URL
+* New setting: Clear Excerpts – removes unnecessary excerpt parts
+* Additional "Save" button on the settings page at the top
+
 ## 2.2.0
 * Taxonomy meta fields security improving
 * SEO length check for taxonomy meta fields

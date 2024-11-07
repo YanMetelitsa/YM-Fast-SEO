@@ -291,6 +291,11 @@ td.ymfseo.column-ymfseo {
 				}
 			}
 		}
+		.submit {
+			&:first-of-type {
+				padding: 0;
+			}
+		}
 	}
 
 	.ymfseo-settings-separator-grid {

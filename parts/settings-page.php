@@ -18,6 +18,8 @@
 
 	<form method="POST" action="options.php">
 		<?php
+			submit_button();
+
 			settings_fields( YMFSEO_Settings::$params[ 'page_slug' ] );
 			do_settings_sections( YMFSEO_Settings::$params[ 'page_slug' ] );
 

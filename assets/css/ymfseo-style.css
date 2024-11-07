@@ -237,6 +237,9 @@ td.ymfseo.column-ymfseo {
   font-weight: 400;
   color: #494e51;
 }
+.ymfseo-seettings-page form .submit:first-of-type {
+  padding: 0;
+}
 .ymfseo-seettings-page .ymfseo-settings-separator-grid {
   width: 25em;
   margin-bottom: 10px;
