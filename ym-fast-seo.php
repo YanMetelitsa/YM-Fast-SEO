@@ -34,6 +34,24 @@ require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Settings.class.php';
 
 YMFSEO::init();
 
+// Adds WordPress theme supports.
+add_action( 'after_setup_theme', function () {
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+});
+
+// Connects styles and scripts.
+add_action( 'admin_enqueue_scripts', function () {
+	wp_enqueue_style( 'ymfseo-styles', YMFSEO_ROOT_URI . 'assets/css/ymfseo-style.css', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
+	
+	wp_enqueue_media();
+	wp_enqueue_script( 'ymfseo-script', YMFSEO_ROOT_URI . 'assets/js/ymfseo-scripts.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ], true );
+	wp_add_inline_script( 'ymfseo-script', 'const YMFSEO_WP = ' . wp_json_encode([
+		'replaceTags' => YMFSEO_Meta_Fields::$replace_tags,
+	]), 'before' );
+});
+
+
 // Creates SEO Editor role and adds caps.
 register_activation_hook( __FILE__, function () {
 	add_role( 'ymfseo_seo_editor', __( 'SEO Editor', 'ym-fast-seo' ), [
@@ -75,6 +93,7 @@ register_deactivation_hook( __FILE__, function () {
 	$editor_role->remove_cap( 'ymfseo_edit_settings' );
 });
 
+
 // Adds settings link to plugin's card on Plugins page.
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function ( $links ) {
 	array_unshift( $links, sprintf( '<a href="%s">%s</a>',
@@ -83,232 +102,6 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), function ( $li
 	));
 
 	return $links;
-});
-
-// Adds WordPress theme supports.
-add_action( 'after_setup_theme', function () {
-	add_theme_support( 'title-tag' );
-	add_theme_support( 'post-thumbnails' );
-});
-
-// Connects styles and scripts.
-add_action( 'admin_enqueue_scripts', function () {
-	wp_enqueue_style( 'ymfseo-styles', YMFSEO_ROOT_URI . 'assets/css/ymfseo-style.css', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
-	
-	wp_enqueue_media();
-	wp_enqueue_script( 'ymfseo-script', YMFSEO_ROOT_URI . 'assets/js/ymfseo-scripts.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ], true );
-	wp_add_inline_script( 'ymfseo-script', 'const YMFSEO_WP = ' . wp_json_encode([
-		'replaceTags' => YMFSEO_Meta_Fields::$replace_tags,
-	]), 'before' );
-});
-
-// Manages custom SEO column.
-add_action( 'init', function () {
-	// Post types.
-	foreach ( YMFSEO::get_public_post_types() as $post_type ) {
-		add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO::manage_seo_columns' );
-		add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
-			if ( 'ymfseo' === $column ) {
-				$check = YMFSEO::check_seo( get_post( $post_id ) );
-
-				printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
-					esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
-					esc_attr( $check[ 'status' ] ),
-				);
-			}
-		}, 10, 2 );
-	}
-
-	// Taxonomies.
-	foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
-		add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO::manage_seo_columns' );
-		add_action( "manage_{$taxonomy}_custom_column" , function ( $string, $column, $term_id  ) {
-			if ( 'ymfseo' === $column ) {
-				$check = YMFSEO::check_seo( get_term( $term_id ) );
-
-				printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
-					esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
-					esc_attr( $check[ 'status' ] ),
-				);
-			}
-		}, 10, 3 );
-	}
-}, 30 );
-
-// Adds SEO meta box to public post types.
-add_action( 'add_meta_boxes', function () {
-	if ( current_user_can( 'ymfseo_edit_metas' ) ) {
-		add_meta_box( 'ymfseo_fields', __( 'SEO', 'ym-fast-seo' ), function ( $post ) {
-			wp_nonce_field( plugin_basename( __FILE__ ), 'ymfseo_post_nonce' );
-			
-			include plugin_dir_path( __FILE__ ) . 'parts/meta-box.php';
-		}, YMFSEO::get_public_post_types(), 'side' );
-	}
-});
-
-// Adds SEO meta fields to public taxonomies.
-add_action( 'init', function () {
-	foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
-		add_action( "{$taxonomy}_edit_form_fields", function ( $term ) {
-			wp_nonce_field( plugin_basename( __FILE__ ), "ymfseo_term_nonce" );
-
-			include plugin_dir_path( __FILE__ ) . 'parts/term-meta-fields.php';
-		});
-	}
-}, 30 );
-
-// Saves post metas after saving post.
-add_action( 'save_post', function ( $post_id ) {
-	// Checks is auto-save.
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-		return;
-	}
-
-	// Checks is a revision.
-    $parent_id = wp_is_post_revision( $post_id );
-
-    if ( false !== $parent_id ) {
-        $post_id = $parent_id;
-    }
-
-	// Checks nonce.
-	if ( ! isset( $_POST[ 'ymfseo_post_nonce' ] ) ) {
-		return;
-	}
-
-	$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_post_nonce' ] ) );
-
-	if ( ! wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
-		return;
-	}
-
-	// Checks is post type public.
-	if ( ! in_array( get_post_type( $post_id ), YMFSEO::get_public_post_types() ) ) {
-		return;
-	}
-
-	// Checks user capability.
-	if( ! current_user_can( 'ymfseo_edit_metas' ) ) {
-		return;
-	}
-
-	YMFSEO::update_meta( [
-		'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
-		'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
-		'page_type'   =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ) ),
-		'noindex'     =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ) ),
-	], $post_id, 'post' );
-});
-
-// Saves terms metas after saving term.
-add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
-	// Checks nonce.
-	if ( ! isset( $_POST[ 'ymfseo_term_nonce' ] ) ) {
-		return;
-	}
-
-	$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_term_nonce' ] ) );
-
-	if ( ! wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
-		return;
-	}
-
-	// Checks is taxonomy public.
-	if ( ! in_array( $taxonomy, YMFSEO::get_public_taxonomies() ) ) {
-		return;
-	}
-
-	// Checks user capability.
-	if( ! current_user_can( 'ymfseo_edit_metas' ) ) {
-		return;
-	}
-
-	YMFSEO::update_meta( [
-		'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
-		'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
-	], $term_id, 'term' );
-}, 10, 3 );
-
-// Modifies title tag parts.
-add_filter( 'document_title_parts', function ( $title ) {
-	$meta_fields = new YMFSEO_Meta_Fields();
-
-	// Hides title parts if option enabled.
-	if ( YMFSEO_Settings::get_option( 'hide_title_parts' ) ) {
-		if ( isset( $title[ 'site' ] ) )    unset( $title[ 'site' ] );
-		if ( isset( $title[ 'tagline' ] ) ) unset( $title[ 'tagline' ] );
-	}
-
-	// Sets title tag the same as meta title if exists.
-	if ( $meta_fields->title ) {
-		$title[ 'title' ] = $meta_fields->title;
-	}
-
-	return $title;
-});
-
-// Modifies title tag separator.
-add_filter( 'document_title_separator', function ( $sep ) {
-	return YMFSEO_Settings::get_option( 'title_separator' );
-});
-
-// Modifies robots meta tag.
-add_filter( 'wp_robots', function ( $robots ) {
-	$meta_fields = new YMFSEO_Meta_Fields();
-	
-	// Sets noindex if needed.
-	if ( $meta_fields->noindex ) {
-		$robots = array_merge( [ 'noindex' => true, 'nofollow' => true, ], $robots, );
-	}
-
-	// Set default index and follow if noindex disabled.
-	if ( ! isset( $robots[ 'nofollow' ] ) || ! $robots[ 'nofollow' ] ) {
-		$robots = array_merge( [ 'follow' => true ], $robots );
-	}
-	if ( ! isset( $robots[ 'noindex' ] ) || ! $robots[ 'noindex' ] ) {
-		$robots = array_merge(  [ 'index' => true ], $robots );
-	}
-
-	return $robots;
-});
-
-// Prints head metas.
-add_action( 'wp_head', function () {
-	include plugin_dir_path( __FILE__ ) . 'parts/head.php';
-}, 1 );
-
-// Modifies robots.txt file.
-add_filter( 'robots_txt', function ( $output ) {
-	// Checks settings robots.txt.
-	$settings_robots_txt = YMFSEO_Settings::get_option( 'robots_txt' );
-
-	if ( ! empty( $settings_robots_txt ) ) {
-		return $settings_robots_txt;
-	}
-
-	// Checks multisite sitemaps.
-	if ( YMFSEO::is_subdir_multisite() ) {
-		foreach ( get_sites() as $site ) {
-			if ( get_main_site_id() != intval( $site->blog_id ) ) {
-				$output .= sprintf( "Sitemap: %s\n", esc_url( get_home_url( $site->blog_id, 'wp-sitemap.xml' ) ) );
-			}
-		}
-	}
-
-	return $output;
-}, 999 );
-
-// Removes headings from post excerpts.
-add_filter( 'excerpt_allowed_blocks', function ( $allowed_blocks ) {
-	if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
-		return $allowed_blocks;
-	}
-
-	return array_filter( $allowed_blocks, function ( $block ) {
-		return ! in_array( $block, [
-			'core/heading',
-		]);
-	});
 });
 
 // Registers YM Fast SEO settings page.
@@ -653,4 +446,218 @@ add_action( 'admin_init', function () {
 		'additional',
 		'robots-txt',
 	);
+});
+
+
+// Manages custom SEO column.
+add_action( 'init', function () {
+	// Post types.
+	foreach ( YMFSEO::get_public_post_types() as $post_type ) {
+		add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO::manage_seo_columns' );
+		add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
+			if ( 'ymfseo' === $column ) {
+				$check = YMFSEO::check_seo( get_post( $post_id ) );
+
+				printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
+					esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
+					esc_attr( $check[ 'status' ] ),
+				);
+			}
+		}, 10, 2 );
+	}
+
+	// Taxonomies.
+	foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
+		add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO::manage_seo_columns' );
+		add_action( "manage_{$taxonomy}_custom_column" , function ( $string, $column, $term_id  ) {
+			if ( 'ymfseo' === $column ) {
+				$check = YMFSEO::check_seo( get_term( $term_id ) );
+
+				printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
+					esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
+					esc_attr( $check[ 'status' ] ),
+				);
+			}
+		}, 10, 3 );
+	}
+}, 30 );
+
+// Adds SEO meta box to public post types.
+add_action( 'add_meta_boxes', function () {
+	if ( current_user_can( 'ymfseo_edit_metas' ) ) {
+		add_meta_box( 'ymfseo_fields', __( 'SEO', 'ym-fast-seo' ), function ( $post ) {
+			wp_nonce_field( plugin_basename( __FILE__ ), 'ymfseo_post_nonce' );
+			
+			include plugin_dir_path( __FILE__ ) . 'parts/meta-box.php';
+		}, YMFSEO::get_public_post_types(), 'side' );
+	}
+});
+
+// Adds SEO meta fields to public taxonomies.
+add_action( 'init', function () {
+	foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
+		add_action( "{$taxonomy}_edit_form_fields", function ( $term ) {
+			wp_nonce_field( plugin_basename( __FILE__ ), "ymfseo_term_nonce" );
+
+			include plugin_dir_path( __FILE__ ) . 'parts/term-meta-fields.php';
+		});
+	}
+}, 30 );
+
+
+// Saves post metas after saving post.
+add_action( 'save_post', function ( $post_id ) {
+	// Checks is auto-save.
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+
+	// Checks is a revision.
+	$parent_id = wp_is_post_revision( $post_id );
+
+	if ( false !== $parent_id ) {
+		$post_id = $parent_id;
+	}
+
+	// Checks nonce.
+	if ( ! isset( $_POST[ 'ymfseo_post_nonce' ] ) ) {
+		return;
+	}
+
+	$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_post_nonce' ] ) );
+
+	if ( ! wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
+		return;
+	}
+
+	// Checks is post type public.
+	if ( ! in_array( get_post_type( $post_id ), YMFSEO::get_public_post_types() ) ) {
+		return;
+	}
+
+	// Checks user capability.
+	if( ! current_user_can( 'ymfseo_edit_metas' ) ) {
+		return;
+	}
+
+	YMFSEO::update_meta( [
+		'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
+		'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
+		'page_type'   =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ) ),
+		'noindex'     =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ) ),
+	], $post_id, 'post' );
+});
+
+// Saves terms metas after saving term.
+add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
+	// Checks nonce.
+	if ( ! isset( $_POST[ 'ymfseo_term_nonce' ] ) ) {
+		return;
+	}
+
+	$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_term_nonce' ] ) );
+
+	if ( ! wp_verify_nonce( $nonce, plugin_basename( __FILE__ ) ) ) {
+		return;
+	}
+
+	// Checks is taxonomy public.
+	if ( ! in_array( $taxonomy, YMFSEO::get_public_taxonomies() ) ) {
+		return;
+	}
+
+	// Checks user capability.
+	if( ! current_user_can( 'ymfseo_edit_metas' ) ) {
+		return;
+	}
+
+	YMFSEO::update_meta( [
+		'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
+		'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
+	], $term_id, 'term' );
+}, 10, 3 );
+
+
+// Modifies title tag parts.
+add_filter( 'document_title_parts', function ( $title ) {
+	$meta_fields = new YMFSEO_Meta_Fields();
+
+	// Hides title parts if option enabled.
+	if ( YMFSEO_Settings::get_option( 'hide_title_parts' ) ) {
+		if ( isset( $title[ 'site' ] ) )    unset( $title[ 'site' ] );
+		if ( isset( $title[ 'tagline' ] ) ) unset( $title[ 'tagline' ] );
+	}
+
+	// Sets title tag the same as meta title if exists.
+	if ( $meta_fields->title ) {
+		$title[ 'title' ] = $meta_fields->title;
+	}
+
+	return $title;
+});
+
+// Modifies title tag separator.
+add_filter( 'document_title_separator', function ( $sep ) {
+	return YMFSEO_Settings::get_option( 'title_separator' );
+});
+
+// Modifies robots meta tag.
+add_filter( 'wp_robots', function ( $robots ) {
+	$meta_fields = new YMFSEO_Meta_Fields();
+	
+	// Sets noindex if needed.
+	if ( $meta_fields->noindex ) {
+		$robots = array_merge( [ 'noindex' => true, 'nofollow' => true, ], $robots, );
+	}
+
+	// Set default index and follow if noindex disabled.
+	if ( ! isset( $robots[ 'nofollow' ] ) || ! $robots[ 'nofollow' ] ) {
+		$robots = array_merge( [ 'follow' => true ], $robots );
+	}
+	if ( ! isset( $robots[ 'noindex' ] ) || ! $robots[ 'noindex' ] ) {
+		$robots = array_merge(  [ 'index' => true ], $robots );
+	}
+
+	return $robots;
+});
+
+// Prints head metas.
+add_action( 'wp_head', function () {
+	include plugin_dir_path( __FILE__ ) . 'parts/head.php';
+}, 1 );
+
+
+// Modifies robots.txt file.
+add_filter( 'robots_txt', function ( $output ) {
+	// Checks settings robots.txt.
+	$settings_robots_txt = YMFSEO_Settings::get_option( 'robots_txt' );
+
+	if ( ! empty( $settings_robots_txt ) ) {
+		return $settings_robots_txt;
+	}
+
+	// Checks multisite sitemaps.
+	if ( YMFSEO::is_subdir_multisite() ) {
+		foreach ( get_sites() as $site ) {
+			if ( get_main_site_id() != intval( $site->blog_id ) ) {
+				$output .= sprintf( "Sitemap: %s\n", esc_url( get_home_url( $site->blog_id, 'wp-sitemap.xml' ) ) );
+			}
+		}
+	}
+
+	return $output;
+}, 999 );
+
+
+// Removes headings from post excerpts.
+add_filter( 'excerpt_allowed_blocks', function ( $allowed_blocks ) {
+	if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
+		return $allowed_blocks;
+	}
+
+	return array_filter( $allowed_blocks, function ( $block ) {
+		return ! in_array( $block, [
+			'core/heading',
+		]);
+	});
 });
