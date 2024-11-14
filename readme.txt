@@ -36,7 +36,6 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 == Changelog ==
 
 = 3.0.0 =
-* IndexNow
 * Implemented automatic IndexNow sending system
 * New Site SEO Health tool
 * Implemented logs system
@@ -49,11 +48,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * Additional "Save" button on the settings page at the top
 
 = 2.2.0 =
-* Taxonomy meta fields security improving
+* Taxonomy meta fields security improvement
 * SEO length check for taxonomy meta fields
 * New organization type: Online Store
 * New representative fields: Phone, City, Address, Region, Postal Code, Image
-* Small improvements and optimisations
+* Other small improvements and fixes
 
 = 2.1.0 =
 * Terms Title & Description meta fields
@@ -61,7 +60,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * SEO Editor role and capabilities
 * Bing Webmaster Tools integration
 * JSON-LD escaping fix
-* Small improvements and optimisations
+* Other small improvements and fixes
 
 = 2.0.1 =
 * Auto adding of all network sitemaps to robots.txt
@@ -83,7 +82,6 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * Translation fixes
 
 = 1.2.0 =
-* Improvements and optimisations
 * New Schema.org "Page Type" post field
 * Possibility to disallow an individual page/post indexing
 * New Settings: Clear Titles, Title Separator, Default Preview Image
@@ -97,7 +95,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * Basic SEO check of posts and pages
 * Ability to edit robots.txt through settings
 * Meta "robots" fix
-* Small improvements and optimisations
+* Other small improvements and fixes
 
 = 1.0.0 =
 * Initial release
