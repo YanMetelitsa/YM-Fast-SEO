@@ -66,6 +66,193 @@ class YMFSEO_Meta_Fields {
 	public static array $cache = [];
 
 	/**
+	 * Inits YMFSEO meta fields subclass.
+	 */
+	public static function init () : void {
+		// Manages posts and terms custom SEO column.
+		add_action( 'init', function () {
+			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
+				return;
+			}
+
+			// Post types.
+			foreach ( YMFSEO::get_public_post_types() as $post_type ) {
+				add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO::manage_seo_columns' );
+				add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
+					if ( 'ymfseo' === $column ) {
+						$check = YMFSEO_Checker::check_seo( get_post( $post_id ) );
+
+						printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
+							esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
+							esc_attr( $check[ 'status' ] ),
+						);
+					}
+				}, 10, 2 );
+			}
+
+			// Taxonomies.
+			foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
+				add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO::manage_seo_columns' );
+				add_action( "manage_{$taxonomy}_custom_column" , function ( $string, $column, $term_id  ) {
+					if ( 'ymfseo' === $column ) {
+						$check = YMFSEO_Checker::check_seo( get_term( $term_id ) );
+
+						printf( '<div class="column-ymfseo__dot" title="%s"><span class="%s"></span><div>',
+							esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
+							esc_attr( $check[ 'status' ] ),
+						);
+					}
+				}, 10, 3 );
+			}
+		}, 30 );
+
+		// Adds SEO meta box to public post types.
+		add_action( 'add_meta_boxes', function () {
+			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
+				return;
+			}
+
+			add_meta_box( 'ymfseo_fields', __( 'SEO', 'ym-fast-seo' ), function ( $post ) {
+				wp_nonce_field( YMFSEO_BASENAME, 'ymfseo_post_nonce' );
+				
+				include YMFSEO_ROOT_DIR . 'parts/meta-box.php';
+			}, YMFSEO::get_public_post_types(), 'side' );
+		});
+
+		// Adds SEO meta fields to public taxonomies.
+		add_action( 'init', function () {
+			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
+				return;
+			}
+
+			foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
+				add_action( "{$taxonomy}_edit_form_fields", function ( $term ) {
+					wp_nonce_field( YMFSEO_BASENAME, "ymfseo_term_nonce" );
+
+					include YMFSEO_ROOT_DIR . 'parts/term-meta-fields.php';
+				});
+			}
+		}, 30 );
+
+
+		// Saves post metas and sends IndexNow after saving post.
+		add_action( 'save_post', function ( $post_id ) {
+			// Is not auto-save.
+			if ( YMFSEO_Checker::is_post_auto_save() ) {
+				return;
+			}
+
+			// Checks revision.
+			YMFSEO_Checker::check_post_revision( $post_id );
+
+			// Is post type public.
+			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
+				return;
+			}
+
+			// Checks nonce.
+			if ( ! isset( $_POST[ 'ymfseo_post_nonce' ] ) ) {
+				return;
+			}
+
+			$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_post_nonce' ] ) );
+
+			if ( ! wp_verify_nonce( $nonce, YMFSEO_BASENAME ) ) {
+				return;
+			}
+
+			// Checks user capability.
+			if ( YMFSEO_Checker::is_current_user_can_edit_metas() ) {
+				// Updates metas.
+				YMFSEO::update_metas( [
+					'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
+					'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
+					'page_type'   =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ) ),
+					'noindex'     =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ) ),
+				], $post_id, 'post' );
+			}
+
+			// If post status publish.
+			if ( YMFSEO_Checker::is_post_published( $post_id ) ) {
+				// Sends IndexNow.
+				YMFSEO_IndexNow::send( get_the_permalink( $post_id ) );
+			}
+		});
+
+		// Sends IndexNow after trashing post.
+		add_action( 'wp_trash_post', function ( $post_id ) {
+			// Is post type public.
+			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
+				return;
+			}
+			
+			// Is post published.
+			if ( ! YMFSEO_Checker::is_post_published( $post_id ) ) {
+				return;
+			}
+
+			// Sends IndexNow.
+			YMFSEO_IndexNow::send( get_the_permalink( $post_id ) );
+		});
+
+
+		// Sends IndexNow after creating term.
+		add_action( 'create_term', function ( $term_id, $tt_id, $taxonomy ){
+			// Is taxonomy public.
+			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+				return;
+			}
+
+			// Sends IndexNow.
+			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+		}, 10, 3 );
+
+		// Saves term metas and sends IndexNow after saving term.
+		add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
+			// Is taxonomy public.
+			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+				return;
+			}
+			
+			// Sends IndexNow.
+			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+			
+			// Checks nonce.
+			if ( ! isset( $_POST[ 'ymfseo_term_nonce' ] ) ) {
+				return;
+			}
+
+			$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_term_nonce' ] ) );
+
+			if ( ! wp_verify_nonce( $nonce, YMFSEO_BASENAME ) ) {
+				return;
+			}
+
+			// Checks user capability.
+			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
+				return;
+			}
+
+			// Updates metas.
+			YMFSEO::update_metas( [
+				'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
+				'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
+			], $term_id, 'term' );
+		}, 10, 3 );
+
+		// Sends IndexNow before deleting term.
+		add_action( 'pre_delete_term', function ( $term_id, $taxonomy ) {
+			// Checks is taxonomy public.
+			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+				return;
+			}
+
+			// Sends IndexNow.
+			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+		}, 10, 2 );
+	}
+
+	/**
 	 * Class that contains meta fields values.
 	 * 
 	 * @param WP_Post|WP_Post_Type|WP_Term|WP_User|null  $queried_object Queried object.
@@ -73,7 +260,7 @@ class YMFSEO_Meta_Fields {
 	 */
 	public function __construct ( WP_Post|WP_Post_Type|WP_Term|WP_User|null $queried_object = null, bool $format = true ) {
 		// Sets default meta fields.
-		$meta_fields = self::$default_values;
+		$meta_fields = YMFSEO_Meta_Fields::$default_values;
 
 		// Gets queried object.
 		if ( is_null( $queried_object ) ) {
@@ -93,8 +280,8 @@ class YMFSEO_Meta_Fields {
 			// Checks for cache.
 			$cache_slug = "{$queried_object_id}_{$queried_object_type}" . ( $format ? '' : '_raw' );
 
-			if ( isset( self::$cache[ $cache_slug ] ) ) {
-				$this->set_meta_fields( self::$cache[ $cache_slug ] );
+			if ( isset( YMFSEO_Meta_Fields::$cache[ $cache_slug ] ) ) {
+				$this->set_meta_fields( YMFSEO_Meta_Fields::$cache[ $cache_slug ] );
 				return;
 			}
 
@@ -202,7 +389,7 @@ class YMFSEO_Meta_Fields {
 
 		// Adds meta fields to cache.
 		if ( isset( $cache_slug ) ) {
-			self::$cache[ $cache_slug ] = $meta_fields;
+			YMFSEO_Meta_Fields::$cache[ $cache_slug ] = $meta_fields;
 		}
 
 		// Sets instance values.
@@ -286,7 +473,7 @@ class YMFSEO_Meta_Fields {
 	 */
 	private function replace_tags ( array &$meta_fields ) : void {
 		foreach ( [ 'title', 'description' ] as $key ) {
-			foreach ( self::$replace_tags as $tag => $value ) {
+			foreach ( YMFSEO_Meta_Fields::$replace_tags as $tag => $value ) {
 				$meta_fields[ $key ] = str_replace( $tag, $value, $meta_fields[ $key ] );
 			}
 		}
@@ -308,7 +495,7 @@ class YMFSEO_Meta_Fields {
 	/**
 	 * Prepares data for Schema.org JSON-LD printing.
 	 * 
-	 * @param YMFSEO_Meta_Fields $meta_fields    Meta fields instance.
+	 * @param YMFSEO_Meta_Fields $meta_fields Meta fields instance.
 	 * 
 	 * @return array Prepared Shema.org array for printing JSON-LD.
 	 */
@@ -316,37 +503,32 @@ class YMFSEO_Meta_Fields {
 		global $wp;
 
 		$queried_object = get_queried_object();
-		
-		$document_title   = wp_get_document_title();
-		$site_name        = get_bloginfo( 'name' );
-		$site_description = get_bloginfo( 'description' );
-		$site_locale      = get_locale();
-		$home_url         = home_url();
-		$current_url      = home_url( $wp->request );
 
+		// Sets object data template.
 		$schema_org_blank = [
 			'WebPage' => [
 				'@type'      => $meta_fields->page_type,
-				'url'        => $current_url,
-				'name'       => $document_title,
-				'inLanguage' => $site_locale,
+				'@id'        => '#webpage',
+				'url'        => home_url( $wp->request ),
+				'name'       => wp_get_document_title(),
+				'inLanguage' => get_locale(),
 				'isPartOf'   => [
-					'@id' => "$home_url#website",
+					'@id' => '#website',
 				],
 				'potentialAction' => [
 					[
 						'@type'  => 'ReadAction',
-						'target' => [ $current_url ],
+						'target' => [ home_url( $wp->request ) ],
 					],
 				],
 			],
 			'WebSite' => [
 				'@type'       => 'WebSite',
-				'@id'         => "$home_url#website",
-				'url'         => $home_url,
-				'name'        => $site_name,
-				'description' => $site_description,
-				'inLanguage'  => $site_locale,
+				'@id'         => '#website',
+				'url'         => home_url(),
+				'name'        => get_bloginfo( 'name' ),
+				'description' => get_bloginfo( 'description' ),
+				'inLanguage'  => get_locale(),
 			],
 		];
 		
@@ -378,7 +560,7 @@ class YMFSEO_Meta_Fields {
 		$rep_phone = YMFSEO_Settings::get_option( 'rep_phone' );
 		if ( $rep_phone ) $rep_data[ 'telephone' ] = $rep_phone;
 		
-		// Organization address.
+		// Sets organization address.
 		if ( 'org' === $rep_type ) {
 			$address = [];
 
@@ -410,7 +592,7 @@ class YMFSEO_Meta_Fields {
 			}
 		}
 
-		// Image.
+		// Sets representative image.
 		$rep_image_id = YMFSEO_Settings::get_option( 'rep_image_id' );
 		if ( $rep_image_id ) {
 			$image_param_name = match ( $rep_type ) {
@@ -421,21 +603,21 @@ class YMFSEO_Meta_Fields {
 			$rep_data[ $image_param_name ] = wp_get_attachment_url( $rep_image_id );
 		}
 
-		// Pre-build output object.
+		// Pre-builds output object.
 		if ( ! empty( $rep_data ) ) {
 			$rep_data = array_merge([
 				'@type' => match ( $rep_type ) {
 					'org'    => YMFSEO_Settings::get_option( 'rep_org_type' ),
 					'person' => 'Person',
 				},
-				'@id'   => "$home_url#publisher",
-				'url'   => $home_url,
+				'@id'   => '#publisher',
+				'url'   => home_url(),
 			], $rep_data );
 
 			$schema_org_blank[ 'Publisher' ] = $rep_data;
 
 			$schema_org_blank[ 'WebSite' ][ 'publisher' ] = [
-				'@id' => "$home_url#publisher",
+				'@id' => '#publisher',
 			];
 		}
 		

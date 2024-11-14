@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Main YMFSEO JS class.
+ */
 class YMFSEO {
 	/**
 	 * Inits inputs SEO length checkers.
@@ -10,7 +13,9 @@ class YMFSEO {
 		checkers.forEach( checker => {
 			const input = document.querySelector( `*[ name=${checker.getAttribute( 'data-for' )} ]` );
 
-			checker.style.width = `${input.offsetWidth}px`;
+			if ( checker.classList.contains( 'ymfseo-length-checker_term' ) ) {
+				checker.style.width = `${input.offsetWidth}px`;
+			}
 
 			YMFSEO.checkInputLength( checker, input );
 			

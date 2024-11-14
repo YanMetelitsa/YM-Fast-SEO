@@ -1,10 +1,10 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimisation
-Stable tag: 2.2.1
+Stable tag: 3.0.0
 Requires PHP: 7.4
 Requires at least: 6.0
-Tested up to: 6.6.2
+Tested up to: 6.7
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -18,13 +18,14 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 = Features =
 
+* Lightweight and Extendable
 * Custom Meta Title & Description Fields
 * Automated Open Graph, Twitter Card, and Schema.org Markup
-* Quick Page and Post SEO Analysis
-* Services integration
-* Useful Tools
+* Quick Pages and Posts SEO Analysis
+* Services Integration
+* Automatic IndexNow Sending
 * Editing the robots.txt file
-* Lightweight and Extendable
+* Useful Tools
 
 == Installation ==
 
@@ -33,6 +34,14 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 1. **Install and Activate** YM Fast SEO from the Plugins page
 
 == Changelog ==
+
+= 3.0.0 =
+* IndexNow
+* Implemented automatic IndexNow sending system
+* New Site SEO Health tool
+* Implemented logs system
+* New representative organization types
+* Other small improvements and fixes
 
 = 2.2.1 =
 * Version of the current theme is now appends to the preview image URL

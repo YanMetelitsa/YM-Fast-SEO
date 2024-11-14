@@ -1,6 +1,6 @@
 :root {
-	--ymfseo-settings-bg: #f9f9f9;
-	--ymfseo-settings-border-radius: 8px;
+	--ymfseo-settings-bg: #fefefe;
+	--ymfseo-settings-border: #dcdcde;
 
 	--ymfseo-red: #dc3232;
 	--ymfseo-green: #46B450;
@@ -8,7 +8,7 @@
 	--ymfseo-blue: #0073aa;
 }
 
-/* Manage columns */
+/* Columns */
 th.manage-column.column-ymfseo {
 	width: 40px;
 
@@ -56,25 +56,11 @@ td.ymfseo.column-ymfseo {
 		padding: 12px;
 
 		.ymfseo-box {
-			/* Page */
-			&__page {
+			/* Container */
+			&__container {
 				display: flex;
 				flex-direction: column;
 				gap: 16px;
-			}
-
-			details {
-				&:not( [ open ] ) + details {
-					margin-top: -16px;
-				}
-
-				summary {
-					margin-bottom: 10px;
-
-					cursor: pointer;
-
-					text-transform: uppercase;
-				}
 			}
 	
 			/* Field */
@@ -90,9 +76,11 @@ td.ymfseo.column-ymfseo {
 					text-transform: uppercase;
 					display: inline-block;
 				}
+
 				textarea {
 					height: auto;
 				}
+
 				p {
 					margin: 2px 0 0 0;
 	
@@ -114,6 +102,20 @@ td.ymfseo.column-ymfseo {
 					input {
 						margin: 0;
 					}
+				}
+			}
+
+			details {
+				&:not( [ open ] ) + details {
+					margin-top: -16px;
+				}
+
+				summary {
+					margin-bottom: 10px;
+
+					cursor: pointer;
+
+					text-transform: uppercase;
 				}
 			}
 		}
@@ -145,8 +147,11 @@ td.ymfseo.column-ymfseo {
 		}
 	}
 }
+
+/* Length indicator */
 .ymfseo-length-checker {
 	background-color: rgba( 0, 0, 0, .2 );
+	width: 100%;
 	height: 2px;
 
 	position: relative;
@@ -164,7 +169,7 @@ td.ymfseo.column-ymfseo {
 		left: 0;
 	}
 
-	&_top-margin {
+	&_term {
 		margin-top: 6px;
 	}
 
@@ -207,18 +212,27 @@ td.ymfseo.column-ymfseo {
 /* Settings */
 .ymfseo-seettings-page {
 	&__header {
-		background-color: var( --ymfseo-settings-bg );
-		padding: 20px;
-		border-radius: var( --ymfseo-settings-border-radius );
-		border: 1px solid #eaecf0;
-		box-shadow: 0 1px 2px rgba( 16, 24, 40, .1 );
+		width: 100%;
+		
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 30px;
 
-		h1 {
-			margin: 0;
-			padding-top: 0;
-		}
-		> p {
+		p {
 			margin: 2px 0 0 0;
+		}
+
+		&-seo-health {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 4px;
+
+			line-height: 110%;
+			text-align: center;
+			text-decoration: none;
 		}
 	}
 
@@ -227,33 +241,32 @@ td.ymfseo.column-ymfseo {
 			background-color: var( --ymfseo-settings-bg );
 			margin: 20px 0 0 0;
 			padding: 20px;
-			border-radius: var( --ymfseo-settings-border-radius ) var( --ymfseo-settings-border-radius ) 0 0;
-			border: 1px solid #eaecf0;
+			border: 1px solid var( --ymfseo-settings-border );
 			border-bottom: none;
-			box-shadow: 0 1px 2px rgba( 16, 24, 40, .1 );
+
+			color: var( --ymfseo-blue );
 		}
+
 		> p {
 			&:not( .submit ) {
 				background-color: var( --ymfseo-settings-bg );
 				margin: -10px 0 0 0;
 				padding: 0 20px 10px 20px;
-				border: 1px solid #eaecf0;
+				border: 1px solid var( --ymfseo-settings-border );
 				border-top: none;
 				border-bottom: none;
-				box-shadow: 0 1px 2px rgba( 16, 24, 40, .1 );
 			}
 
 			code {
 				border-radius: 3px;
 			}
 		}
+
 		> table {
 			background-color: var( --ymfseo-settings-bg );
 			margin: 0;
 			padding: 20px;
-			border-radius: 0 0 var( --ymfseo-settings-border-radius ) var( --ymfseo-settings-border-radius );
-			border: 1px solid #eaecf0;
-			box-shadow: 0 1px 2px rgba( 16, 24, 40, .1 );
+			border: 1px solid var( --ymfseo-settings-border );
 
 			display: block;
 
@@ -291,6 +304,7 @@ td.ymfseo.column-ymfseo {
 				}
 			}
 		}
+
 		.submit {
 			&:first-of-type {
 				padding: 0;
@@ -346,6 +360,7 @@ td.ymfseo.column-ymfseo {
 	
 				opacity: 0;
 			}
+
 			span {
 				width: 100%;
 				height: 100%;
@@ -386,5 +401,29 @@ td.ymfseo.column-ymfseo {
 	}
 	tbody:has( tr.rep-type option[ value=person ][ selected ] ) tr.rep-org {
 		display: none;
+	}
+}
+
+/* Site Health */
+.ymfseo-site-health {
+	.health-check-accordion {
+		h4.health-check-accordion-heading {
+			.dashicons {
+				margin-right: 10px;
+
+				&.dashicons-yes-alt {
+					color: var( --ymfseo-green );
+				}
+				&.dashicons-warning {
+					color: var( --ymfseo-yellow );
+				}
+				&.dashicons-dismiss {
+					color: var( --ymfseo-red );
+				}
+			}	
+		}
+		.health-check-accordion-panel {
+			overflow-x: auto;
+		}
 	}
 }

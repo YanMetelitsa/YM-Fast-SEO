@@ -10,7 +10,7 @@ $robots_txt_placeholder = '';
 // Sets robots.txt path.
 $robots_txt_path = home_url( 'robots.txt' );
 
-if ( YMFSEO::is_subdir_multisite() ) {
+if ( YMFSEO_Checker::is_subdir_multisite() ) {
 	$robots_txt_path = get_home_url( get_main_site_id(), 'robots.txt' );
 }
 
@@ -30,6 +30,6 @@ printf( '<textarea name="%1$s" id="%1$s" class="code" rows="8" cols="50" placeho
 );
 
 printf( '<p class="description">%s</p>', esc_html__( 'To restore the default value, clear this field and save.', 'ym-fast-seo' ) );
-if ( YMFSEO::is_subdir_multisite() ) {
+if ( YMFSEO_Checker::is_subdir_multisite() ) {
 	printf( '<p class="description">%s</p>', esc_html__( 'A network of sites using the subdirectory structure shares a single robots.txt file.', 'ym-fast-seo' ) );
 }

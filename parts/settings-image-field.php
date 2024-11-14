@@ -25,7 +25,7 @@
 		"document.querySelector( '#" . esc_attr( $args[ 'label_for' ] ) . "-change-button' ).click()",
 	); ?>
 	
-	<div class="action-buttons">
+	<div class="action-buttons site-icon-action-buttons">
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-upload-button" ),
 			'button-add-site-icon',
@@ -42,7 +42,7 @@
 		
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-remove-button" ),
-			'button reset',
+			'button button-secondary reset remove-site-icon',
 			esc_attr( $image_uri ? '' : 'hidden' ),
 			esc_html__( 'Remove Image', 'ym-fast-seo' ),
 		); ?>

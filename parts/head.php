@@ -46,7 +46,7 @@ if ( $meta_fields->description ) {
 	printf( '<meta name="twitter:description" content="%s">', esc_attr( $meta_fields->description ) );
 }
 
-// Common tags.
+// Common meta tags.
 printf( '<meta property="og:site_name" content="%s">', esc_attr( $site_name ) );
 printf( '<meta property="og:type"      content="%s">', esc_attr( $is_front_page ? 'website' : 'article' ) );
 printf( '<meta property="og:locale"    content="%s">', esc_attr( $site_locale ) );
@@ -58,7 +58,7 @@ if ( $queried_object && 'WP_Post' == get_class( $queried_object ) ) {
 	printf( '<meta property="article:modified_time"  content="%s">', esc_attr( get_the_modified_date( 'c', $queried_object ) ) );
 }
 
-// Canonical URL and pagination meta tags.
+// Canonical URL and pagination.
 if ( is_singular() ) {
 	printf( '<meta property="og:url"  content="%s">', esc_url( $canonical_url ) );
 	printf( '<meta name="twitter:url" content="%s">', esc_url( $canonical_url ) );
@@ -67,7 +67,7 @@ if ( get_query_var( 'paged', 0 ) ) {
 	printf( '<link rel="prev" href="%s">', esc_url( get_previous_posts_page_link() ) );
 }
 
-// Preview image meta tags.
+// Preview image.
 if ( $meta_fields->image_uri ) {
 	$image_size = getimagesize( $meta_fields->image_uri );
 
@@ -95,7 +95,7 @@ printf( '<script type="application/ld+json">%s</script>',
 // Does user action.
 do_action( 'ymfseo_after_print_metas' );
 
-// Debug.
+// Debugs queried object data.
 if ( $queried_object ) {
 	printf( '<!-- %s-%s -->',
 		...match ( get_class( $queried_object ) ) {

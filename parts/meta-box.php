@@ -8,7 +8,7 @@
 ?>
 
 <div class="ymfseo-box <?php echo $current_screen->is_block_editor() ? 'ymfseo-box_gutenberg' : ''; ?>">
-	<div class="ymfseo-box__page">
+	<div class="ymfseo-box__container">
 		<!-- Title -->
 		<div class="ymfseo-box__field-box">
 			<label for="ymfseo-title"><?php esc_html_e( 'Title', 'ym-fast-seo' ); ?></label>
@@ -17,9 +17,9 @@
 				'ymfseo-title',
 				'components-text-control__input',
 				esc_attr( $meta_fields->title ),
-				esc_attr( YMFSEO::$check_length_values[ 'title' ][ 'min' ] ),
-				esc_attr( implode( '-', YMFSEO::$check_length_values[ 'title' ][ 'rec' ] ) ),
-				esc_attr( YMFSEO::$check_length_values[ 'title' ][ 'max' ] ),
+				esc_attr( YMFSEO_Checker::$meta_lengths[ 'title' ][ 'min' ] ),
+				esc_attr( implode( '-', YMFSEO_Checker::$meta_lengths[ 'title' ][ 'rec' ] ) ),
+				esc_attr( YMFSEO_Checker::$meta_lengths[ 'title' ][ 'max' ] ),
 			); ?>
 
 			<div class="ymfseo-length-checker" data-for="ymfseo-title"></div>
@@ -32,9 +32,9 @@
 			<?php printf( '<textarea rows="4" name="%1$s" id="%1$s" class="%2$s" data-min="%3$s" data-rec="%4$s" data-max="%5$s">%6$s</textarea>',
 				'ymfseo-description',
 				'components-text-control__input',
-				esc_attr( YMFSEO::$check_length_values[ 'description' ][ 'min' ] ),
-				esc_attr( implode( '-', YMFSEO::$check_length_values[ 'description' ][ 'rec' ] ) ),
-				esc_attr( YMFSEO::$check_length_values[ 'description' ][ 'max' ] ),
+				esc_attr( YMFSEO_Checker::$meta_lengths[ 'description' ][ 'min' ] ),
+				esc_attr( implode( '-', YMFSEO_Checker::$meta_lengths[ 'description' ][ 'rec' ] ) ),
+				esc_attr( YMFSEO_Checker::$meta_lengths[ 'description' ][ 'max' ] ),
 				esc_attr( $meta_fields->description ),
 			); ?>
 

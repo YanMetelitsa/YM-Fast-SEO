@@ -4,7 +4,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- *  Main YM Fast SEO class.
+ * Main YM Fast SEO class.
  */
 class YMFSEO {
 	/**
@@ -17,38 +17,26 @@ class YMFSEO {
 	public static array $page_types = [];
 
 	/**
-	 * SEO check length values.
-	 * 
-	 * @since 2.2.0
-	 * 
-	 * @var array
-	 */
-	public static array $check_length_values = [
-		'title' => [
-			'min' => 30,
-			'rec' => [ 40, 60 ],
-			'max' => 70,
-		],
-		'description' => [
-			'min' => 50,
-			'rec' => [ 140, 160 ],
-			'max' => 170,
-		],
-	];
-
-	/**
 	 * Inits YM Fast SEO Plugin.
 	 */
 	public static function init () : void {
 		// Defines available page types.
-		self::$page_types = [
+		YMFSEO::$page_types = [
+			/* translators: Web page type */
 			'WebPage'           => __( 'Regular Page', 'ym-fast-seo' ),
+			/* translators: Web page type */
 			'CollectionPage'    => __( 'Collection Page', 'ym-fast-seo' ),
+			/* translators: Web page type */
 			'ItemPage'          => __( 'Item Page', 'ym-fast-seo' ),
+			/* translators: Web page type */
 			'AboutPage'         => __( 'About Page', 'ym-fast-seo' ),
+			/* translators: Web page type */
 			'FAQPage'           => __( 'FAQ Page', 'ym-fast-seo' ),
+			/* translators: Web page type */
 			'ContactPage'       => __( 'Contact Page', 'ym-fast-seo' ),
+			/* translators: Web page type */
 			'CheckoutPage'      => __( 'Checkout Page', 'ym-fast-seo' ),
+			/* translators: Web page type */
 			'SearchResultsPage' => __( 'Search results Page', 'ym-fast-seo' ),
 		];
 
@@ -66,7 +54,7 @@ class YMFSEO {
 			'page_title'    => __( 'SEO Settings', 'ym-fast-seo' ),
 			'menu_label'    => __( 'SEO', 'ym-fast-seo' ),
 			'menu_position' => 3,
-			'capability'    => 'manage_options',
+			'capability'    => 'ymfseo_edit_settings',
 			'page_slug'     => 'ymfseo-settings',
 		];
 
@@ -90,8 +78,9 @@ class YMFSEO {
 			'rep_org_postal_code'       => '',
 			'rep_image_id'              => 0,
 			'google_search_console_key' => '',
-			'yandex_webmaster_key'      => '',
 			'bing_webmaster_tools_key'  => '',
+			'yandex_webmaster_key'      => '',
+			'indexnow_key'              => '',
 			'robots_txt'                => '',
 		];
 
@@ -100,6 +89,115 @@ class YMFSEO {
 			'%site_name%' => get_bloginfo( 'name' ),
 			'%sep%'       => YMFSEO_Settings::get_option( 'title_separator' ),
 		];
+
+
+		// Adds WordPress theme supports.
+		add_action( 'after_setup_theme', function () {
+			add_theme_support( 'title-tag' );
+			add_theme_support( 'post-thumbnails' );
+		});
+
+		// Connects styles and scripts.
+		add_action( 'admin_enqueue_scripts', function () {
+			wp_enqueue_style( 'ymfseo-styles', YMFSEO_ROOT_URI . 'assets/css/ymfseo-style.css', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
+			
+			wp_enqueue_media();
+			wp_enqueue_script( 'ymfseo-script', YMFSEO_ROOT_URI . 'assets/js/ymfseo-scripts.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ], true );
+			wp_add_inline_script( 'ymfseo-script', 'const YMFSEO_WP = ' . wp_json_encode([
+				'replaceTags' => YMFSEO_Meta_Fields::$replace_tags,
+			]), 'before' );
+		});
+
+
+		// Modifies title tag parts.
+		add_filter( 'document_title_parts', function ( $title ) {
+			$meta_fields = new YMFSEO_Meta_Fields();
+
+			// Hides title parts if option enabled.
+			if ( YMFSEO_Settings::get_option( 'hide_title_parts' ) ) {
+				if ( isset( $title[ 'site' ] ) )    unset( $title[ 'site' ] );
+				if ( isset( $title[ 'tagline' ] ) ) unset( $title[ 'tagline' ] );
+			}
+
+			// Sets title tag the same as meta title if exists.
+			if ( $meta_fields->title ) {
+				$title[ 'title' ] = $meta_fields->title;
+			}
+
+			return $title;
+		});
+
+		// Modifies title tag separator.
+		add_filter( 'document_title_separator', function ( $sep ) {
+			return YMFSEO_Settings::get_option( 'title_separator' );
+		});
+
+		// Modifies robots meta tag.
+		add_filter( 'wp_robots', function ( $robots ) {
+			$meta_fields = new YMFSEO_Meta_Fields();
+			
+			// Sets noindex if needed.
+			if ( $meta_fields->noindex ) {
+				$robots = array_merge( [ 'noindex' => true, 'nofollow' => true, ], $robots, );
+			}
+
+			// Sets default index and follow if noindex disabled.
+			if ( ! isset( $robots[ 'nofollow' ] ) || ! $robots[ 'nofollow' ] ) {
+				$robots = array_merge( [ 'follow' => true ], $robots );
+			}
+			if ( ! isset( $robots[ 'noindex' ] ) || ! $robots[ 'noindex' ] ) {
+				$robots = array_merge(  [ 'index' => true ], $robots );
+			}
+
+			// Additional parameters.
+			$robots[ 'max-snippet' ]       = '-1';
+			$robots[ 'max-image-preview' ] = 'large';
+			$robots[ 'max-video-preview' ] = '-1';
+
+			return $robots;
+		});
+
+		// Prints head metas.
+		add_action( 'wp_head', function () {
+			include YMFSEO_ROOT_DIR . 'parts/head.php';
+		}, 1 );
+		
+		// Removes headings from post excerpts.
+		add_filter( 'excerpt_allowed_blocks', function ( $allowed_blocks ) {
+			if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
+				return $allowed_blocks;
+			}
+
+			return array_filter( $allowed_blocks, function ( $block ) {
+				return ! in_array( $block, [
+					'core/heading',
+				]);
+			});
+		});
+
+		// Modifies robots.txt file.
+		add_filter( 'robots_txt', function ( $output ) {
+			// Checks settings robots.txt.
+			$settings_robots_txt = YMFSEO_Settings::get_option( 'robots_txt' );
+
+			if ( ! empty( $settings_robots_txt ) ) {
+				return $settings_robots_txt;
+			}
+
+			// Checks multisite sitemaps.
+			if ( YMFSEO_Checker::is_subdir_multisite() ) {
+				foreach ( get_sites() as $site ) {
+					if ( get_main_site_id() != intval( $site->blog_id ) ) {
+						$output .= sprintf(
+							"Sitemap: %s\n",
+							esc_url( get_home_url( $site->blog_id, 'wp-sitemap.xml' ) )
+						);
+					}
+				}
+			}
+
+			return $output;
+		}, 999 );
 	}
 
 	/**
@@ -145,7 +243,7 @@ class YMFSEO {
 	 * 
 	 * @return array Input with added SEO column.
 	 */
-	public static function manage_seo_columns ( $columns ) {
+	public static function manage_seo_columns ( $columns ) : array {
 		$columns[ 'ymfseo' ] = __( 'SEO', 'ym-fast-seo' );
 		
 		return $columns;
@@ -158,9 +256,9 @@ class YMFSEO {
 	 * 
 	 * @param array  $meta_fields Meta fields.
 	 * @param int    $id          Post/term ID.
-	 * @param string $type        'post' or 'term'.
+	 * @param string $type        Object type. Can be 'post' or 'term'.
 	 */
-	public static function update_meta ( array $meta_fields, int $id, string $type ) {
+	public static function update_metas ( array $meta_fields, int $id, string $type ) : void {
 		$meta_value = [];
 
 		$update_function_name = "update_{$type}_meta";
@@ -177,98 +275,5 @@ class YMFSEO {
 		} else {
 			$delete_function_name( $id, 'ymfseo_fields' );
 		}
-	}
-
-	/**
-	 * Retrieves whether the site in a network with a subdirectory type.
-	 * 
-	 * @since 2.0.1
-	 * 
-	 * @return bool Is multisite with subdirectory structure.
-	 */
-	public static function is_subdir_multisite () : bool {
-		return is_multisite() && defined( 'SUBDOMAIN_INSTALL' ) && ! SUBDOMAIN_INSTALL;
-	}
-
-	/**
-	 * Checks post SEO status.
-	 * 
-	 * @param WP_Post|WP_Term $object Post or Term object.
-	 * 
-	 * @return array Check result data.
-	 */
-	public static function check_seo ( WP_Post|WP_Term $object ) : array {
-		$status = 'good';
-		$notes  = [];
-
-		$meta_fields = new YMFSEO_Meta_Fields( $object );
-
-		$title_length       = mb_strlen( $meta_fields->title );
-		$description_length = mb_strlen( $meta_fields->description );
-
-		// Too short title.
-		if ( $title_length < self::$check_length_values[ 'title' ][ 'min' ] ) {
-			$status = 'bad';
-			/* translators: %d: Number of symbols */
-			$notes[] = sprintf( __( 'The title is too short (%d).', 'ym-fast-seo' ),
-				esc_html( $title_length ),
-			);
-		}
-		// Too long title.
-		if ( $title_length > self::$check_length_values[ 'title' ][ 'max' ] ) {
-			$status = 'bad';
-			/* translators: %d: Number of symbols */
-			$notes[] = sprintf( __( 'The title is too long (%d).', 'ym-fast-seo' ),
-				esc_html( $title_length ),
-			);
-		}
-
-		// No description.
-		if ( empty( $meta_fields->description ) ) {
-			$status = 'bad';
-			$notes[] = __( 'No description.', 'ym-fast-seo' );
-		} else {
-			// Too short description.
-			if ( $description_length < self::$check_length_values[ 'description' ][ 'min' ] ) {
-				$status = 'bad';
-				/* translators: %d: Number of symbols */
-				$notes[] = sprintf( __( 'The description is too short (%d).', 'ym-fast-seo' ),
-					esc_html( $description_length ),
-				);
-			}
-
-			// Too long description.
-			if ( $description_length > self::$check_length_values[ 'description' ][ 'max' ] ) {
-				$status = 'bad';
-				/* translators: %d: Number of symbols */
-				$notes[] = sprintf( __( 'The description is too long (%d).', 'ym-fast-seo' ),
-					esc_html( $description_length ),
-				);
-			}
-		}
-
-		if ( $object instanceof WP_Post ) {
-			// Not public.
-			if ( 'publish' !== get_post_status( $object ) ) {
-				$status = 'noindex';
-				$notes[] = __( 'Post status is "not published".', 'ym-fast-seo' );
-			}
-
-			// Noindex.
-			if ( $meta_fields->noindex ) {
-				$status = 'noindex';
-				$notes[] = __( 'Indexing has been disallowed.', 'ym-fast-seo' );
-			}
-		}
-
-		// Good!
-		if ( empty( $notes ) ) {
-			$notes[] = __( 'Good!', 'ym-fast-seo' );
-		}
-
-		return [
-			'status' => $status,
-			'notes'  => $notes,
-		];
 	}
 }
