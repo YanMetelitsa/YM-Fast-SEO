@@ -1,7 +1,7 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimisation
-Stable tag: 3.0.0
+Stable tag: 3.1.0
 Requires PHP: 7.4
 Requires at least: 6.0
 Tested up to: 6.7
@@ -34,6 +34,17 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 1. **Install and Activate** YM Fast SEO from the Plugins page
 
 == Changelog ==
+
+= 3.1.0 =
+* New setting: Hide Users Sitemap
+* New setting: Head Scripts
+* Added `<link rel="next">` tag for pagination pages
+* User page meta tags fix
+* Multisite robots.txt edit fix
+* Representative image fix
+* IndexNow fixes
+* Site SEO Health empty IndexNow table fix
+* Settings visual fix
 
 = 3.0.0 =
 * Implemented automatic IndexNow sending system

@@ -194,6 +194,12 @@ class YMFSEO_Site_Health {
 				'links' => [
 					__( 'IndexNow Response Formats', 'ym-fast-seo' ) => 'https://www.indexnow.org/documentation#response',
 				],
+				'table' => [
+					'head' => [
+						__( 'URL', 'ym-fast-seo' ), __( 'Status', 'ym-fast-seo' ), __( 'Date', 'ym-fast-seo' ),
+					],
+					'body' => [],
+				],
 			];
 
 			// Get data.
@@ -202,19 +208,14 @@ class YMFSEO_Site_Health {
 			// If has logs.
 			if ( $logs ) {
 				// Set table.
-				$content[ 'table' ] = [
-					'head' => [
-						__( 'URL', 'ym-fast-seo' ), __( 'Status', 'ym-fast-seo' ), __( 'Date', 'ym-fast-seo' ),
-					],
-					'body' => array_map( function ( $item ) {
-						$datetime = DateTime::createFromFormat( 'Y-m-d\TH:i:sP', $item[ 'date' ] );
-						$format   = get_option( 'date_format' ) . ', H:i:s';
+				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
+					$datetime = DateTime::createFromFormat( 'Y-m-d\TH:i:sP', $item[ 'date' ] );
+					$format   = get_option( 'date_format' ) . ', H:i:s';
 
-						$item[ 'date' ] = $datetime->format( $format );
+					$item[ 'date' ] = $datetime->format( $format );
 
-						return $item;
-					}, $logs ),
-				];
+					return $item;
+				}, $logs );
 
 				// Check statuses.
 				foreach ( $logs as $i => $entry ) {

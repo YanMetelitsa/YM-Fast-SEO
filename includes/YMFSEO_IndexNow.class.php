@@ -37,6 +37,83 @@ class YMFSEO_IndexNow {
 
 		// Updates rewrite rules after plugin deactivationn.
 		register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+
+
+		// Sends IndexNow after any post change.
+		add_action( 'save_post', function ( $post_id, $post ) {
+			// Is post type public.
+			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
+				return;
+			}
+
+			// Checks nonce.
+			if ( ! isset( $_POST[ 'ymfseo_post_nonce' ] ) ) {
+				return;
+			}
+
+			$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_post_nonce' ] ) );
+
+			if ( ! wp_verify_nonce( $nonce, YMFSEO_BASENAME ) ) {
+				return;
+			}
+
+			// Is not revision.
+			if ( wp_is_post_revision( $post_id ) ) {
+				return;
+			}
+
+			// Is not autosave.
+			if ( wp_is_post_autosave( $post_id ) ) {
+				return;
+			}
+
+			// Is post status 'publish'.
+			if ( 'publish' !== $post->post_status ) {
+				return;
+			}
+			
+			// Get permalink.
+			$permalink = get_permalink( $post_id );
+
+			$permalink = preg_replace( '/__trashed$/', '', $permalink );
+
+			// Sends IndexNow.
+			YMFSEO_IndexNow::send( $permalink );
+		}, 20, 2 );
+
+
+		// Sends IndexNow after creating term.
+		add_action( 'create_term', function ( $term_id, $tt_id, $taxonomy ) {
+			// Is taxonomy public.
+			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+				return;
+			}
+
+			// Sends IndexNow.
+			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+		}, 10, 3 );
+
+		// Sends IndexNow after saving term.
+		add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
+			// Is taxonomy public.
+			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+				return;
+			}
+			
+			// Sends IndexNow.
+			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+		}, 10, 3 );
+
+		// Sends IndexNow before deleting term.
+		add_action( 'pre_delete_term', function ( $term_id, $taxonomy ) {
+			// Checks is taxonomy public.
+			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+				return;
+			}
+
+			// Sends IndexNow.
+			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+		}, 10, 2 );
 	}
 
 	/**

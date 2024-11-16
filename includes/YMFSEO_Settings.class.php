@@ -29,16 +29,6 @@ class YMFSEO_Settings {
 	 * @since 3.0.0
 	 */
 	public static function init () : void {
-		// Adds settings link to plugin's card on Plugins page.
-		add_filter( 'plugin_action_links_' . YMFSEO_BASENAME, function ( $links ) {
-			array_unshift( $links, sprintf( '<a href="%s">%s</a>',
-				menu_page_url( 'ymfseo-settings', false ),
-				__( 'SEO Settings', 'ym-fast-seo' ),
-			));
-
-			return $links;
-		});
-
 		// Registers YM Fast SEO settings page.
 		add_action( 'admin_menu', function () {
 			add_options_page(
@@ -95,6 +85,17 @@ class YMFSEO_Settings {
 				[
 					'label'       => __( 'Enhance excerpts by removing unnecessary parts', 'ym-fast-seo' ),
 					'description' => __( 'Removes headings from excerpts.', 'ym-fast-seo' ),
+				],
+			);
+			YMFSEO_Settings::register_option(
+				'hide_users_sitemap',
+				/* translators: Verb */
+				__( 'Hide Users Sitemap', 'ym-fast-seo' ),
+				'boolean',
+				'general',
+				'checkbox',
+				[
+					'label' => __( 'Exclude the users page from the sitemap', 'ym-fast-seo' ),
 				],
 			);
 
@@ -423,6 +424,28 @@ class YMFSEO_Settings {
 			/* translators: Settings section name */
 			YMFSEO_Settings::add_section( 'additional', __( 'Additional', 'ym-fast-seo' ) );
 			YMFSEO_Settings::register_option(
+				'head_scripts',
+				__( 'Head Scripts', 'ym-fast-seo' ),
+				'string',
+				'additional',
+				'textarea',
+				[
+					'rows'        => 8,
+					'codemirror'  => true,
+					'description' => __( 'This is where you can insert the code for analytics counters and other scripts. The code will be printed inside the <code>&lt;head&gt;</code> tag.', 'ym-fast-seo' ),
+				],
+			);
+			YMFSEO_Settings::register_option(
+				'head_scripts_only_visitors',
+				__( 'Only for Visitors', 'ym-fast-seo' ),
+				'boolean',
+				'additional',
+				'checkbox',
+				[
+					'label' => __( 'Do not insert head scripts for logged-in users', 'ym-fast-seo' ),
+				],
+			);
+			YMFSEO_Settings::register_option(
 				'robots_txt',
 				__( 'Edit robots.txt', 'ym-fast-seo' ),
 				'string',
@@ -494,11 +517,20 @@ class YMFSEO_Settings {
 			YMFSEO_Settings::$default_settings[ $slug ] = $default;
 		}
 
+		// Defines sanitize callback.
+		$sanitize_callback = 'sanitize_text_field';
+
+		if ( in_array( $slug, [ 'head_scripts', 'robots_txt' ] ) ) {
+			$sanitize_callback = function ( $value ) {
+				return wp_unslash( $value );
+			};
+		}
+
 		// Registers setting and adds field.
 		register_setting( YMFSEO_Settings::$params[ 'page_slug' ], "ymfseo_$slug", [
 			'type'              => $type,
 			'default'           => YMFSEO_Settings::$default_settings[ $slug ],
-			'sanitize_callback' => 'robots_txt' == $slug ? 'sanitize_textarea_field' : 'sanitize_text_field',
+			'sanitize_callback' => $sanitize_callback,
 		]);
 		add_settings_field(
 			"ymfseo_$slug",

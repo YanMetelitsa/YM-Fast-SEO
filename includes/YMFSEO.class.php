@@ -60,28 +60,31 @@ class YMFSEO {
 
 		// Defines default settings.
 		YMFSEO_Settings::$default_settings = [
-			'hide_title_parts'          => true,
-			'title_separator'           => '|',
-			'clear_excerpts'            => true,
-			'post_type_page_type_page'  => 'WebPage',
-			'preview_image_id'          => 0,
-			'preview_size'              => 'summary_large_image',
-			'rep_type'                  => 'org',
-			'rep_org_type'              => 'Organization',
-			'rep_org_name'              => '',
-			'rep_person_name'           => '',
-			'rep_email'                 => '',
-			'rep_phone'                 => '',
-			'rep_org_city'              => '',
-			'rep_org_region'            => '',
-			'rep_org_address'           => '',
-			'rep_org_postal_code'       => '',
-			'rep_image_id'              => 0,
-			'google_search_console_key' => '',
-			'bing_webmaster_tools_key'  => '',
-			'yandex_webmaster_key'      => '',
-			'indexnow_key'              => '',
-			'robots_txt'                => '',
+			'hide_title_parts'           => true,
+			'title_separator'            => '|',
+			'clear_excerpts'             => true,
+			'hide_users_sitemap'         => true,
+			'post_type_page_type_page'   => 'WebPage',
+			'preview_image_id'           => 0,
+			'preview_size'               => 'summary_large_image',
+			'rep_type'                   => 'org',
+			'rep_org_type'               => 'Organization',
+			'rep_org_name'               => '',
+			'rep_person_name'            => '',
+			'rep_email'                  => '',
+			'rep_phone'                  => '',
+			'rep_org_city'               => '',
+			'rep_org_region'             => '',
+			'rep_org_address'            => '',
+			'rep_org_postal_code'        => '',
+			'rep_image_id'               => 0,
+			'google_search_console_key'  => '',
+			'bing_webmaster_tools_key'   => '',
+			'yandex_webmaster_key'       => '',
+			'indexnow_key'               => '',
+			'head_scripts'               => '',
+			'head_scripts_only_visitors' => true,
+			'robots_txt'                 => '',
 		];
 
 		// Defines replace tags.
@@ -91,6 +94,22 @@ class YMFSEO {
 		];
 
 
+		// Adds links to plugin's card on Plugins page.
+		add_filter( 'plugin_action_links_' . YMFSEO_BASENAME, function ( $links ) {
+			array_unshift( $links, sprintf( '<a href="%s">%s</a>',
+				admin_url( 'site-health.php?tab=ymfseo-site-health-tab' ),
+				__( 'SEO Health', 'ym-fast-seo' ),
+			));
+
+			array_unshift( $links, sprintf( '<a href="%s">%s</a>',
+				menu_page_url( 'ymfseo-settings', false ),
+				__( 'SEO Settings', 'ym-fast-seo' ),
+			));
+
+			return $links;
+		});
+
+
 		// Adds WordPress theme supports.
 		add_action( 'after_setup_theme', function () {
 			add_theme_support( 'title-tag' );
@@ -98,14 +117,22 @@ class YMFSEO {
 		});
 
 		// Connects styles and scripts.
-		add_action( 'admin_enqueue_scripts', function () {
+		add_action( 'admin_enqueue_scripts', function ( $hook_suffix ) {
 			wp_enqueue_style( 'ymfseo-styles', YMFSEO_ROOT_URI . 'assets/css/ymfseo-style.css', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
 			
-			wp_enqueue_media();
 			wp_enqueue_script( 'ymfseo-script', YMFSEO_ROOT_URI . 'assets/js/ymfseo-scripts.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ], true );
 			wp_add_inline_script( 'ymfseo-script', 'const YMFSEO_WP = ' . wp_json_encode([
 				'replaceTags' => YMFSEO_Meta_Fields::$replace_tags,
 			]), 'before' );
+
+			if ( 'settings_page_' . YMFSEO_Settings::$params[ 'page_slug' ] == $hook_suffix ) {
+				wp_enqueue_media();
+
+				wp_enqueue_code_editor([
+					'type' => 'text/html',
+				]);
+				wp_enqueue_script( 'wp-codemirror' );
+			}
 		});
 
 
@@ -161,6 +188,7 @@ class YMFSEO {
 		add_action( 'wp_head', function () {
 			include YMFSEO_ROOT_DIR . 'parts/head.php';
 		}, 1 );
+
 		
 		// Removes headings from post excerpts.
 		add_filter( 'excerpt_allowed_blocks', function ( $allowed_blocks ) {
@@ -174,6 +202,19 @@ class YMFSEO {
 				]);
 			});
 		});
+
+		// Removes users from sitemap.
+		add_filter( 'wp_sitemaps_add_provider', function ( $provider, $name ) {
+			if ( ! YMFSEO_Settings::get_option( 'hide_users_sitemap' ) ) {
+				return $provider;
+			}
+
+			if ( 'users' === $name ) {
+				return false;
+			}
+		
+			return $provider;
+		}, 10, 2 );
 
 		// Modifies robots.txt file.
 		add_filter( 'robots_txt', function ( $output ) {
@@ -232,48 +273,5 @@ class YMFSEO {
 		unset( $public_post_types[ 'post_format' ] );
 
 		return $public_post_types;
-	}
-
-	/**
-	 * Adds SEO column.
-	 * 
-	 * @since 2.1.0
-	 * 
-	 * @param array $columns Input columns.
-	 * 
-	 * @return array Input with added SEO column.
-	 */
-	public static function manage_seo_columns ( $columns ) : array {
-		$columns[ 'ymfseo' ] = __( 'SEO', 'ym-fast-seo' );
-		
-		return $columns;
-	}
-
-	/**
-	 * Updates post/term meta fields after saving.
-	 * 
-	 * @since 2.1.0
-	 * 
-	 * @param array  $meta_fields Meta fields.
-	 * @param int    $id          Post/term ID.
-	 * @param string $type        Object type. Can be 'post' or 'term'.
-	 */
-	public static function update_metas ( array $meta_fields, int $id, string $type ) : void {
-		$meta_value = [];
-
-		$update_function_name = "update_{$type}_meta";
-		$delete_function_name = "delete_{$type}_meta";
-
-		foreach ( $meta_fields as $key => $value ) {
-			if ( $value !== YMFSEO_Meta_Fields::$default_values[ $key ] ) {
-				$meta_value[ $key ] = $value;
-			}
-		}
-
-		if ( $meta_value ) {
-			$update_function_name( $id, 'ymfseo_fields', $meta_value );
-		} else {
-			$delete_function_name( $id, 'ymfseo_fields' );
-		}
 	}
 }

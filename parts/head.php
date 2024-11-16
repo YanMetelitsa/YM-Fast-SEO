@@ -23,6 +23,17 @@ if ( ! $queried_object  ) {
 	echo '<!-- Queried object not found -->';
 }
 
+// Head scripts.
+$head_scripts = YMFSEO_Settings::get_option( 'head_scripts' );
+
+if ( $head_scripts ) {
+	$only_visitors_head_scripts = YMFSEO_Settings::get_option( 'head_scripts_only_visitors' );
+
+	if ( ! $only_visitors_head_scripts || ! is_user_logged_in() ) {
+		echo $head_scripts;
+	}
+}
+
 // Integrations.
 if ( $google_search_console_key ) {
 	printf( '<meta name="google-site-verification" content="%s">', esc_attr( $google_search_console_key ) );
@@ -63,8 +74,16 @@ if ( is_singular() ) {
 	printf( '<meta property="og:url"  content="%s">', esc_url( $canonical_url ) );
 	printf( '<meta name="twitter:url" content="%s">', esc_url( $canonical_url ) );
 }
-if ( get_query_var( 'paged', 0 ) ) {
-	printf( '<link rel="prev" href="%s">', esc_url( get_previous_posts_page_link() ) );
+
+$prev_page_url = get_previous_posts_page_link();
+$next_page_url = get_next_posts_page_link( $GLOBALS[ 'wp_query' ]->max_num_pages ?: 1 );
+
+if ( get_query_var( 'paged', 0 ) && $prev_page_url ) {
+	printf( '<link rel="prev" href="%s">', esc_url( $prev_page_url ) );
+}
+
+if ( $next_page_url ) {
+	printf( '<link rel="next" href="%s">', esc_url( $next_page_url ) );
 }
 
 // Preview image.
@@ -100,8 +119,8 @@ if ( $queried_object ) {
 	printf( '<!-- %s-%s -->',
 		...match ( get_class( $queried_object ) ) {
 			'WP_Post'      => [ 'P',  esc_html( $queried_object->ID ) ],
-			'WP_Term'      => [ 'T',  esc_html( $queried_object->term_id ) ],
 			'WP_Post_Type' => [ 'PT', esc_html( $queried_object->name ) ],
+			'WP_Term'      => [ 'T',  esc_html( $queried_object->term_id ) ],
 			'WP_User'      => [ 'U',  esc_html( $queried_object->ID ) ],
 		},
 	);

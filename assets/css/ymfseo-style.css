@@ -172,26 +172,6 @@ td.ymfseo.column-ymfseo {
 }
 
 /* Settings */
-.ymfseo-seettings-page__header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-}
-.ymfseo-seettings-page__header p {
-  margin: 2px 0 0 0;
-}
-.ymfseo-seettings-page__header-seo-health {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  line-height: 110%;
-  text-align: center;
-  text-decoration: none;
-}
 .ymfseo-seettings-page form > h2 {
   background-color: var(--ymfseo-settings-bg);
   margin: 20px 0 0 0;
@@ -234,12 +214,27 @@ td.ymfseo.column-ymfseo {
   width: 100%;
   display: block;
 }
+.ymfseo-seettings-page form > table tbody tr th {
+  flex-shrink: 0;
+}
 .ymfseo-seettings-page form > table tbody tr td textarea[name=ymfseo_robots_txt] {
   text-wrap: nowrap;
 }
 .ymfseo-seettings-page form > table tbody tr.sub-field th {
   font-weight: 400;
   color: #494e51;
+}
+@media screen and (min-width: 782px) {
+  .ymfseo-seettings-page form > table tbody tr:has(.CodeMirror) {
+    display: flex;
+  }
+}
+.ymfseo-seettings-page form > table tbody tr:has(.CodeMirror) td {
+  width: 100%;
+}
+.ymfseo-seettings-page form > table tbody tr:has(.CodeMirror) td .CodeMirror {
+  border-radius: 4px;
+  border: 1px solid var(--ymfseo-settings-border);
 }
 .ymfseo-seettings-page form .submit:first-of-type {
   padding: 0;

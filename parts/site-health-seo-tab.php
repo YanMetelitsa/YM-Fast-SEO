@@ -13,20 +13,21 @@
 			<?php
 				$test_result = $check_function();
 
+				$test_icon = match ( $test_result->is_passed ) {
+					'yes'     => 'dashicons-yes-alt',
+					'no'      => 'dashicons-dismiss',
+					'warning' => 'dashicons-warning',
+					default   => false,
+				 };
+
 				$test_table = $test_result->content[ 'table' ] ?? null;
 				$test_links = $test_result->content[ 'links' ] ?? null;
 			?>
 
 			<h4 class="health-check-accordion-heading">
 				<button class="health-check-accordion-trigger" aria-controls="<?php echo esc_html( $test_id ); ?>" type="button">
-					<?php $icon = match ( $test_result->is_passed ) {
-						'yes'     => 'dashicons-yes-alt',
-						'no'      => 'dashicons-dismiss',
-						'warning' => 'dashicons-warning',
-						default   => false,
- 					}; ?>
-					<?php if ( $icon ) : ?>
-						<span class="dashicons <?php echo esc_html( $icon ); ?>"></span>
+					<?php if ( $test_icon ) : ?>
+						<span class="dashicons <?php echo esc_html( $test_icon ); ?>"></span>
 					<?php endif; ?>
 
 					<span class="title"><?php echo esc_html( $test_result->title ); ?></span>
@@ -61,14 +62,26 @@
 								</tr>
 							</thead>
 						<?php endif; ?>
+
 						<tbody>
-							<?php foreach ( $test_table[ 'body' ] as $tr ) : ?>
-								<tr>
-									<?php foreach ( $tr as $td ) : ?>
-										<td><?php echo esc_html( $td ); ?></td>
-									<?php endforeach; ?>
-								</tr>
-							<?php endforeach; ?>
+							<?php if ( ! empty ( $test_table[ 'body' ] ) ) : ?>
+								<?php foreach ( $test_table[ 'body' ] as $tr ) : ?>
+									<tr>
+										<?php foreach ( $tr as $td ) : ?>
+											<td><?php echo esc_html( $td ); ?></td>
+										<?php endforeach; ?>
+									</tr>
+								<?php endforeach; ?>
+							<?php else : ?>
+								<?php if ( isset( $test_table[ 'head' ] ) ) : ?>
+									<tr>
+										<td colspan="<?php echo esc_attr( count( $test_table[ 'head' ] ) ); ?>">
+											<?php /* translators: Empty table message */ ?>
+											<?php esc_html_e( 'No data.', 'ym-fast-seo' ); ?>
+										</td>
+									</tr>
+								<?php endif; ?>
+							<?php endif; ?>
 						</tbody>
 					</table>
 				<?php endif; ?>

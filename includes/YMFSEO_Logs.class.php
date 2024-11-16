@@ -14,10 +14,15 @@ class YMFSEO_Logs {
 	 * 
 	 * @var string[]
 	 */
-	private static array $allowed_files = [ 'IndexNow' ];
+	private static array $allowed_files = [
+		'debug',
+		'IndexNow',
+	];
 
 	/**
 	 * Prepares and retrive global $wp_filesystem.
+	 * 
+	 * @global $wp_filesystem
 	 */
 	private static function get_filesystem () {
 		global $wp_filesystem;

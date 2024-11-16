@@ -50,48 +50,12 @@ class YMFSEO_Checker {
 	}
 
 	/**
-	 * Retrives `true` if user can edit SEO settings.
-	 */
-	public static function is_current_user_can_edit_settings () : bool {
-		return current_user_can( 'ymfseo_edit_settings' );
-	}
-
-	/**
-	 * Retrives `true` if current post is auto-save.
-	 */
-	public static function is_post_auto_save () : bool {
-		return defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE;
-	}
-
-	/**
-	 * Replaces given post ID with paret post ID if current is revision.
-	 *
-	 * @param int $post_id Post ID.
-	 */
-	public static function check_post_revision ( int &$post_id ) : void {
-		$parent_id = wp_is_post_revision( $post_id );
-
-		if ( is_int( $parent_id ) ) {
-			$post_id = $parent_id;
-		}
-	}
-
-	/**
 	 * Retrives `true` if post type is public.
 	 *
 	 * @param int $post_id Post ID.
 	 */
 	public static function is_post_type_public ( int $post_id ) : bool {
 		return in_array( get_post_type( $post_id ), YMFSEO::get_public_post_types() );
-	}
-
-	/**
-	 * Retrives `true` if post status is publish.
-	 *
-	 * @param int $post_id Post ID.
-	 */
-	public static function is_post_published ( int $post_id ) : bool {
-		return in_array( get_post_status( $post_id ), [ 'publish' ] );
 	}
 
 	/**

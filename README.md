@@ -23,6 +23,17 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 # Changelog
 
+## 3.1.0
+* New setting: Hide Users Sitemap
+* New setting: Head Scripts
+* Added `<link rel="next">` tag for pagination pages
+* User page meta tags fix
+* Multisite robots.txt edit fix
+* Representative image fix
+* IndexNow fixes
+* Site SEO Health empty IndexNow table fix
+* Settings visual fix
+
 ## 3.0.0
 * Implemented automatic IndexNow sending system
 * New Site SEO Health tool

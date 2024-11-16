@@ -31,14 +31,14 @@ class YMFSEO_Meta_Fields {
 	public string $image_uri;
 
 	/**
-	 * Schema.org page type.
+	 * Schema.org WebPage type.
 	 * 
 	 * @var string
 	 */
 	public string $page_type;
 
 	/**
-	 * Defines the values of the robots meta tag "index" and "follow".
+	 * Defines `index` and `follow` values of `robots` meta tag.
 	 * 
 	 * @var bool
 	 */
@@ -77,7 +77,7 @@ class YMFSEO_Meta_Fields {
 
 			// Post types.
 			foreach ( YMFSEO::get_public_post_types() as $post_type ) {
-				add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO::manage_seo_columns' );
+				add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO_Meta_Fields::manage_seo_columns' );
 				add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_post( $post_id ) );
@@ -92,7 +92,7 @@ class YMFSEO_Meta_Fields {
 
 			// Taxonomies.
 			foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
-				add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO::manage_seo_columns' );
+				add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO_Meta_Fields::manage_seo_columns' );
 				add_action( "manage_{$taxonomy}_custom_column" , function ( $string, $column, $term_id  ) {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_term( $term_id ) );
@@ -135,15 +135,12 @@ class YMFSEO_Meta_Fields {
 		}, 30 );
 
 
-		// Saves post metas and sends IndexNow after saving post.
+		// Saves post metas after saving post.
 		add_action( 'save_post', function ( $post_id ) {
-			// Is not auto-save.
-			if ( YMFSEO_Checker::is_post_auto_save() ) {
+			// Is user can edit metas.
+			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
 				return;
 			}
-
-			// Checks revision.
-			YMFSEO_Checker::check_post_revision( $post_id );
 
 			// Is post type public.
 			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
@@ -161,61 +158,37 @@ class YMFSEO_Meta_Fields {
 				return;
 			}
 
-			// Checks user capability.
-			if ( YMFSEO_Checker::is_current_user_can_edit_metas() ) {
-				// Updates metas.
-				YMFSEO::update_metas( [
-					'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
-					'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
-					'page_type'   =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ) ),
-					'noindex'     =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ) ),
-				], $post_id, 'post' );
-			}
-
-			// If post status publish.
-			if ( YMFSEO_Checker::is_post_published( $post_id ) ) {
-				// Sends IndexNow.
-				YMFSEO_IndexNow::send( get_the_permalink( $post_id ) );
-			}
-		});
-
-		// Sends IndexNow after trashing post.
-		add_action( 'wp_trash_post', function ( $post_id ) {
-			// Is post type public.
-			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
-				return;
-			}
-			
-			// Is post published.
-			if ( ! YMFSEO_Checker::is_post_published( $post_id ) ) {
+			// Is not revision.
+			if ( wp_is_post_revision( $post_id ) ) {
 				return;
 			}
 
-			// Sends IndexNow.
-			YMFSEO_IndexNow::send( get_the_permalink( $post_id ) );
+			// Is not autosave.
+			if ( wp_is_post_autosave( $post_id ) ) {
+				return;
+			}
+
+			// Updates metas.
+			YMFSEO_Meta_Fields::update_meta([
+				'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
+				'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
+				'page_type'   =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ) ),
+				'noindex'     =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ) ),
+			], $post_id, 'post' );
 		});
 
 
-		// Sends IndexNow after creating term.
-		add_action( 'create_term', function ( $term_id, $tt_id, $taxonomy ){
-			// Is taxonomy public.
-			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
-				return;
-			}
-
-			// Sends IndexNow.
-			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
-		}, 10, 3 );
-
-		// Saves term metas and sends IndexNow after saving term.
+		// Saves term metas after saving term.
 		add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
+			// Is user can edit metas.
+			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
+				return;
+			}
+
 			// Is taxonomy public.
 			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
 				return;
 			}
-			
-			// Sends IndexNow.
-			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
 			
 			// Checks nonce.
 			if ( ! isset( $_POST[ 'ymfseo_term_nonce' ] ) ) {
@@ -228,28 +201,57 @@ class YMFSEO_Meta_Fields {
 				return;
 			}
 
-			// Checks user capability.
-			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
-				return;
-			}
-
 			// Updates metas.
-			YMFSEO::update_metas( [
+			YMFSEO_Meta_Fields::update_meta([
 				'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
 				'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
 			], $term_id, 'term' );
 		}, 10, 3 );
+	}
 
-		// Sends IndexNow before deleting term.
-		add_action( 'pre_delete_term', function ( $term_id, $taxonomy ) {
-			// Checks is taxonomy public.
-			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
-				return;
+	/**
+	 * Adds SEO column.
+	 * 
+	 * @since 2.1.0
+	 * @since 3.1.0 Is YMFSEO_Meta_Fields method.
+	 * 
+	 * @param array $columns Input columns.
+	 * 
+	 * @return array Input with added SEO column.
+	 */
+	public static function manage_seo_columns ( $columns ) : array {
+		$columns[ 'ymfseo' ] = __( 'SEO', 'ym-fast-seo' );
+		
+		return $columns;
+	}
+
+	/**
+	 * Updates post/term meta fields after saving.
+	 * 
+	 * @since 2.1.0
+	 * @since 3.1.0 Is YMFSEO_Meta_Fields method.
+	 * 
+	 * @param array  $meta_fields Meta fields.
+	 * @param int    $id          Post/term ID.
+	 * @param string $type        Object type. Can be 'post' or 'term'.
+	 */
+	public static function update_meta ( array $meta_fields, int $id, string $type ) : void {
+		$meta_value = [];
+
+		$update_function_name = "update_{$type}_meta";
+		$delete_function_name = "delete_{$type}_meta";
+
+		foreach ( $meta_fields as $key => $value ) {
+			if ( $value !== YMFSEO_Meta_Fields::$default_values[ $key ] ) {
+				$meta_value[ $key ] = $value;
 			}
+		}
 
-			// Sends IndexNow.
-			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
-		}, 10, 2 );
+		if ( $meta_value ) {
+			$update_function_name( $id, 'ymfseo_fields', $meta_value );
+		} else {
+			$delete_function_name( $id, 'ymfseo_fields' );
+		}
 	}
 
 	/**
@@ -275,6 +277,7 @@ class YMFSEO_Meta_Fields {
 				'WP_Post'      => $queried_object->ID,
 				'WP_Post_Type' => 0,
 				'WP_Term'      => $queried_object->term_id,
+				'WP_User'      => $queried_object->ID,
 			};
 
 			// Checks for cache.
@@ -364,7 +367,13 @@ class YMFSEO_Meta_Fields {
 
 				// Users.
 				case 'WP_User':
-					// Silence is golden.
+					$user_meta = get_user_meta( $queried_object->ID );
+
+					$meta_fields[ 'title' ]       = $queried_object->data->display_name;
+					$meta_fields[ 'description' ] = $user_meta[ 'description' ][ 0 ];
+					$meta_fields[ 'image_uri' ]   = get_avatar_url( $queried_object->ID, [
+						'size' => 512,
+					]);
 
 					break;
 			}
@@ -444,10 +453,10 @@ class YMFSEO_Meta_Fields {
 	/**
 	 * Sets default preview image URI into 'image_uri' meta array property.
 	 * 
-	 * @since 2.1.0 Is private.
-	 * 
 	 * Checks is 'image_uri' property empty. If true – tries to get default
 	 * preview image from settings.
+	 * 
+	 * @since 2.1.0 Is private.
 	 * 
 	 * @param array $meta_fields Meta fields.
 	 */
@@ -494,6 +503,8 @@ class YMFSEO_Meta_Fields {
 	
 	/**
 	 * Prepares data for Schema.org JSON-LD printing.
+	 * 
+	 * @global $wp
 	 * 
 	 * @param YMFSEO_Meta_Fields $meta_fields Meta fields instance.
 	 * 
@@ -595,12 +606,7 @@ class YMFSEO_Meta_Fields {
 		// Sets representative image.
 		$rep_image_id = YMFSEO_Settings::get_option( 'rep_image_id' );
 		if ( $rep_image_id ) {
-			$image_param_name = match ( $rep_type ) {
-				'org'    => 'logo',
-				'person' => 'image',
-			};
-
-			$rep_data[ $image_param_name ] = wp_get_attachment_url( $rep_image_id );
+			$rep_data[ 'image' ] = wp_get_attachment_url( $rep_image_id );
 		}
 
 		// Pre-builds output object.
