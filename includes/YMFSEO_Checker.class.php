@@ -50,6 +50,24 @@ class YMFSEO_Checker {
 	}
 
 	/**
+	 * Retrives `true` if user can view site health.
+	 * 
+	 * @since 3.1.1
+	 */
+	public static function is_current_user_can_view_site_health () : bool {
+		return current_user_can( 'view_site_health_checks' );
+	}
+
+	/**
+	 * Retrives `true` if user can manage options
+	 * 
+	 * @since 3.1.1
+	 */
+	public static function is_current_user_can_manage_options () : bool {
+		return current_user_can( 'manage_options' );
+	}
+
+	/**
 	 * Retrives `true` if post type is public.
 	 *
 	 * @param int $post_id Post ID.

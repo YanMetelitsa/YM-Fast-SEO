@@ -54,7 +54,7 @@ class YMFSEO {
 			'page_title'    => __( 'SEO Settings', 'ym-fast-seo' ),
 			'menu_label'    => __( 'SEO', 'ym-fast-seo' ),
 			'menu_position' => 3,
-			'capability'    => 'ymfseo_edit_settings',
+			'capability'    => 'manage_options',
 			'page_slug'     => 'ymfseo-settings',
 		];
 
@@ -96,15 +96,19 @@ class YMFSEO {
 
 		// Adds links to plugin's card on Plugins page.
 		add_filter( 'plugin_action_links_' . YMFSEO_BASENAME, function ( $links ) {
-			array_unshift( $links, sprintf( '<a href="%s">%s</a>',
-				admin_url( 'site-health.php?tab=ymfseo-site-health-tab' ),
-				__( 'SEO Health', 'ym-fast-seo' ),
-			));
+			if ( YMFSEO_Checker::is_current_user_can_view_site_health() ) {
+				array_unshift( $links, sprintf( '<a href="%s">%s</a>',
+					admin_url( 'site-health.php?tab=ymfseo-site-health-tab' ),
+					__( 'SEO Health', 'ym-fast-seo' ),
+				));
+			}
 
-			array_unshift( $links, sprintf( '<a href="%s">%s</a>',
-				menu_page_url( 'ymfseo-settings', false ),
-				__( 'SEO Settings', 'ym-fast-seo' ),
-			));
+			if ( YMFSEO_Checker::is_current_user_can_manage_options() ) {
+				array_unshift( $links, sprintf( '<a href="%s">%s</a>',
+					menu_page_url( 'ymfseo-settings', false ),
+					__( 'Settings', 'ym-fast-seo' ),
+				));
+			}
 
 			return $links;
 		});

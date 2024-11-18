@@ -432,7 +432,7 @@ class YMFSEO_Settings {
 				[
 					'rows'        => 8,
 					'codemirror'  => true,
-					'description' => __( 'This is where you can insert the code for analytics counters and other scripts. The code will be printed inside the <code>&lt;head&gt;</code> tag.', 'ym-fast-seo' ),
+					'description' => __( 'Here you can insert analytics counters code and other scripts. The code will be printed inside the <code>&lt;head&gt;</code> tag.', 'ym-fast-seo' ),
 				],
 			);
 			YMFSEO_Settings::register_option(

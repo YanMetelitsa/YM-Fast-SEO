@@ -36,7 +36,7 @@ class YMFSEO_IndexNow {
 		});
 
 		// Updates rewrite rules after plugin deactivationn.
-		register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+		register_deactivation_hook( YMFSEO_BASENAME, 'flush_rewrite_rules' );
 
 
 		// Sends IndexNow after any post change.
