@@ -23,6 +23,10 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 # Changelog
 
+## 3.1.1
+* Activation/deactivation hook fix
+* Capability fixes
+
 ## 3.1.0
 * New setting: Hide Users Sitemap
 * New setting: Head Scripts
