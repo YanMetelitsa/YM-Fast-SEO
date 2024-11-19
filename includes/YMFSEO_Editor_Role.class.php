@@ -38,10 +38,14 @@ class YMFSEO_Editor_Role {
 			]);
 
 			$admin_role = get_role( 'administrator' );
-			$admin_role->add_cap( 'ymfseo_edit_metas' );
+			if ( $admin_role ) {
+				$admin_role->add_cap( 'ymfseo_edit_metas' );
+			}
 
 			$editor_role = get_role( 'editor' );
-			$editor_role->add_cap( 'ymfseo_edit_metas' );
+			if ( $editor_role ) {
+				$editor_role->add_cap( 'ymfseo_edit_metas' );
+			}
 		});
 
 		// Removes SEO Editor role and caps.
@@ -49,10 +53,14 @@ class YMFSEO_Editor_Role {
 			remove_role( 'ymfseo_seo_editor' );
 
 			$admin_role = get_role( 'administrator' );
-			$admin_role->remove_cap( 'ymfseo_edit_metas' );
+			if ( $admin_role ) {
+				$admin_role->remove_cap( 'ymfseo_edit_metas' );
+			}
 
 			$editor_role = get_role( 'editor' );
-			$editor_role->remove_cap( 'ymfseo_edit_metas' );
+			if ( $editor_role ) {
+				$editor_role->remove_cap( 'ymfseo_edit_metas' );
+			}
 		});
 	}
 }

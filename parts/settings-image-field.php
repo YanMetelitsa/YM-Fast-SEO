@@ -67,7 +67,6 @@
 
 			// Uploads.
 			uploadButton.add( changeButton ).click( function ( e ) {
-				console.log(1);
 				e.preventDefault();
 
 				if ( mediaUploader ) {

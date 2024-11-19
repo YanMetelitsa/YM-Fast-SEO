@@ -12,7 +12,8 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * Quick Pages and Posts SEO Analysis
 * Services Integration
 * Automatic IndexNow Sending
-* Editing the robots.txt file
+* Setting up Analytics via Settings
+* Editing the `robots.txt` File
 * Useful Tools
 
 # Installation
@@ -22,6 +23,9 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 1. **Install and Activate** YM Fast SEO from the Plugins page
 
 # Changelog
+
+## 3.1.2
+* Fix: Fatal error on plugin activation due to `add_cap()` function
 
 ## 3.1.1
 * Activation/deactivation hook fix
