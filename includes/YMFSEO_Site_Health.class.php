@@ -188,7 +188,13 @@ class YMFSEO_Site_Health {
 			$title       = __( 'IndexNow is active', 'ym-fast-seo' );
 			$description = [
 				__( 'After creating, modifying, or deleting posts and taxonomy terms, YM Fast SEO sends a notification request to search engines to inform them of changes on your site.', 'ym-fast-seo' ),
-				__( 'The last <strong>10</strong> requests are shown below. Status <strong>200</strong> indicates that the search engines have successfully processed the request. Status <strong>202</strong> is allowed for the first request and shows that the request was successfully sent, but search engines are still verifying the API key.', 'ym-fast-seo' ),
+				sprintf(
+					/* translators: %1$s: 10, %2$s: 200, %3$s: 202 */
+					__( 'The last %1$s requests are shown below. Status %2$s indicates that the search engines have successfully processed the request. Status %3$s is allowed for the first request and shows that the request was successfully sent, but search engines are still verifying the API key.', 'ym-fast-seo' ),
+					'<strong>10</strong>',
+					'<strong>200</strong>',
+					'<strong>202</strong>',
+				),
 			];
 			$content = [
 				'links' => [

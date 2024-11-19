@@ -39,13 +39,25 @@
 	if ( YMFSEO_Checker::is_subdir_multisite() ) {
 		printf(
 			'<p class="description">%s</p>',
-			wp_kses_post( __( 'A network of sites using the subdirectory structure shares a single <code>robots.txt</code> file.', 'ym-fast-seo' ) ),
+			wp_kses_post(
+				sprintf(
+					/* translators: %s: robots.txt */
+					__( 'A network of sites using the subdirectory structure shares a single %s file.', 'ym-fast-seo' ),
+					'<code>robots.txt</code>',
+				)
+			),
 		);
 		
 		if ( ! is_main_site() ) {
 			printf(
 				'<p class="description">%s</p>',
-				wp_kses_post( __( 'You can edit the <code>robots.txt</code> file only on the main site.', 'ym-fast-seo' ) ),
+				wp_kses_post(
+					sprintf(
+						/* translators: %s: robots.txt */
+						__( 'You can edit the %s file only on the main site.', 'ym-fast-seo' ),
+						'<code>robots.txt</code>',
+					)
+				),
 			);
 		}
 	}
