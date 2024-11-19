@@ -12,7 +12,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 * Quick Pages and Posts SEO Analysis
 * Services Integration
 * Automatic IndexNow Sending
-* Setting up Analytics via Settings
+* Setting Up Analytics via Settings
 * Editing the `robots.txt` File
 * Useful Tools
 
