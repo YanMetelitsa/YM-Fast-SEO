@@ -39,21 +39,10 @@ class YMFSEO_IndexNow {
 		register_deactivation_hook( YMFSEO_BASENAME, 'flush_rewrite_rules' );
 
 
-		// Sends IndexNow after any post change.
+		// Sends IndexNow after any post save.
 		add_action( 'save_post', function ( $post_id, $post ) {
 			// Is post type public.
 			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
-				return;
-			}
-
-			// Checks nonce.
-			if ( ! isset( $_POST[ 'ymfseo_post_nonce' ] ) ) {
-				return;
-			}
-
-			$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_post_nonce' ] ) );
-
-			if ( ! wp_verify_nonce( $nonce, YMFSEO_BASENAME ) ) {
 				return;
 			}
 
@@ -67,18 +56,13 @@ class YMFSEO_IndexNow {
 				return;
 			}
 
-			// Is post status 'publish'.
+			// Is new post status 'publish'.
 			if ( 'publish' !== $post->post_status ) {
 				return;
 			}
-			
-			// Get permalink.
-			$permalink = get_permalink( $post_id );
-
-			$permalink = preg_replace( '/__trashed$/', '', $permalink );
 
 			// Sends IndexNow.
-			YMFSEO_IndexNow::send( $permalink );
+			YMFSEO_IndexNow::send( get_permalink( $post_id ) );
 		}, 20, 2 );
 
 
@@ -156,12 +140,37 @@ class YMFSEO_IndexNow {
 	/**
 	 * Sends IndexNow request.
 	 * 
+	 * @since 3.1.3 Checks last request time for the permalink.
+	 * 
 	 * @param string $permalink Permalink to send.
 	 * 
 	 * @return int Response status code.
 	 */
 	public static function send ( string $permalink ) : int {
-		// Get API key.
+		// Checks is IndexNow was sent recently
+		$indexNow_logs = YMFSEO_Logs::read( 'IndexNow' );
+		$current_time  = YMFSEO_Logs::parse_datetime( YMFSEO_Logs::get_current_datetime() );
+
+		foreach ( $indexNow_logs as $entry ) {
+			// Checks is data exists.
+			if ( ! isset( $entry[ 'URL' ] ) || ! isset( $entry[ 'date' ] ) ) {
+				break;
+			}
+
+			$send_time = YMFSEO_Logs::parse_datetime( $entry[ 'date' ] );
+
+			// Looks for the same URL.
+			if ( $permalink == $entry[ 'URL' ] ) {
+				$difference = $current_time->getTimestamp() - $send_time->getTimestamp();
+
+				// Exits if difference less than 10 minutes.
+				if ( $difference < 10 * 60 ) {
+					return 0;
+				}
+			}
+		}
+
+		// Gets API key.
 		$api_key = YMFSEO_IndexNow::get_api_key();
 
 		// Send request.
@@ -170,10 +179,10 @@ class YMFSEO_IndexNow {
 			'key' => $api_key,
 		]));
 
-		// Parse response status code.
+		// Parses response status code.
 		$response_code = intval( $response[ 'response' ][ 'code' ] );
 
-		// Write log.
+		// Writes logs entry.
 		YMFSEO_Logs::write( 'IndexNow', [
 			'URL'    => $permalink,
 			'status' => $response_code,

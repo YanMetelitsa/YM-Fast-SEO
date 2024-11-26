@@ -90,7 +90,7 @@ class YMFSEO {
 		// Defines replace tags.
 		YMFSEO_Meta_Fields::$replace_tags = [
 			'%site_name%' => get_bloginfo( 'name' ),
-			'%sep%'       => YMFSEO_Settings::get_option( 'title_separator' ),
+			'%sep%'       => YMFSEO::get_separator(),
 		];
 
 
@@ -160,7 +160,7 @@ class YMFSEO {
 
 		// Modifies title tag separator.
 		add_filter( 'document_title_separator', function ( $sep ) {
-			return YMFSEO_Settings::get_option( 'title_separator' );
+			return YMFSEO::get_separator();
 		});
 
 		// Modifies robots meta tag.
@@ -277,5 +277,19 @@ class YMFSEO {
 		unset( $public_post_types[ 'post_format' ] );
 
 		return $public_post_types;
+	}
+
+	/**
+	 * Retrives filtered document title separator.
+	 * 
+	 * @since 3.1.3
+	 * 
+	 * @return string
+	 */
+	public static function get_separator () : string {
+		$sep = YMFSEO_Settings::get_option( 'title_separator' );
+		$sep = apply_filters( 'ymfseo_title_separator', $sep );
+
+		return $sep;
 	}
 }

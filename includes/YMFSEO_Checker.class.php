@@ -44,6 +44,8 @@ class YMFSEO_Checker {
 
 	/**
 	 * Retrives `true` if user can edit metas.
+	 * 
+	 * @return bool
 	 */
 	public static function is_current_user_can_edit_metas () : bool {
 		return current_user_can( 'ymfseo_edit_metas' );
@@ -53,6 +55,8 @@ class YMFSEO_Checker {
 	 * Retrives `true` if user can view site health.
 	 * 
 	 * @since 3.1.1
+	 * 
+	 * @return bool
 	 */
 	public static function is_current_user_can_view_site_health () : bool {
 		return current_user_can( 'view_site_health_checks' );
@@ -62,6 +66,8 @@ class YMFSEO_Checker {
 	 * Retrives `true` if user can manage options
 	 * 
 	 * @since 3.1.1
+	 * 
+	 * @return bool
 	 */
 	public static function is_current_user_can_manage_options () : bool {
 		return current_user_can( 'manage_options' );
@@ -71,6 +77,8 @@ class YMFSEO_Checker {
 	 * Retrives `true` if post type is public.
 	 *
 	 * @param int $post_id Post ID.
+	 * 
+	 * @return bool
 	 */
 	public static function is_post_type_public ( int $post_id ) : bool {
 		return in_array( get_post_type( $post_id ), YMFSEO::get_public_post_types() );
@@ -80,6 +88,8 @@ class YMFSEO_Checker {
 	 * Retrives `true` if taxonomy public.
 	 *
 	 * @param string $taxonomy Taxonomy slug.
+	 * 
+	 * @return bool
 	 */
 	public static function is_taxonomy_public ( string $taxonomy ) : bool {
 		return in_array( $taxonomy, YMFSEO::get_public_taxonomies() );

@@ -1,7 +1,7 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimisation
-Stable tag: 3.1.2
+Stable tag: 3.1.3
 Requires PHP: 7.4
 Requires at least: 6.0
 Tested up to: 6.7
@@ -35,6 +35,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 1. **Install and Activate** YM Fast SEO from the Plugins page
 
 == Changelog ==
+
+= 3.1.3 =
+* Added `ymfseo_title_separator` filter
+* IndexNow does not sent if this URL was already sent less than 10 minutes ago
+* Taxonomy pages now have the `CollectionPage` type
 
 = 3.1.2 =
 * Fix: Fatal error on plugin activation due to `add_cap()` function

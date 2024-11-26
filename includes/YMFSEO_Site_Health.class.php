@@ -215,7 +215,7 @@ class YMFSEO_Site_Health {
 			if ( $logs ) {
 				// Set table.
 				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
-					$datetime = DateTime::createFromFormat( 'Y-m-d\TH:i:sP', $item[ 'date' ] );
+					$datetime = YMFSEO_Logs::parse_datetime( $item[ 'date' ] );
 					$format   = get_option( 'date_format' ) . ', H:i:s';
 
 					$item[ 'date' ] = $datetime->format( $format );
@@ -245,7 +245,7 @@ class YMFSEO_Site_Health {
 				}
 			}
 
-			// Check API key.
+			// Check.
 			if ( ! YMFSEO_Settings::get_option( 'indexnow_key' ) ) {
 				$is_passed = 'no';
 				$title     = __( 'IndexNow API key is missing', 'ym-fast-seo' );

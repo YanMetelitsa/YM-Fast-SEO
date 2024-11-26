@@ -361,6 +361,10 @@ class YMFSEO_Meta_Fields {
 								'%term_desc%'  => $term_description,
 							],
 						);
+
+						if ( 'default' === $meta_fields[ 'page_type' ] ) {
+							$meta_fields[ 'page_type' ] = 'CollectionPage';
+						}
 					}
 
 					break;
@@ -557,7 +561,7 @@ class YMFSEO_Meta_Fields {
 			$schema_org_blank[ 'WebPage' ][ 'dateModified' ]  = get_the_modified_date( 'c', $queried_object );
 		}
 
-		// Adds representative.
+		// Adds representative's details.
 		$rep_data = [];
 
 		$rep_type = YMFSEO_Settings::get_option( 'rep_type' );
@@ -603,7 +607,7 @@ class YMFSEO_Meta_Fields {
 			}
 		}
 
-		// Sets representative image.
+		// Sets representative's image.
 		$rep_image_id = YMFSEO_Settings::get_option( 'rep_image_id' );
 		if ( $rep_image_id ) {
 			$rep_data[ 'image' ] = wp_get_attachment_url( $rep_image_id );
@@ -630,6 +634,7 @@ class YMFSEO_Meta_Fields {
 		// Applies user filters.
 		$schema_org = apply_filters( 'ymfseo_schema_org', $schema_org_blank, $queried_object );
 		
+		// Final build.
 		$schema_org = [
 			'@context' => 'https://schema.org',
 			'@graph'   => array_values( $schema_org_blank ),

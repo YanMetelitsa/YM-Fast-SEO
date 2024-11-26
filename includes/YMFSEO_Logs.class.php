@@ -37,6 +37,33 @@ class YMFSEO_Logs {
 	}
 
 	/**
+	 * Retrives current UTC time string.
+	 * 
+	 * @since 3.1.3
+	 * 
+	 * @return string
+	 */
+	public static function get_current_datetime () : string {
+		return gmdate( 'c' );
+	}
+
+	/**
+	 * Retrives parsed DateTime object from string.
+	 * 
+	 * @since 3.1.3
+	 * 
+	 * @param string $date Time string in ISO 8601 format.
+	 * 
+	 * @return DateTime
+	 */
+	public static function parse_datetime ( string $date ) : DateTime {
+		$datetime = DateTime::createFromFormat( 'Y-m-d\TH:i:sP', $date );
+		$datetime->setTimezone( wp_timezone() );
+
+		return $datetime;
+	}
+
+	/**
 	 * Writes entry into log file.
 	 * 
 	 * @param string $file  File name.
@@ -66,11 +93,11 @@ class YMFSEO_Logs {
 		// Write entry.
 		array_unshift( $logs, [
 			...$entry,
-			'date' => gmdate( 'c' ),
+			'date' => YMFSEO_Logs::get_current_datetime(),
 		]);
 
 		// Slice only first 100 items.
-		$logs = array_slice( $logs, 0, 100 );
+		$logs = array_slice( $logs, 0, 20 );
 
 		// Write to file.
 		return boolval(
@@ -87,9 +114,9 @@ class YMFSEO_Logs {
 	 * @param string $file  File name.
 	 * @param array  $slice How much entries returns.
 	 * 
-	 * @return bool Dara array or `false` on error.
+	 * @return bool|array Dara array or `false` on error.
 	 */
-	public static function read ( string $file, int $slice = 100 ) : bool|array {
+	public static function read ( string $file, int $slice = 20 ) : bool|array {
 		// Is file name allowed.
 		if ( ! in_array( $file, YMFSEO_Logs::$allowed_files ) ) {
 			return false;

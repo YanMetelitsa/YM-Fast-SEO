@@ -24,6 +24,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 # Changelog
 
+## 3.1.3
+* Added `ymfseo_title_separator` filter
+* IndexNow does not sent if this URL was already sent less than 10 minutes ago
+* Taxonomy pages now have the `CollectionPage` type
+
 ## 3.1.2
 * Fix: Fatal error on plugin activation due to `add_cap()` function
 
