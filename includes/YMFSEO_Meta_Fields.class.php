@@ -637,7 +637,7 @@ class YMFSEO_Meta_Fields {
 		// Final build.
 		$schema_org = [
 			'@context' => 'https://schema.org',
-			'@graph'   => array_values( $schema_org_blank ),
+			'@graph'   => array_values( $schema_org ),
 		];
 
 		return $schema_org;
