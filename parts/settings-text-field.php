@@ -14,5 +14,5 @@ printf( '<input type="%1$s" name="%2$s" id="%2$s" autocomplete="%3$s" class="reg
 );
 
 if ( isset( $args[ 'description' ] ) ) {
-	printf( '<p class="description">%s</p>', esc_html( $args[ 'description' ] ) );
+	printf( '<p class="description">%s</p>', wp_kses_post( $args[ 'description' ] ) );
 }

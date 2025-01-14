@@ -2,7 +2,7 @@
 
 YM Fast SEO enhances your website with powerful, intuitive, and easy-to-use SEO tools. In today’s digital world, SEO is essential for driving organic traffic and improving your website’s visibility on search engines.
 
-With YM Fast SEO, you can easily manage important aspects of search optimisation without unnecessary complexity. Unlike bulky alternatives, this lightweight plugin is efficient, flexible, and easy to extend, allowing you to keep full control over your website’s performance.
+With YM Fast SEO, you can easily manage important aspects of search optimization without unnecessary complexity. Unlike bulky alternatives, this lightweight plugin is efficient, flexible, and easy to extend, allowing you to keep full control over your website’s performance.
 
 ## Features
 
@@ -24,90 +24,89 @@ With YM Fast SEO, you can easily manage important aspects of search optimisation
 
 # Changelog
 
+## 3.2.0
+* New: Settings page UI
+* New: Admin Bar menu
+* New: `IndexNow Sending` option
+* Fix: WordPress 6.7.0 `get_plugin_data()`
+* Fix: IndexNow sending logic
+
 ## 3.1.3
-* Added `ymfseo_title_separator` filter
-* IndexNow does not sent if this URL was already sent less than 10 minutes ago
-* Taxonomy pages now have the `CollectionPage` type
+* New: [`ymfseo_title_separator`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation) filter
+* Fix: Terms pages now have the `CollectionPage` type as default
+* Fix: Limit resending URL to IndexNow within 10 minutes
 
 ## 3.1.2
 * Fix: Fatal error on plugin activation due to `add_cap()` function
 
 ## 3.1.1
-* Activation/deactivation hook fix
-* Capability fixes
+* Fix: Activation/Deactivation hook
+* Fix: Roles capabilities
 
 ## 3.1.0
-* New setting: Hide Users Sitemap
-* New setting: Head Scripts
-* Added `<link rel="next">` tag for pagination pages
-* User page meta tags fix
-* Multisite robots.txt edit fix
-* Representative image fix
-* IndexNow fixes
-* Site SEO Health empty IndexNow table fix
-* Settings visual fix
+* New: `Head Scripts` editor
+* New: `Hide Users Sitemap` option
+* New: `<link rel="next">` tag for pagination pages
+* Fix: User page meta tags
+* Fix: Multisite `robots.txt` edit
+* Fix: Representative image
+* Fix: IndexNow
+* Fix: Empty IndexNow table on the Site SEO Health page
+* Fix: Settings page design
 
 ## 3.0.0
-* Implemented automatic IndexNow sending system
-* New Site SEO Health tool
-* Implemented logs system
-* New representative organization types
-* Other small improvements and fixes
+* New: IndexNow system
+* New: Site SEO Health page
+* New: Logs system
+* New: Representative organization types
 
 ## 2.2.1
-* Version of the current theme is now appends to the preview image URL
-* New setting: Clear Excerpts – removes unnecessary excerpt parts
-* Additional "Save" button on the settings page at the top
+* New: `Clear Excerpts` option
+* New: Additional `Save` settings page button
+* New: Version of the current theme now appends to the preview image URL
 
 ## 2.2.0
-* Taxonomy meta fields security improvement
-* SEO length check for taxonomy meta fields
-* New organization type: Online Store
-* New representative fields: Phone, City, Address, Region, Postal Code, Image
-* Other small improvements and fixes
+* New: Length check for taxonomy meta fields
+* New: `Online Store` organization type
+* New: Representative `Phone`, `City`, `Address`, `Region`, `Postal Code`, `Image` options
+* Fix: Taxonomy meta fields security
 
 ## 2.1.0
-* Terms Title & Description meta fields
-* Default Page Type for post types
-* SEO Editor role and capabilities
-* Bing Webmaster Tools integration
-* JSON-LD escaping fix
-* Other small improvements and fixes
+* New: Taxonomy meta fields
+* New: SEO Editor role and capabilities
+* New: Bing Webmaster Tools integration
+* Fix: JSON-LD escaping
 
 ## 2.0.1
-* Auto adding of all network sitemaps to robots.txt
-* Multisite robots.txt edit fix
-* Default titles and descriptions fix
-* Counting symbols in UTF-8 strings during SEO checking fix
+* Fix: Multisite sitemaps in `robots.txt`
+* Fix: Multisite `robots.txt` edit
+* Fix: UTF-8 symbols counting in Basic SEO checks
 
 ## 2.0.0
-* Improved core
-* Performance optimisation
-* Database space optimisation
-* New settings design
-* Default meta tags values for post types and taxonomies
-* Possibility to add a site representative
+* New: Settings page design
+* New: `Post Types` and `Taxonomies` settings blocks
+* New: `Representative` settings block
+* Fix: Performance optimization
+* Fix: Database space optimization
 
 ## 1.2.1
-* Schema.org UTF-8 fix
-* Undefined `$preview_image_uri` fix
-* Translation fixes
+* Fix: Schema.org encoding
+* Fix: Undefined `$preview_image_uri`
+* Fix: Translations
 
 ## 1.2.0
-* New Schema.org "Page Type" post field
-* Possibility to disallow an individual page/post indexing
-* New Settings: Clear Titles, Title Separator, Default Preview Image
-* Services integration
-* Meta descriptions of the taxonomy pages are automatically load from the term descriptions
-* Cache fix
-* Edit robots.txt fix
+* New: `Page Type` meta field
+* New: `Clear Titles`, `Title Separator`, `Preview Image` settings options
+* New: Ability to disallow indexing for individual pages/posts
+* New: Webmaster services integrations
+* Fix: Meta fields caching
+* Fix: `robots.txt` editor
 
 ## 1.1.0
-* Meta fields length indicator
-* Basic SEO check of posts and pages
-* Ability to edit robots.txt through settings
-* Meta "robots" fix
-* Other small improvements and fixes
+* New: `robots.txt` editor
+* New: Basic SEO checks
+* New: Meta fields length indicator
+* Fix: `robots` meta tag
 
 ## 1.0.0
 * Initial release

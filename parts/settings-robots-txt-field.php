@@ -17,7 +17,11 @@
 	$response = wp_remote_get( $robots_txt_path );
 
 	if ( is_wp_error ( $response ) || $response[ 'response' ][ 'code' ] != 200 ) {
-		$robots_txt_placeholder = __( 'Error loading the robots.txt file', 'ym-fast-seo' );
+		$robots_txt_placeholder = sprintf(
+			/* translators: %s: robots.txt */
+			__( 'Error loading the %s file', 'ym-fast-seo' ),
+			'robots.txt',
+		);
 	} else {
 		$robots_txt_content = wp_remote_retrieve_body( $response );
 	}

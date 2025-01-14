@@ -3,15 +3,15 @@
 // Exits if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// Gets meta data.
 $queried_object = get_queried_object();
 
-// Gets meta data.
-$meta_fields      = new YMFSEO_Meta_Fields();
-$document_title   = wp_get_document_title();
-$site_name        = get_bloginfo( 'name' );
-$site_locale      = get_locale();
-$canonical_url    = wp_get_canonical_url();
-$is_front_page    = is_front_page();
+$meta_fields    = new YMFSEO_Meta_Fields();
+$document_title = wp_get_document_title();
+$site_name      = get_bloginfo( 'name' );
+$site_locale    = get_locale();
+$canonical_url  = wp_get_canonical_url();
+$is_front_page  = is_front_page();
 
 $google_search_console_key = YMFSEO_Settings::get_option( 'google_search_console_key' );
 $yandex_webmaster_key      = YMFSEO_Settings::get_option( 'yandex_webmaster_key' );
@@ -106,7 +106,7 @@ if ( $meta_fields->image_uri ) {
 }
 
 // Schema.org JSON-LD.
-$schema_org = YMFSEO_Meta_Fields::build_schema_org( $meta_fields, $queried_object );
+$schema_org = YMFSEO_Schema::build( $meta_fields, $queried_object );
 printf( '<script type="application/ld+json">%s</script>',
 	wp_json_encode( $schema_org, JSON_UNESCAPED_UNICODE ),
 );

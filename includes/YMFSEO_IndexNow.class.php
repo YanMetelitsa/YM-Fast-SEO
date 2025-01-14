@@ -10,6 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  */
 class YMFSEO_IndexNow {
 	/**
+	 * How many minutes should elapse between sending the same URLs.
+	 * 
+	 * @var int
+	 */
+	public static $delay = 10;
+	/**
 	 * Inits IndexNow features.
 	 */
 	public static function init () : void {
@@ -40,7 +46,7 @@ class YMFSEO_IndexNow {
 
 
 		// Sends IndexNow after any post save.
-		add_action( 'save_post', function ( $post_id, $post ) {
+		add_action( 'save_post', function ( int $post_id, WP_Post $post ) {
 			// Is post type public.
 			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
 				return;
@@ -67,7 +73,7 @@ class YMFSEO_IndexNow {
 
 
 		// Sends IndexNow after creating term.
-		add_action( 'create_term', function ( $term_id, $tt_id, $taxonomy ) {
+		add_action( 'create_term', function ( int $term_id, int $tt_id, string $taxonomy ) {
 			// Is taxonomy public.
 			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
 				return;
@@ -78,7 +84,7 @@ class YMFSEO_IndexNow {
 		}, 10, 3 );
 
 		// Sends IndexNow after saving term.
-		add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
+		add_action( 'saved_term', function ( int $term_id, int $tt_id, string $taxonomy ) {
 			// Is taxonomy public.
 			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
 				return;
@@ -89,7 +95,7 @@ class YMFSEO_IndexNow {
 		}, 10, 3 );
 
 		// Sends IndexNow before deleting term.
-		add_action( 'pre_delete_term', function ( $term_id, $taxonomy ) {
+		add_action( 'pre_delete_term', function ( int $term_id, string $taxonomy ) {
 			// Checks is taxonomy public.
 			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
 				return;
@@ -147,6 +153,14 @@ class YMFSEO_IndexNow {
 	 * @return int Response status code.
 	 */
 	public static function send ( string $permalink ) : int {
+		if ( ! YMFSEO_Checker::is_site_public() ) {
+			return 0;
+		}
+
+		if ( ! YMFSEO_Settings::get_option( 'indexnow_enabled' ) ) {
+			return 0;
+		}
+
 		// Checks is IndexNow was sent recently
 		$indexNow_logs = YMFSEO_Logs::read( 'IndexNow' );
 		$current_time  = YMFSEO_Logs::parse_datetime( YMFSEO_Logs::get_current_datetime() );
@@ -164,7 +178,7 @@ class YMFSEO_IndexNow {
 				$difference = $current_time->getTimestamp() - $send_time->getTimestamp();
 
 				// Exits if difference less than 10 minutes.
-				if ( $difference < 10 * 60 ) {
+				if ( $difference < YMFSEO_IndexNow::$delay * 60 ) {
 					return 0;
 				}
 			}

@@ -64,14 +64,14 @@ class YMFSEO_Site_Health {
 	 */
 	public static function init () : void {
 		// Adds site health SEO navigation tab.
-		add_filter( 'site_health_navigation_tabs', function ( $tabs ) {
+		add_filter( 'site_health_navigation_tabs', function (array  $tabs ) : array {
 			$tabs[ 'ymfseo-site-health-tab' ] = __( 'SEO', 'ym-fast-seo' );
 		
 			return $tabs;
 		});
 
 		// Includes site health SEO navigation tab content.
-		add_action( 'site_health_tab_content', function ( $tab ) {
+		add_action( 'site_health_tab_content', function ( string $tab ) {
 			if ( 'ymfseo-site-health-tab' !== $tab ) {
 				return;
 			}
@@ -79,7 +79,7 @@ class YMFSEO_Site_Health {
 			include YMFSEO_ROOT_DIR . 'parts/site-health-seo-tab.php';
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-indexing-available', function () {
+		YMFSEO_Site_Health::register_test( 'is-indexing-available', function () : YMFSEO_Site_Health {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site is available for indexing', 'ym-fast-seo' );
@@ -99,7 +99,7 @@ class YMFSEO_Site_Health {
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-site-has-name', function () {
+		YMFSEO_Site_Health::register_test( 'is-site-has-name', function () : YMFSEO_Site_Health {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site title is specified', 'ym-fast-seo' );
@@ -119,7 +119,7 @@ class YMFSEO_Site_Health {
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-site-has-tagline', function () {
+		YMFSEO_Site_Health::register_test( 'is-site-has-tagline', function () : YMFSEO_Site_Health {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site tagline is specified', 'ym-fast-seo' );
@@ -139,7 +139,7 @@ class YMFSEO_Site_Health {
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-site-has-icon', function () {
+		YMFSEO_Site_Health::register_test( 'is-site-has-icon', function () : YMFSEO_Site_Health {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site icon is specified', 'ym-fast-seo' );
@@ -159,7 +159,7 @@ class YMFSEO_Site_Health {
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-site-has-preview-image', function () {
+		YMFSEO_Site_Health::register_test( 'is-site-has-preview-image', function () : YMFSEO_Site_Health {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site preview image is specified', 'ym-fast-seo' );
@@ -182,18 +182,23 @@ class YMFSEO_Site_Health {
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-index-now-works', function () {
+		YMFSEO_Site_Health::register_test( 'is-index-now-works', function () : YMFSEO_Site_Health {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'IndexNow is active', 'ym-fast-seo' );
 			$description = [
-				__( 'After creating, modifying, or deleting posts and taxonomy terms, YM Fast SEO sends a notification request to search engines to inform them of changes on your site.', 'ym-fast-seo' ),
+				__( 'YM Fast SEO sends a notification request to search engines after creating, modifying, or deleting posts and terms to inform them of changes on your site.', 'ym-fast-seo' ),
 				sprintf(
 					/* translators: %1$s: 10, %2$s: 200, %3$s: 202 */
 					__( 'The last %1$s requests are shown below. Status %2$s indicates that the search engines have successfully processed the request. Status %3$s is allowed for the first request and shows that the request was successfully sent, but search engines are still verifying the API key.', 'ym-fast-seo' ),
 					'<strong>10</strong>',
 					'<strong>200</strong>',
 					'<strong>202</strong>',
+				),
+				sprintf(
+					/* translators: %s: Number of minutes */
+					__( 'The request will not be sent if the URL was already sent less than %s minutes ago.', 'ym-fast-seo' ),
+					'<strong>' . YMFSEO_IndexNow::$delay . '</strong>',
 				),
 			];
 			$content = [

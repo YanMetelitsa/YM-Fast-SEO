@@ -69,6 +69,37 @@ class YMFSEO {
 	}
 
 	/**
+	 * Inits settings navigation bar.
+	 */
+	static initSettingsNav () {
+		const settingsSections = document.querySelectorAll( '.ymfseo-seettings-page form h2' );
+		const settingsNav      = document.querySelector( '.ymfseo-seettings-page__nav' );
+		const navItems         = settingsNav.querySelectorAll( '.ymfseo-seettings-page__nav-item' );
+
+		navItems.forEach( item => {
+			item.addEventListener( 'click', e => {
+				settingsSections.forEach( h2 => {
+					if ( item.innerText == h2.innerText ) {
+						h2.scrollIntoView();
+					}
+				});
+			});
+		});
+	}
+
+	/**
+	 * Inits settings additional `Save` buttons.
+	 */
+	static initSettingsSaveButtons () {
+		const mainButton  = document.querySelector( '.ymfseo-seettings-page .submit input[ type=submit ]' );
+		const saveButtons = document.querySelectorAll( '.ymfseo-submit .button' );
+	
+		saveButtons.forEach( btn => {
+			btn.addEventListener( 'click', e => btn.focus() );
+		});
+	}
+
+	/**
 	 * Inits meta box checkboxes.
 	 */
 	static initMetaBoxCheckboxes () {
@@ -85,6 +116,21 @@ class YMFSEO {
 			});
 		});
 	}
+
+	// static addRedirectRow ( button ) {
+	// 	const parent   = button.closest( '.ymfseo-settings-redirects-section' );
+	// 	const grid     = parent.querySelector( '.ymfseo-settings-redirects-section__grid' );
+	// 	const items    = parent.querySelectorAll( '.ymfseo-settings-redirects-section__item' );
+	// 	const lastItem = items[ items.length - 1 ];
+
+	// 	const counter = parseInt( lastItem.getAttribute( 'data-counter' ) ) + 1;
+
+	// 	console.log( lastItem, counter );
+	// }
+
+	// static removeRedirectRow ( button ) {
+	// 	alert( 2 );
+	// }
 }
 
 window.addEventListener( 'load', e => {

@@ -31,6 +31,15 @@ class YMFSEO_Checker {
 	];
 
 	/**
+	 * Retirves `true` if current site is not `noindex`.
+	 * 
+	 * @return bool
+	 */
+	public static function is_site_public () : bool {
+		return get_option( 'blog_public', true );
+	}
+
+	/**
 	 * Retrieves whether the site in a network with a subdirectory type.
 	 * 
 	 * @since 2.0.1
@@ -39,7 +48,7 @@ class YMFSEO_Checker {
 	 * @return bool Is multisite with subdirectory structure.
 	 */
 	public static function is_subdir_multisite () : bool {
-		return is_multisite() && defined( 'SUBDOMAIN_INSTALL' ) && ! SUBDOMAIN_INSTALL;
+		return is_multisite() && ! is_subdomain_install();
 	}
 
 	/**

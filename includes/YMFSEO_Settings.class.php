@@ -22,6 +22,13 @@ class YMFSEO_Settings {
 	 * @var array
 	 */
 	public static array $default_settings = [];
+	
+	/**
+	 * Contains info adbout registered sections.
+	 * 
+	 * @var array
+	 */
+	public static array $registered_sections = [];
 
 	/**
 	 * Inits YMFSEO Settings.
@@ -45,7 +52,12 @@ class YMFSEO_Settings {
 		add_action( 'admin_init', function () {
 			// General section.
 			/* translators: Settings section name */
-			YMFSEO_Settings::add_section( 'general', __( 'General', 'ym-fast-seo' ) );
+			YMFSEO_Settings::add_section( 'general', __( 'General', 'ym-fast-seo' ), 'dashicons-admin-settings', [
+				/* translators: %s: Link to general settings page */
+				'description' => sprintf( wp_kses_post( __( 'To update the site name and description, navigate to the <a href="%s">general settings page</a>.', 'ym-fast-seo' ) ),
+					esc_url( get_admin_url( null, 'options-general.php' ) ),
+				),
+			]);
 			YMFSEO_Settings::register_option(
 				'hide_title_parts',
 				/* translators: Verb */
@@ -101,7 +113,7 @@ class YMFSEO_Settings {
 
 			// Post Types section.
 			/* translators: Settings section name */
-			YMFSEO_Settings::add_section( 'post-types', __( 'Post Types', 'ym-fast-seo' ), [
+			YMFSEO_Settings::add_section( 'post-types', __( 'Post Types', 'ym-fast-seo' ), 'dashicons-admin-post', [
 				'description' => implode( "</p><p>",[
 					__( 'The default title and page type values for single post pages.', 'ym-fast-seo' ),
 					sprintf(
@@ -125,6 +137,7 @@ class YMFSEO_Settings {
 					'text',
 					[
 						'placeholder' => '%post_title%',
+						'menu_icon'   => $post_type->menu_icon,
 					],
 				);
 				YMFSEO_Settings::register_option(
@@ -142,7 +155,7 @@ class YMFSEO_Settings {
 
 			// Taxonomies section.
 			/* translators: Settings section name */
-			YMFSEO_Settings::add_section( 'taxonomies', __( 'Taxonomies', 'ym-fast-seo' ), [
+			YMFSEO_Settings::add_section( 'taxonomies', __( 'Taxonomies', 'ym-fast-seo' ), 'dashicons-tag', [
 				'description' => implode( "</p><p>",[
 					__( 'The default title and description values for taxonomy term pages.', 'ym-fast-seo' ),
 					sprintf(
@@ -182,7 +195,7 @@ class YMFSEO_Settings {
 
 			// Site Preview section.
 			/* translators: Settings section name */
-			YMFSEO_Settings::add_section( 'preview', __( 'Site Preview', 'ym-fast-seo' ) );
+			YMFSEO_Settings::add_section( 'preview', __( 'Site Preview', 'ym-fast-seo' ), 'dashicons-format-image' );
 			YMFSEO_Settings::register_option(
 				'preview_image_id',
 				/* translators: Noun */
@@ -217,7 +230,7 @@ class YMFSEO_Settings {
 
 			// Representative section.
 			/* translators: Settings section name */
-			YMFSEO_Settings::add_section( 'representative', __( 'Representative', 'ym-fast-seo' ), [
+			YMFSEO_Settings::add_section( 'representative', __( 'Representative', 'ym-fast-seo' ), 'dashicons-businessperson', [
 				'description' => __( 'If this website represents a company or person, you can include some details. This information will not be visible to visitors but will be available to search engines.', 'ym-fast-seo' ),
 			]);
 			YMFSEO_Settings::register_option(
@@ -366,7 +379,7 @@ class YMFSEO_Settings {
 
 			// Integrations section.
 			/* translators: Settings section name */
-			YMFSEO_Settings::add_section( 'integrations', __( 'Integrations', 'ym-fast-seo' ), [
+			YMFSEO_Settings::add_section( 'integrations', __( 'Integrations', 'ym-fast-seo' ), 'dashicons-rest-api', [
 				'description' => sprintf(
 					/* translators: %s: <meta> tag `content` attribute name */
 					__( 'Enter the verification codes for the required services. They are usually found in the %s attribute of the verification meta tag.', 'ym-fast-seo' ),
@@ -375,8 +388,10 @@ class YMFSEO_Settings {
 			]);
 			YMFSEO_Settings::register_option(
 				'google_search_console_key',
-				/* translators: Service name (probably doesn't translate) */
-				__( 'Google Search Console', 'ym-fast-seo' ),
+				sprintf( '<a href="https://search.google.com/search-console" target="_blank">%s</a>',
+					/* translators: Service name (probably doesn't translate) */
+					__( 'Google Search Console', 'ym-fast-seo' ),
+				),
 				'string',
 				'integrations',
 				'text',
@@ -386,8 +401,10 @@ class YMFSEO_Settings {
 			);
 			YMFSEO_Settings::register_option(
 				'bing_webmaster_tools_key',
-				/* translators: Service name (probably doesn't translate) */
-				__( 'Bing Webmaster Tools', 'ym-fast-seo' ),
+				sprintf( '<a href="https://www.bing.com/webmasters" target="_blank">%s</a>',
+					/* translators: Service name (probably doesn't translate) */
+					__( 'Bing Webmaster Tools', 'ym-fast-seo' ),
+				),
 				'string',
 				'integrations',
 				'text',
@@ -397,8 +414,10 @@ class YMFSEO_Settings {
 			);
 			YMFSEO_Settings::register_option(
 				'yandex_webmaster_key',
-				/* translators: Service name (probably doesn't translate) */
-				__( 'Yandex Webmaster', 'ym-fast-seo' ),
+				sprintf( '<a href="https://webmaster.yandex.ru/" target="_blank">%s</a>',
+					/* translators: Service name (probably doesn't translate) */
+					__( 'Yandex Webmaster', 'ym-fast-seo' ),
+				),
 				'string',
 				'integrations',
 				'text',
@@ -408,8 +427,8 @@ class YMFSEO_Settings {
 			);
 			YMFSEO_Settings::register_option(
 				'indexnow_key',
-				/* translators: Protocol name (probably doesn't translate) */
-				__( 'IndexNow', 'ym-fast-seo' ),
+				/* translators: IndexNow – Protocol name (probably doesn't translate) */
+				__( 'IndexNow Key', 'ym-fast-seo' ),
 				'string',
 				'integrations',
 				'text',
@@ -419,10 +438,36 @@ class YMFSEO_Settings {
 					'description' => __( 'IndexNow API key is generated automatically.', 'ym-fast-seo' ),
 				],
 			);
+			YMFSEO_Settings::register_option(
+				'indexnow_enabled',
+				/* translators: Option name */
+				__( 'IndexNow Sending', 'ym-fast-seo' ),
+				'boolean',
+				'integrations',
+				'checkbox',
+				[
+					'label'       => __( 'Enable IndexNow sending', 'ym-fast-seo' ),
+					'description' => __( sprintf(
+						'When the site is configured to <a href="%s">discourage indexing</a>, IndexNow will remain disabled irrespective of this option.',
+						get_admin_url( null, 'options-reading.php#blog_public' ),
+					), 'ym-fast-seo' ),
+				],
+			);
+
+			// Redirects section.
+			/* translators: Redirects section name */
+			// YMFSEO_Settings::add_section( 'redirects', __( 'Redirects', 'ym-fast-seo' ), 'dashicons-randomize' );
+			// YMFSEO_Settings::register_option(
+			// 	'redirects',
+			// 	__( 'Redirects', 'ym-fast-seo' ),
+			// 	'array',
+			// 	'redirects',
+			// 	'redirects',
+			// );
 
 			// Additional section.
 			/* translators: Settings section name */
-			YMFSEO_Settings::add_section( 'additional', __( 'Additional', 'ym-fast-seo' ) );
+			YMFSEO_Settings::add_section( 'additional', __( 'Additional', 'ym-fast-seo' ), 'dashicons-admin-generic' );
 			YMFSEO_Settings::register_option(
 				'head_scripts',
 				__( 'Head Scripts', 'ym-fast-seo' ),
@@ -451,7 +496,11 @@ class YMFSEO_Settings {
 			);
 			YMFSEO_Settings::register_option(
 				'robots_txt',
-				__( 'Edit robots.txt', 'ym-fast-seo' ),
+				sprintf(
+					/* translators: %s: robots.txt */
+					__( 'Edit %s', 'ym-fast-seo' ),
+					'robots.txt',
+				),
 				'string',
 				'additional',
 				'robots-txt',
@@ -462,21 +511,34 @@ class YMFSEO_Settings {
 	/**
 	 * Adds section to YM Fast SEO settings page.
 	 * 
+	 * @since 3.2.0 Has `$icon` argument.
+	 * 
 	 * @param string $slug  Section slug.
 	 * @param string $title Section title.
-	 * @param array  $args  {
+	 * @param string $icon  Full dashicon name e.g. `dashicons-admin-generic`.
+	 * @param array  $args {
 	 * 		Section arguments.
 	 * 
 	 * 		@type string $description Section description below title. 
 	 * }
 	 */
-	public static function add_section ( string $slug, string $title, array $args = [] ) : void {
-		add_settings_section(
-			"ymfseo_{$slug}_section",
-			$title,
+	public static function add_section ( string $slug, string $title, string $icon, array $args = [] ) : void {
+		YMFSEO_Settings::$registered_sections[] = [
+			'title' => $title,
+			'icon'  => $icon,
+		];
+
+		add_settings_section( "ymfseo_{$slug}_section",
+			"<span class=\"dashicons $icon\"></span> $title",
 			fn ( $args ) => include YMFSEO_ROOT_DIR . 'parts/settings-section.php',
 			YMFSEO_Settings::$params[ 'page_slug' ],
-			$args
+			[
+				'after_section' => sprintf( '<div class="ymfseo-submit"><button class="%s">%s</button></div>',
+					esc_attr( 'button button-primary' ),
+					esc_attr__( 'Save Changes', 'ym-fast-seo' ),
+				),
+				...$args,
+			]
 		);
 	}
 
@@ -486,9 +548,13 @@ class YMFSEO_Settings {
 	 * @param string $slug       Option name.
 	 * @param string $title      Option title.
 	 * @param string $type       Option type.
-	 * @param string $section    Option section slug without 'ymfseo_____section'.
-	 * @param string $field_part Option field part file name without 'parts/settings-___-field.php'.
-	 * @param array  $args       Option arguments.
+	 * @param string $section    Option section slug without 'ymfseo_$_section'.
+	 * @param string $field_part Option field part file name without 'parts/settings-$-field.php'.
+	 * @param array  $args {
+	 * 		Option arguments.
+	 * 
+	 * 		@type string $menu_icon Menu dashicon name.
+	 * }
 	 */
 	public static function register_option ( string $slug, string $title, string $type, string $section, string $field_part, array $args = [] ) : void {
 		// Checks is default value exist.
@@ -530,15 +596,47 @@ class YMFSEO_Settings {
 			};
 		}
 
+		if ( 'redirects' == $slug ) {
+			$sanitize_callback = function ( $value ) : array {
+				foreach ( $value as $i => $item ) {
+					foreach ( $item as $param ) {
+						if ( empty( $param ) && isset( $value[ $i ] ) ) {
+							unset( $value[ $i ] );
+						}
+					}
+				}
+
+				if ( ! is_array( $value ) ) {
+					return [];
+				}
+
+				return $value;
+			};
+		}
+
+		// Check menu icon.
+		$menu_icon = false;
+
+		if ( isset( $args[ 'menu_icon' ] ) ) {
+			$menu_icon = $args[ 'menu_icon' ];
+
+			if ( ! str_contains( $menu_icon, 'dashicons-' ) ) {
+				$menu_icon = false;
+			}
+		}
+
 		// Registers setting and adds field.
 		register_setting( YMFSEO_Settings::$params[ 'page_slug' ], "ymfseo_$slug", [
 			'type'              => $type,
 			'default'           => YMFSEO_Settings::$default_settings[ $slug ],
 			'sanitize_callback' => $sanitize_callback,
 		]);
-		add_settings_field(
-			"ymfseo_$slug",
-			$title,
+
+		add_settings_field( "ymfseo_$slug",
+			sprintf( '%s %s',
+				$menu_icon ? "<span class=\"dashicons {$menu_icon}\"></span>" : '',
+				$title,
+			),
 			fn ( $args ) => include YMFSEO_ROOT_DIR . "parts/settings-$field_part-field.php",
 			YMFSEO_Settings::$params[ 'page_slug' ],
 			"ymfseo_{$section}_section",

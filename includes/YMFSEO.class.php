@@ -82,6 +82,8 @@ class YMFSEO {
 			'bing_webmaster_tools_key'   => '',
 			'yandex_webmaster_key'       => '',
 			'indexnow_key'               => '',
+			'indexnow_enabled'           => true,
+			'redirects'                  => [],
 			'head_scripts'               => '',
 			'head_scripts_only_visitors' => true,
 			'robots_txt'                 => '',
@@ -95,7 +97,7 @@ class YMFSEO {
 
 
 		// Adds links to plugin's card on Plugins page.
-		add_filter( 'plugin_action_links_' . YMFSEO_BASENAME, function ( $links ) {
+		add_filter( 'plugin_action_links_' . YMFSEO_BASENAME, function ( array $links ) : array {
 			if ( YMFSEO_Checker::is_current_user_can_view_site_health() ) {
 				array_unshift( $links, sprintf( '<a href="%s">%s</a>',
 					admin_url( 'site-health.php?tab=ymfseo-site-health-tab' ),
@@ -121,27 +123,72 @@ class YMFSEO {
 		});
 
 		// Connects styles and scripts.
-		add_action( 'admin_enqueue_scripts', function ( $hook_suffix ) {
+		add_action( 'admin_enqueue_scripts', function ( string $hook_suffix ) {
+			global $_wp_admin_css_colors;
+
+			$color_scheme    = get_user_option( 'admin_color', get_current_user_id() );
+			$colors          = $_wp_admin_css_colors[ $color_scheme ]->colors;
+			$primary_color   = $colors[ 1 ];
+			$secondary_color = $colors[ 2 ];
+
+			// CSS
 			wp_enqueue_style( 'ymfseo-styles', YMFSEO_ROOT_URI . 'assets/css/ymfseo-style.css', [], YMFSEO_PLUGIN_DATA[ 'Version' ] );
-			
+			wp_add_inline_style( 'ymfseo-styles', ":root{--ymfseo-primary:{$primary_color};--ymfseo-secondary:{$secondary_color};}" );
+
+			// JS
 			wp_enqueue_script( 'ymfseo-script', YMFSEO_ROOT_URI . 'assets/js/ymfseo-scripts.js', [], YMFSEO_PLUGIN_DATA[ 'Version' ], true );
 			wp_add_inline_script( 'ymfseo-script', 'const YMFSEO_WP = ' . wp_json_encode([
 				'replaceTags' => YMFSEO_Meta_Fields::$replace_tags,
 			]), 'before' );
 
+			// WordPress
 			if ( 'settings_page_' . YMFSEO_Settings::$params[ 'page_slug' ] == $hook_suffix ) {
 				wp_enqueue_media();
 
 				wp_enqueue_code_editor([
-					'type' => 'text/html',
+					'type'       => 'text/html',
+					'codemirror' => [
+						'indentUnit'     => 4,
+						'indentWithTabs' => true,
+						'lineWrapping'   => false,
+					],
 				]);
 				wp_enqueue_script( 'wp-codemirror' );
 			}
 		});
 
+		// Adds admin bar menu.
+		add_action( 'admin_bar_menu', function ( WP_Admin_Bar $wp_admin_bar ) {
+			if ( ! current_user_can( 'ymfseo_edit_metas' ) ) {
+				return;
+			}
+
+			$wp_admin_bar->add_menu([
+				'id'     => 'ymfseo-admin-bar-menu',
+				'title'  => sprintf(
+					'<span class="ab-icon dashicons-welcome-view-site" style="top:2px"></span><span class="ab-label">%s</span>',
+					__( 'SEO', 'ym-fast-seo' )
+				),
+				'href'   => admin_url( 'options-general.php?page=ymfseo-settings' ),
+			]);
+
+			$wp_admin_bar->add_menu([
+				'id'     => 'ymfseo-admin-bar-menu-settings',
+				'title'  => __( 'Settings', 'ym-fast-seo' ),
+				'href'   => admin_url( 'options-general.php?page=ymfseo-settings' ),
+				'parent' => 'ymfseo-admin-bar-menu',
+			]);
+			$wp_admin_bar->add_menu([
+				'id'     => 'ymfseo-admin-bar-menu-health',
+				'title'  => __( 'Health', 'ym-fast-seo' ),
+				'href'   => admin_url( 'site-health.php?tab=ymfseo-site-health-tab' ),
+				'parent' => 'ymfseo-admin-bar-menu',
+			]);
+		}, 70 );
+
 
 		// Modifies title tag parts.
-		add_filter( 'document_title_parts', function ( $title ) {
+		add_filter( 'document_title_parts', function ( array $title ) : array {
 			$meta_fields = new YMFSEO_Meta_Fields();
 
 			// Hides title parts if option enabled.
@@ -159,12 +206,12 @@ class YMFSEO {
 		});
 
 		// Modifies title tag separator.
-		add_filter( 'document_title_separator', function ( $sep ) {
+		add_filter( 'document_title_separator', function ( string $sep ) : string {
 			return YMFSEO::get_separator();
 		});
 
 		// Modifies robots meta tag.
-		add_filter( 'wp_robots', function ( $robots ) {
+		add_filter( 'wp_robots', function ( array $robots ) : array {
 			$meta_fields = new YMFSEO_Meta_Fields();
 			
 			// Sets noindex if needed.
@@ -193,35 +240,35 @@ class YMFSEO {
 			include YMFSEO_ROOT_DIR . 'parts/head.php';
 		}, 1 );
 
+
+		// Adds redirects.
+		// add_filter( 'mod_rewrite_rules', function ( string $rules ) : string {
+		// 	$redirects_option = YMFSEO_Settings::get_option( 'redirects', [] );
+
+		// 	if ( empty( $redirects_option ) ) {
+		// 		return $rules;
+		// 	}
+
+		// 	$redirects = [
+		// 		"\n# BEGIN YMFSEO Redirects",
+		// 	];
+
+		// 	foreach ( $redirects_option as $item ) {
+		// 		$redirects[] = sprintf( '%s %d %s %s',
+		// 			esc_html( $item[ 'is_regex' ] ? 'RedirectMatch' : 'Redirect' ),
+		// 			esc_html( $item[ 'type' ] ),
+		// 			esc_html( $item[ 'from' ] ),
+		// 			esc_html( $item[ 'to' ] ),
+		// 		);
+		// 	}
+
+		// 	$redirects[] = "# END YMFSEO Redirects\n\n";
 		
-		// Removes headings from post excerpts.
-		add_filter( 'excerpt_allowed_blocks', function ( $allowed_blocks ) {
-			if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
-				return $allowed_blocks;
-			}
-
-			return array_filter( $allowed_blocks, function ( $block ) {
-				return ! in_array( $block, [
-					'core/heading',
-				]);
-			});
-		});
-
-		// Removes users from sitemap.
-		add_filter( 'wp_sitemaps_add_provider', function ( $provider, $name ) {
-			if ( ! YMFSEO_Settings::get_option( 'hide_users_sitemap' ) ) {
-				return $provider;
-			}
-
-			if ( 'users' === $name ) {
-				return false;
-			}
-		
-			return $provider;
-		}, 10, 2 );
+		// 	return implode( "\n", $redirects ) . $rules;
+		// });
 
 		// Modifies robots.txt file.
-		add_filter( 'robots_txt', function ( $output ) {
+		add_filter( 'robots_txt', function ( string $output ) : string {
 			// Checks settings robots.txt.
 			$settings_robots_txt = YMFSEO_Settings::get_option( 'robots_txt' );
 
@@ -243,6 +290,32 @@ class YMFSEO {
 
 			return $output;
 		}, 999 );
+		
+		// Removes headings from post excerpts.
+		add_filter( 'excerpt_allowed_blocks', function ( array $allowed_blocks ) : array {
+			if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
+				return $allowed_blocks;
+			}
+
+			return array_filter( $allowed_blocks, function ( $block ) {
+				return ! in_array( $block, [
+					'core/heading',
+				]);
+			});
+		});
+
+		// Removes users from sitemap.
+		add_filter( 'wp_sitemaps_add_provider', function ( WP_Sitemaps_Provider $provider, string $name ) : bool|WP_Sitemaps_Provider {
+			if ( ! YMFSEO_Settings::get_option( 'hide_users_sitemap' ) ) {
+				return $provider;
+			}
+
+			if ( 'users' === $name ) {
+				return false;
+			}
+		
+			return $provider;
+		}, 10, 2 );
 	}
 
 	/**

@@ -136,7 +136,7 @@ class YMFSEO_Meta_Fields {
 
 
 		// Saves post metas after saving post.
-		add_action( 'save_post', function ( $post_id ) {
+		add_action( 'save_post', function ( int $post_id ) {
 			// Is user can edit metas.
 			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
 				return;
@@ -179,7 +179,7 @@ class YMFSEO_Meta_Fields {
 
 
 		// Saves term metas after saving term.
-		add_action( 'saved_term', function ( $term_id, $tt_id, $taxonomy ) {
+		add_action( 'saved_term', function ( int $term_id, int $tt_id, string $taxonomy ) {
 			// Is user can edit metas.
 			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
 				return;
@@ -219,7 +219,7 @@ class YMFSEO_Meta_Fields {
 	 * 
 	 * @return array Input with added SEO column.
 	 */
-	public static function manage_seo_columns ( $columns ) : array {
+	public static function manage_seo_columns ( array $columns ) : array {
 		$columns[ 'ymfseo' ] = __( 'SEO', 'ym-fast-seo' );
 		
 		return $columns;
@@ -503,143 +503,5 @@ class YMFSEO_Meta_Fields {
 		$this->image_uri   = $meta_fields[ 'image_uri' ];
 		$this->page_type   = $meta_fields[ 'page_type' ];
 		$this->noindex     = $meta_fields[ 'noindex' ];
-	}
-	
-	/**
-	 * Prepares data for Schema.org JSON-LD printing.
-	 * 
-	 * @global $wp
-	 * 
-	 * @param YMFSEO_Meta_Fields $meta_fields Meta fields instance.
-	 * 
-	 * @return array Prepared Shema.org array for printing JSON-LD.
-	 */
-	public static function build_schema_org ( YMFSEO_Meta_Fields $meta_fields ) : array {
-		global $wp;
-
-		$queried_object = get_queried_object();
-
-		// Sets object data template.
-		$schema_org_blank = [
-			'WebPage' => [
-				'@type'      => $meta_fields->page_type,
-				'@id'        => '#webpage',
-				'url'        => home_url( $wp->request ),
-				'name'       => wp_get_document_title(),
-				'inLanguage' => get_locale(),
-				'isPartOf'   => [
-					'@id' => '#website',
-				],
-				'potentialAction' => [
-					[
-						'@type'  => 'ReadAction',
-						'target' => [ home_url( $wp->request ) ],
-					],
-				],
-			],
-			'WebSite' => [
-				'@type'       => 'WebSite',
-				'@id'         => '#website',
-				'url'         => home_url(),
-				'name'        => get_bloginfo( 'name' ),
-				'description' => get_bloginfo( 'description' ),
-				'inLanguage'  => get_locale(),
-			],
-		];
-		
-		// Adds WebPage description.
-		if ( $meta_fields->description ) {
-			$schema_org_blank[ 'WebPage' ][ 'description' ] = $meta_fields->description;
-		}
-		// Adds WebPage image preview URI.
-		if ( $meta_fields->image_uri ) {
-			$schema_org_blank[ 'WebPage' ][ 'image' ] = $meta_fields->image_uri;
-		}
-		// Adds WebPage dates.
-		if ( $queried_object && 'WP_Post' == get_class( $queried_object ) ) {
-			$schema_org_blank[ 'WebPage' ][ 'datePublished' ] = get_the_date( 'c', $queried_object );
-			$schema_org_blank[ 'WebPage' ][ 'dateModified' ]  = get_the_modified_date( 'c', $queried_object );
-		}
-
-		// Adds representative's details.
-		$rep_data = [];
-
-		$rep_type = YMFSEO_Settings::get_option( 'rep_type' );
-
-		$rep_name = YMFSEO_Settings::get_option( "rep_{$rep_type}_name" );
-		if ( $rep_name ) $rep_data[ 'name' ] = $rep_name;
-
-		$rep_email = YMFSEO_Settings::get_option( 'rep_email' );
-		if ( $rep_email ) $rep_data[ 'email' ] = $rep_email;
-
-		$rep_phone = YMFSEO_Settings::get_option( 'rep_phone' );
-		if ( $rep_phone ) $rep_data[ 'telephone' ] = $rep_phone;
-		
-		// Sets organization address.
-		if ( 'org' === $rep_type ) {
-			$address = [];
-
-			$rep_city = YMFSEO_Settings::get_option( 'rep_org_city' );
-			if ( $rep_city ) {
-				$address[ 'addressLocality' ] = $rep_city;
-			}
-
-			$rep_region = YMFSEO_Settings::get_option( 'rep_org_region' );
-			if ( $rep_region ) {
-				$address[ 'addressRegion' ] = $rep_region;
-			}
-
-			$rep_address = YMFSEO_Settings::get_option( 'rep_org_address' );
-			if ( $rep_address ) {
-				$address[ 'streetAddress' ] = $rep_address;
-			}
-
-			$rep_postal_code = YMFSEO_Settings::get_option( 'rep_org_postal_code' );
-			if ( $rep_postal_code ) {
-				$address[ 'postalCode' ] = $rep_postal_code;
-			}
-
-			if ( ! empty( $address ) ) {
-				$rep_data[ 'address' ] = array_merge(
-					[ '@type' => 'PostalAddress' ],
-					$address,
-				);
-			}
-		}
-
-		// Sets representative's image.
-		$rep_image_id = YMFSEO_Settings::get_option( 'rep_image_id' );
-		if ( $rep_image_id ) {
-			$rep_data[ 'image' ] = wp_get_attachment_url( $rep_image_id );
-		}
-
-		// Pre-builds output object.
-		if ( ! empty( $rep_data ) ) {
-			$rep_data = array_merge([
-				'@type' => match ( $rep_type ) {
-					'org'    => YMFSEO_Settings::get_option( 'rep_org_type' ),
-					'person' => 'Person',
-				},
-				'@id'   => '#publisher',
-				'url'   => home_url(),
-			], $rep_data );
-
-			$schema_org_blank[ 'Publisher' ] = $rep_data;
-
-			$schema_org_blank[ 'WebSite' ][ 'publisher' ] = [
-				'@id' => '#publisher',
-			];
-		}
-		
-		// Applies user filters.
-		$schema_org = apply_filters( 'ymfseo_schema_org', $schema_org_blank, $queried_object );
-		
-		// Final build.
-		$schema_org = [
-			'@context' => 'https://schema.org',
-			'@graph'   => array_values( $schema_org ),
-		];
-
-		return $schema_org;
 	}
 }
