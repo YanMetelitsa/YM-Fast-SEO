@@ -447,10 +447,11 @@ class YMFSEO_Settings {
 				'checkbox',
 				[
 					'label'       => __( 'Enable IndexNow sending', 'ym-fast-seo' ),
-					'description' => __( sprintf(
-						'When the site is configured to <a href="%s">discourage indexing</a>, IndexNow will remain disabled irrespective of this option.',
+					'description' => sprintf(
+						/* translators: %s - link to settings page */
+						__( 'When the site is configured to <a href="%s">discourage indexing</a>, IndexNow will remain disabled irrespective of this option.', 'ym-fast-seo' ),
 						get_admin_url( null, 'options-reading.php#blog_public' ),
-					), 'ym-fast-seo' ),
+					),
 				],
 			);
 

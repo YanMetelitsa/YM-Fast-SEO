@@ -256,6 +256,11 @@ class YMFSEO_Site_Health {
 				$title     = __( 'IndexNow API key is missing', 'ym-fast-seo' );
 			}
 
+			if ( ! YMFSEO_Settings::get_option( 'indexnow_enabled' ) ) {
+				$is_passed = 'no';
+				$title     = __( 'IndexNow sending disabled', 'ym-fast-seo' );
+			}
+
 			return new YMFSEO_Site_Health( $is_passed, $title, $description, $content );
 		});
 	}

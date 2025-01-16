@@ -20,80 +20,82 @@ class YMFSEO {
 	 * Inits YM Fast SEO Plugin.
 	 */
 	public static function init () : void {
-		// Defines available page types.
-		YMFSEO::$page_types = [
-			/* translators: Web page type */
-			'WebPage'           => __( 'Regular Page', 'ym-fast-seo' ),
-			/* translators: Web page type */
-			'CollectionPage'    => __( 'Collection Page', 'ym-fast-seo' ),
-			/* translators: Web page type */
-			'ItemPage'          => __( 'Item Page', 'ym-fast-seo' ),
-			/* translators: Web page type */
-			'AboutPage'         => __( 'About Page', 'ym-fast-seo' ),
-			/* translators: Web page type */
-			'FAQPage'           => __( 'FAQ Page', 'ym-fast-seo' ),
-			/* translators: Web page type */
-			'ContactPage'       => __( 'Contact Page', 'ym-fast-seo' ),
-			/* translators: Web page type */
-			'CheckoutPage'      => __( 'Checkout Page', 'ym-fast-seo' ),
-			/* translators: Web page type */
-			'SearchResultsPage' => __( 'Search results Page', 'ym-fast-seo' ),
-		];
+		add_action( 'init', function () {
+			// Defines available page types.
+			YMFSEO::$page_types = [
+				/* translators: Web page type */
+				'WebPage'           => __( 'Regular Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'CollectionPage'    => __( 'Collection Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'ItemPage'          => __( 'Item Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'AboutPage'         => __( 'About Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'FAQPage'           => __( 'FAQ Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'ContactPage'       => __( 'Contact Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'CheckoutPage'      => __( 'Checkout Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'SearchResultsPage' => __( 'Search results Page', 'ym-fast-seo' ),
+			];
 
-		// Defines default meta values.
-		YMFSEO_Meta_Fields::$default_values = [
-			'title'       => '',
-			'description' => '',
-			'image_uri'   => '',
-			'page_type'   => 'default',
-			'noindex'     => '',
-		];
+			// Defines default meta values.
+			YMFSEO_Meta_Fields::$default_values = [
+				'title'       => '',
+				'description' => '',
+				'image_uri'   => '',
+				'page_type'   => 'default',
+				'noindex'     => '',
+			];
 
-		// Defines settings rguments.
-		YMFSEO_Settings::$params = [
-			'page_title'    => __( 'SEO Settings', 'ym-fast-seo' ),
-			'menu_label'    => __( 'SEO', 'ym-fast-seo' ),
-			'menu_position' => 3,
-			'capability'    => 'manage_options',
-			'page_slug'     => 'ymfseo-settings',
-		];
+			// Defines settings arguments.
+			YMFSEO_Settings::$params = [
+				'page_title'    => __( 'SEO Settings', 'ym-fast-seo' ),
+				'menu_label'    => __( 'SEO', 'ym-fast-seo' ),
+				'menu_position' => 3,
+				'capability'    => 'manage_options',
+				'page_slug'     => 'ymfseo-settings',
+			];
 
-		// Defines default settings.
-		YMFSEO_Settings::$default_settings = [
-			'hide_title_parts'           => true,
-			'title_separator'            => '|',
-			'clear_excerpts'             => true,
-			'hide_users_sitemap'         => true,
-			'post_type_page_type_page'   => 'WebPage',
-			'preview_image_id'           => 0,
-			'preview_size'               => 'summary_large_image',
-			'rep_type'                   => 'org',
-			'rep_org_type'               => 'Organization',
-			'rep_org_name'               => '',
-			'rep_person_name'            => '',
-			'rep_email'                  => '',
-			'rep_phone'                  => '',
-			'rep_org_city'               => '',
-			'rep_org_region'             => '',
-			'rep_org_address'            => '',
-			'rep_org_postal_code'        => '',
-			'rep_image_id'               => 0,
-			'google_search_console_key'  => '',
-			'bing_webmaster_tools_key'   => '',
-			'yandex_webmaster_key'       => '',
-			'indexnow_key'               => '',
-			'indexnow_enabled'           => true,
-			'redirects'                  => [],
-			'head_scripts'               => '',
-			'head_scripts_only_visitors' => true,
-			'robots_txt'                 => '',
-		];
+			// Defines default settings.
+			YMFSEO_Settings::$default_settings = [
+				'hide_title_parts'           => true,
+				'title_separator'            => '|',
+				'clear_excerpts'             => true,
+				'hide_users_sitemap'         => true,
+				'post_type_page_type_page'   => 'WebPage',
+				'preview_image_id'           => 0,
+				'preview_size'               => 'summary_large_image',
+				'rep_type'                   => 'org',
+				'rep_org_type'               => 'Organization',
+				'rep_org_name'               => '',
+				'rep_person_name'            => '',
+				'rep_email'                  => '',
+				'rep_phone'                  => '',
+				'rep_org_city'               => '',
+				'rep_org_region'             => '',
+				'rep_org_address'            => '',
+				'rep_org_postal_code'        => '',
+				'rep_image_id'               => 0,
+				'google_search_console_key'  => '',
+				'bing_webmaster_tools_key'   => '',
+				'yandex_webmaster_key'       => '',
+				'indexnow_key'               => '',
+				'indexnow_enabled'           => true,
+				'redirects'                  => [],
+				'head_scripts'               => '',
+				'head_scripts_only_visitors' => true,
+				'robots_txt'                 => '',
+			];
 
-		// Defines replace tags.
-		YMFSEO_Meta_Fields::$replace_tags = [
-			'%site_name%' => get_bloginfo( 'name' ),
-			'%sep%'       => YMFSEO::get_separator(),
-		];
+			// Defines replace tags.
+			YMFSEO_Meta_Fields::$replace_tags = [
+				'%site_name%' => get_bloginfo( 'name' ),
+				'%sep%'       => YMFSEO::get_separator(),
+			];
+		});
 
 
 		// Adds links to plugin's card on Plugins page.
