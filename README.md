@@ -6,15 +6,14 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 ## Features
 
-* Lightweight and Extendable
-* Custom Meta Title & Description Fields
-* Automated Open Graph, Twitter Card, and Schema.org Markup
-* Quick Pages and Posts SEO Analysis
-* Services Integration
+* Lightweight & Extendable
+* Posts/Taxonomies Meta Tags Fields
+* Automated Open Graph, Twitter Card, and Schema.org Markups
+* Quick SEO Analysis + Site SEO Health Page
+* Services Integration (Analytics + Webmasters)
 * Automatic IndexNow Sending
-* Setting Up Analytics via Settings
-* Editing the `robots.txt` File
-* Useful Tools
+* `Robots.txt` Editor
+* Other Useful Tools & Improvement
 
 # Installation
 
