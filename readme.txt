@@ -27,6 +27,14 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * `Robots.txt` Editor
 * Other Useful Tools & Improvement
 
+== Screenshots ==
+
+1. Gutenberg meta fields box.
+2. Classic editor meta fields box.
+3. Taxonomy meta fields box.
+4. Settings screen.
+5. Site SEO Health screen.
+
 == Installation ==
 
 1. **Visit** Plugins > Add New
