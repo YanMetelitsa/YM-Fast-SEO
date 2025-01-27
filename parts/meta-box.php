@@ -50,7 +50,8 @@
 					$default_page_type       = YMFSEO_Settings::get_option( "post_type_page_type_$post->post_type" );
 					$default_page_type_label = __( YMFSEO::$page_types[ $default_page_type ], 'ym-fast-seo' );
 
-					printf( '<option value="default">Default (%s)</option>',
+					printf( '<option value="default">%s (%s)</option>',
+						esc_html__( 'Default', 'ym-fast-seo' ),
 						esc_html( $default_page_type_label ),
 					);
 					
