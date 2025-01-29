@@ -23,6 +23,9 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 # Changelog
 
+## 3.2.3
+* Fix: Now `noindex` pages are not displayed in sitemaps
+
 ## 3.2.0
 * New: Settings page UI
 * New: Admin Bar menu

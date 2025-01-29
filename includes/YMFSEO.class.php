@@ -306,7 +306,7 @@ class YMFSEO {
 			});
 		});
 
-		// Removes users from sitemap.
+		// Removes users from the sitemap.
 		add_filter( 'wp_sitemaps_add_provider', function ( WP_Sitemaps_Provider $provider, string $name ) : bool|WP_Sitemaps_Provider {
 			if ( ! YMFSEO_Settings::get_option( 'hide_users_sitemap' ) ) {
 				return $provider;
@@ -317,6 +317,27 @@ class YMFSEO {
 			}
 		
 			return $provider;
+		}, 10, 2 );
+
+		// Removes `noindex` pages from the sitemap.
+		add_filter( 'wp_sitemaps_posts_query_args', function ( array $args, string $post_type ) : array {
+			$args[ 'post__not_in' ] = $args[ 'post__not_in' ] ?? [];
+
+			$page_query = new WP_Query([
+				'post_type'      => YMFSEO::get_public_post_types(),
+				'meta_key'       => 'ymfseo_fields',
+				'meta_value'     => 'noindex";s:1',
+				'meta_compare'   => 'LIKE',
+				'posts_per_page' => -1,
+			]);
+			while ( $page_query->have_posts() ) {
+				$page_query->the_post();
+				
+				$args[ 'post__not_in' ][] = get_the_ID();
+			}
+			wp_reset_postdata();
+		
+			return $args;
 		}, 10, 2 );
 	}
 
