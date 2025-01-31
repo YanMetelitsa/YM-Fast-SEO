@@ -3,7 +3,7 @@
 /*
  * Plugin Name:       YM Fast SEO
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
- * Version:           3.2.3
+ * Version:           3.2.4
  * Requires PHP:      7.4
  * Requires at least: 6.0
  * Tested up to:      6.7.1

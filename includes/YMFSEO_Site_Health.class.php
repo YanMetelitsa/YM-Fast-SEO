@@ -218,6 +218,25 @@ class YMFSEO_Site_Health {
 
 			// If has logs.
 			if ( $logs ) {
+				// Check statuses.
+				foreach ( $logs as $i => $entry ) {
+					switch ( intval( $entry[ 'status' ] ) ) {
+						case 200:
+							// Silence is golden.
+							break;
+						case 202:
+							if ( 0 == $i ) {
+								$is_passed = 'warning';
+							}
+							break;
+						default:
+							if ( 0 == $i ) {
+								$is_passed = 'no';
+							}
+							break;
+					}
+				}
+
 				// Set table.
 				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
 					$datetime = YMFSEO_Logs::parse_datetime( $item[ 'date' ] );
@@ -227,27 +246,6 @@ class YMFSEO_Site_Health {
 
 					return $item;
 				}, $logs );
-
-				// Check statuses.
-				foreach ( $logs as $i => $entry ) {
-					$status = intval( $entry[ 'status' ] );
-	
-					if ( 200 == $status ) {
-						break;
-					}
-	
-					if ( 202 == $status ) {
-						if ( 0 == $i ) {
-							$is_passed = 'warning';
-						}
-					}
-	
-					if ( ! in_array( $status, [ 200, 202 ] ) ) {
-						if ( 0 == $i ) {
-							$is_passed = 'no';
-						}
-					}
-				}
 			}
 
 			// Check.

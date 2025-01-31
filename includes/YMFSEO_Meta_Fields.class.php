@@ -69,6 +69,63 @@ class YMFSEO_Meta_Fields {
 	 * Inits YMFSEO meta fields subclass.
 	 */
 	public static function init () : void {
+		// Adds posts quick edit fields.
+		add_action( 'quick_edit_custom_box', function ( string $column_name, string $post_type ) {
+			if ( ! in_array( $post_type, array_values( YMFSEO::get_public_post_types() ) ) ) {
+				return;
+			}
+
+			if ( 'ymfseo' !== $column_name ) {
+				return;
+			}
+
+			wp_nonce_field( YMFSEO_BASENAME, 'ymfseo_post_nonce' );
+
+			global $post;
+
+			$meta_fields = new YMFSEO_Meta_Fields( get_post( $post->ID ), false );
+
+			?>
+				<fieldset class="inline-edit-col-right">
+					<legend class="inline-edit-legend"><?php esc_html_e( 'SEO', 'ym-fast-seo' ); ?></legend>
+
+					<div class="inline-edit-col">
+						<label>
+							<span class="title"><?php esc_html_e( 'Page Type', 'ym-fast-seo' ); ?></span>
+							<select name="ymfseo-page-type">
+								<?php
+									$default_page_type       = YMFSEO_Settings::get_option( "post_type_page_type_$post->post_type" );
+									$default_page_type_label = __( YMFSEO::$page_types[ $default_page_type ], 'ym-fast-seo' );
+				
+									printf( '<option value="default">%s (%s)</option>',
+										esc_html__( 'Default', 'ym-fast-seo' ),
+										esc_html( $default_page_type_label ),
+									);
+									
+									foreach ( YMFSEO::$page_types as $value => $label ) {
+										printf( '<option value="%s"%s>%s</option>',
+											esc_attr( $value ),
+											selected( $meta_fields->page_type, $value, false ),
+											esc_html( $label ),
+										);
+									}
+								?>
+							</select>
+						</label>
+
+						<label class="alignleft">
+							<?php printf( '<input type="checkbox" name="%1$s" value="1"%2$s>',
+								'ymfseo-noindex',
+								checked( $meta_fields->noindex, true, false ),
+							); ?>
+							<span class="checkbox-title"><?php esc_html_e( 'Disallow indexing', 'ym-fast-seo' ); ?></span>
+						</label>
+					</div>
+				</fieldset>
+			<?php
+		}, 10, 2);
+
+
 		// Manages posts and terms custom SEO column.
 		add_action( 'init', function () {
 			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {

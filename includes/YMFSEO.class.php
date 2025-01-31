@@ -38,7 +38,7 @@ class YMFSEO {
 				/* translators: Web page type */
 				'CheckoutPage'      => __( 'Checkout Page', 'ym-fast-seo' ),
 				/* translators: Web page type */
-				'SearchResultsPage' => __( 'Search results Page', 'ym-fast-seo' ),
+				'SearchResultsPage' => __( 'Search Results Page', 'ym-fast-seo' ),
 			];
 
 			// Defines default meta values.
@@ -161,7 +161,7 @@ class YMFSEO {
 
 		// Adds admin bar menu.
 		add_action( 'admin_bar_menu', function ( WP_Admin_Bar $wp_admin_bar ) {
-			if ( ! current_user_can( 'ymfseo_edit_metas' ) ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
 				return;
 			}
 
@@ -329,6 +329,7 @@ class YMFSEO {
 				'meta_value'     => 'noindex";s:1',
 				'meta_compare'   => 'LIKE',
 				'posts_per_page' => -1,
+				'fields'         => 'ids',
 			]);
 			while ( $page_query->have_posts() ) {
 				$page_query->the_post();

@@ -17,24 +17,25 @@ class YMFSEO_Editor_Role {
 		register_activation_hook( YMFSEO_BASENAME, function () {
 			/* translators: User role name */
 			add_role( 'ymfseo_seo_editor', __( 'SEO Editor', 'ym-fast-seo' ), [
-				'read'                 => true,
+				'read'                    => true,
 
-				'publish_pages'        => true,
-				'edit_pages'           => true,
-				'edit_published_pages' => true,
-				'edit_others_pages'    => true,
+				'publish_pages'           => true,
+				'edit_pages'              => true,
+				'edit_published_pages'    => true,
+				'edit_others_pages'       => true,
 
-				'publish_posts'        => true,
-				'edit_posts'           => true,
-				'edit_published_posts' => true,
-				'edit_others_posts'    => true,
+				'publish_posts'           => true,
+				'edit_posts'              => true,
+				'edit_published_posts'    => true,
+				'edit_others_posts'       => true,
 
-				'manage_categories'    => true,
+				'manage_categories'       => true,
 
-				'upload_files'         => true,
+				'upload_files'            => true,
 
-				'ymfseo_edit_metas'    => true,
-				'manage_options'       => true,
+				'ymfseo_edit_metas'       => true,
+				'view_site_health_checks' => true,
+				'manage_options'          => true,
 			]);
 
 			$admin_role = get_role( 'administrator' );
