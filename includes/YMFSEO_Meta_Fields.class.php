@@ -81,10 +81,6 @@ class YMFSEO_Meta_Fields {
 
 			wp_nonce_field( YMFSEO_BASENAME, 'ymfseo_post_nonce' );
 
-			global $post;
-
-			$meta_fields = new YMFSEO_Meta_Fields( get_post( $post->ID ), false );
-
 			?>
 				<fieldset class="inline-edit-col-right">
 					<legend class="inline-edit-legend"><?php esc_html_e( 'SEO', 'ym-fast-seo' ); ?></legend>
@@ -94,7 +90,7 @@ class YMFSEO_Meta_Fields {
 							<span class="title"><?php esc_html_e( 'Page Type', 'ym-fast-seo' ); ?></span>
 							<select name="ymfseo-page-type">
 								<?php
-									$default_page_type       = YMFSEO_Settings::get_option( "post_type_page_type_$post->post_type" );
+									$default_page_type       = YMFSEO_Settings::get_option( "post_type_page_type_$post_type" );
 									$default_page_type_label = __( YMFSEO::$page_types[ $default_page_type ], 'ym-fast-seo' );
 				
 									printf( '<option value="default">%s (%s)</option>',
@@ -103,9 +99,8 @@ class YMFSEO_Meta_Fields {
 									);
 									
 									foreach ( YMFSEO::$page_types as $value => $label ) {
-										printf( '<option value="%s"%s>%s</option>',
+										printf( '<option value="%s">%s</option>',
 											esc_attr( $value ),
-											selected( $meta_fields->page_type, $value, false ),
 											esc_html( $label ),
 										);
 									}
@@ -114,16 +109,32 @@ class YMFSEO_Meta_Fields {
 						</label>
 
 						<label class="alignleft">
-							<?php printf( '<input type="checkbox" name="%1$s" value="1"%2$s>',
+							<?php printf( '<input type="checkbox" name="%1$s" value="1">',
 								'ymfseo-noindex',
-								checked( $meta_fields->noindex, true, false ),
 							); ?>
 							<span class="checkbox-title"><?php esc_html_e( 'Disallow indexing', 'ym-fast-seo' ); ?></span>
 						</label>
 					</div>
 				</fieldset>
 			<?php
-		}, 10, 2);
+		}, 10, 2 );
+		add_action( 'admin_footer', function () {
+			?>
+				<script>
+					jQuery( document ).ready( function ( $ ) {
+						$( document ).on( 'click', '.editinline', function () {
+							const tr = $( this ).closest( 'tr' );
+
+							const pageType  = tr.find( 'input[ name="ymfseo-page-type-value" ]' ).val();
+							const isNoindex = parseInt( tr.find( 'input[ name="ymfseo-noindex-value" ]' ).val() );
+
+							$( 'select[ name="ymfseo-page-type" ]', '.inline-edit-row' ).val( pageType );
+							$( 'input[ name="ymfseo-noindex" ]', '.inline-edit-row' ).prop( 'checked', 1 == isNoindex );
+						});
+					});
+				</script>
+			<?php
+		});
 
 
 		// Manages posts and terms custom SEO column.
@@ -135,7 +146,7 @@ class YMFSEO_Meta_Fields {
 			// Post types.
 			foreach ( YMFSEO::get_public_post_types() as $post_type ) {
 				add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO_Meta_Fields::manage_seo_columns' );
-				add_action( "manage_{$post_type}_posts_custom_column" , function ( $column, $post_id ) {
+				add_action( "manage_{$post_type}_posts_custom_column" , function ( string $column, int $post_id ) {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_post( $post_id ) );
 
@@ -143,6 +154,11 @@ class YMFSEO_Meta_Fields {
 							esc_attr( implode( '&#013;', $check[ 'notes' ] ) ),
 							esc_attr( $check[ 'status' ] ),
 						);
+
+						$meta_fields = new YMFSEO_Meta_Fields( get_post( $post_id ), false );
+
+						printf( '<input name="ymfseo-page-type-value" value="%s" hidden>', $meta_fields->page_type );
+						printf( '<input name="ymfseo-noindex-value"   value="%d" hidden>', $meta_fields->noindex ? 1 : 0 );
 					}
 				}, 10, 2 );
 			}
@@ -150,7 +166,7 @@ class YMFSEO_Meta_Fields {
 			// Taxonomies.
 			foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
 				add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO_Meta_Fields::manage_seo_columns' );
-				add_action( "manage_{$taxonomy}_custom_column" , function ( $string, $column, $term_id  ) {
+				add_action( "manage_{$taxonomy}_custom_column" , function ( string $string, string $column, int $term_id  ) {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_term( $term_id ) );
 
