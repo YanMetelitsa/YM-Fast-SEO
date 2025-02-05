@@ -141,6 +141,10 @@ td.ymfseo.column-ymfseo {
 	&:has( .ymfseo-box_gutenberg ) {
 		/* Header tab */
 		> .postbox-header {
+			.components-panel__body + .edit-post-meta-boxes-area:has( #ymfseo_fields.postbox ) & {
+				border-top: none;
+			}
+
 			h2 {
 				padding: 0 16px ;
 	

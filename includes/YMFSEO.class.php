@@ -340,6 +340,15 @@ class YMFSEO {
 		
 			return $args;
 		}, 10, 2 );
+
+		// Adds preview image media state.
+		add_filter( 'display_media_states', function ( array $media_states, WP_Post $post ) : array {
+			if ( YMFSEO_Settings::get_option( 'preview_image_id' ) == $post->ID ) {
+				$media_states[] =  __( 'Preview Image', 'ym-fast-seo' );
+			}
+		
+			return $media_states;
+		}, 10, 2 );
 	}
 
 	/**

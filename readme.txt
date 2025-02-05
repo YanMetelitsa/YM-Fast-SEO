@@ -1,7 +1,7 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimization
-Stable tag: 3.2.5
+Stable tag: 3.2.6
 Requires PHP: 7.4
 Requires at least: 6.0
 Tested up to: 6.7.1
@@ -42,6 +42,10 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 1. **Install and Activate** YM Fast SEO from the Plugins page
 
 == Changelog ==
+
+= 3.2.6 =
+* New: Preview image media state
+* Fix: Gutenber meta box style fix
 
 = 3.2.4 =
 * New: Quick edit SEO fields

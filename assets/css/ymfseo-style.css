@@ -108,6 +108,9 @@ td.ymfseo.column-ymfseo {
   /* Header tab */
   /* Container */
 }
+.components-panel__body + .edit-post-meta-boxes-area:has(#ymfseo_fields.postbox) #ymfseo_fields.postbox:has(.ymfseo-box_gutenberg) > .postbox-header {
+  border-top: none;
+}
 #ymfseo_fields.postbox:has(.ymfseo-box_gutenberg) > .postbox-header h2 {
   padding: 0 16px;
   font-size: 13px;
