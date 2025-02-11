@@ -173,10 +173,10 @@ class YMFSEO_Meta_Fields {
 
 						$meta_fields = new YMFSEO_Meta_Fields( get_post( $post_id ), false );
 
-						printf( '<input name="ymfseo-title-value"       value="%s" hidden>', $meta_fields->title );
-						printf( '<input name="ymfseo-description-value" value="%s" hidden>', $meta_fields->description );
-						printf( '<input name="ymfseo-page-type-value"   value="%s" hidden>', $meta_fields->page_type );
-						printf( '<input name="ymfseo-noindex-value"     value="%d" hidden>', $meta_fields->noindex ? 1 : 0 );
+						printf( '<input name="ymfseo-title-value"       value="%s" hidden>', esc_attr( $meta_fields->title ) );
+						printf( '<input name="ymfseo-description-value" value="%s" hidden>', esc_attr( $meta_fields->description ) );
+						printf( '<input name="ymfseo-page-type-value"   value="%s" hidden>', esc_attr( $meta_fields->page_type ) );
+						printf( '<input name="ymfseo-noindex-value"     value="%d" hidden>', esc_attr( $meta_fields->noindex ? 1 : 0 ) );
 					}
 				}, 10, 2 );
 			}
