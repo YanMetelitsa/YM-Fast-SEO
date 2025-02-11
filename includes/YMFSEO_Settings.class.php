@@ -191,6 +191,16 @@ class YMFSEO_Settings {
 						'class' => 'sub-field',
 					],
 				);
+				YMFSEO_Settings::register_option(
+					"taxonomy_noindex_{$taxonomy->name}",
+					__( 'Indexing', 'ym-fast-seo' ),
+					'boolean',
+					'taxonomies',
+					'checkbox',
+					[
+						'label' => __( 'Disallow indexing', 'ym-fast-seo' ),
+					],
+				);
 			}
 
 			// Site Preview section.
@@ -569,6 +579,7 @@ class YMFSEO_Settings {
 				'post_type_page_type_'   => 'ItemPage',
 				'taxonomy_title_'        => '',
 				'taxonomy_description_'  => '',
+				'taxonomy_noindex_'      => false,
 			];
 
 			// Checks is setting allowed by mask.
@@ -626,13 +637,14 @@ class YMFSEO_Settings {
 			}
 		}
 
-		// Registers setting and adds field.
+		// Registers setting.
 		register_setting( YMFSEO_Settings::$params[ 'page_slug' ], "ymfseo_$slug", [
 			'type'              => $type,
 			'default'           => YMFSEO_Settings::$default_settings[ $slug ],
 			'sanitize_callback' => $sanitize_callback,
 		]);
 
+		// Adds field.
 		add_settings_field( "ymfseo_$slug",
 			sprintf( '%s %s',
 				$menu_icon ? "<span class=\"dashicons {$menu_icon}\"></span>" : '',

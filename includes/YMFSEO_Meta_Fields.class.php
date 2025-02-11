@@ -87,6 +87,18 @@ class YMFSEO_Meta_Fields {
 
 					<div class="inline-edit-col">
 						<label>
+							<span class="title"><?php esc_html_e( 'Title', 'ym-fast-seo' ); ?></span>
+							<span class="input-text-wrap">
+								<input type="text" name="ymfseo-title">
+							</span>
+						</label>
+
+						<label>
+							<span class="title"><?php esc_html_e( 'Description', 'ym-fast-seo' ); ?></span>
+							<textarea cols="22" rows="1" name="ymfseo-description"></textarea>
+						</label>
+
+						<label>
 							<span class="title"><?php esc_html_e( 'Page Type', 'ym-fast-seo' ); ?></span>
 							<select name="ymfseo-page-type">
 								<?php
@@ -125,11 +137,15 @@ class YMFSEO_Meta_Fields {
 						$( document ).on( 'click', '.editinline', function () {
 							const tr = $( this ).closest( 'tr' );
 
-							const pageType  = tr.find( 'input[ name="ymfseo-page-type-value" ]' ).val();
-							const isNoindex = parseInt( tr.find( 'input[ name="ymfseo-noindex-value" ]' ).val() );
+							const title       = tr.find( 'input[ name="ymfseo-title-value" ]' ).val();
+							const description = tr.find( 'input[ name="ymfseo-description-value" ]' ).val();
+							const pageType    = tr.find( 'input[ name="ymfseo-page-type-value" ]' ).val();
+							const isNoindex   = parseInt( tr.find( 'input[ name="ymfseo-noindex-value" ]' ).val() );
 
-							$( 'select[ name="ymfseo-page-type" ]', '.inline-edit-row' ).val( pageType );
-							$( 'input[ name="ymfseo-noindex" ]', '.inline-edit-row' ).prop( 'checked', 1 == isNoindex );
+							$( 'input[ name="ymfseo-title" ]',          '.inline-edit-row' ).val( title );
+							$( 'textarea[ name="ymfseo-description" ]', '.inline-edit-row' ).val( description );
+							$( 'select[ name="ymfseo-page-type" ]',     '.inline-edit-row' ).val( pageType );
+							$( 'input[ name="ymfseo-noindex" ]',        '.inline-edit-row' ).prop( 'checked', 1 == isNoindex );
 						});
 					});
 				</script>
@@ -157,8 +173,10 @@ class YMFSEO_Meta_Fields {
 
 						$meta_fields = new YMFSEO_Meta_Fields( get_post( $post_id ), false );
 
-						printf( '<input name="ymfseo-page-type-value" value="%s" hidden>', $meta_fields->page_type );
-						printf( '<input name="ymfseo-noindex-value"   value="%d" hidden>', $meta_fields->noindex ? 1 : 0 );
+						printf( '<input name="ymfseo-title-value"       value="%s" hidden>', $meta_fields->title );
+						printf( '<input name="ymfseo-description-value" value="%s" hidden>', $meta_fields->description );
+						printf( '<input name="ymfseo-page-type-value"   value="%s" hidden>', $meta_fields->page_type );
+						printf( '<input name="ymfseo-noindex-value"     value="%d" hidden>', $meta_fields->noindex ? 1 : 0 );
 					}
 				}, 10, 2 );
 			}
@@ -185,7 +203,7 @@ class YMFSEO_Meta_Fields {
 				return;
 			}
 
-			add_meta_box( 'ymfseo_fields', __( 'SEO', 'ym-fast-seo' ), function ( $post ) {
+			add_meta_box( 'ymfseo_fields', __( 'SEO', 'ym-fast-seo' ), function ( WP_Post $post ) {
 				wp_nonce_field( YMFSEO_BASENAME, 'ymfseo_post_nonce' );
 				
 				include YMFSEO_ROOT_DIR . 'parts/meta-box.php';
@@ -199,11 +217,11 @@ class YMFSEO_Meta_Fields {
 			}
 
 			foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
-				add_action( "{$taxonomy}_edit_form_fields", function ( $term ) {
+				add_action( "{$taxonomy}_edit_form_fields", function ( WP_Term $term, string $taxonomy ) {
 					wp_nonce_field( YMFSEO_BASENAME, "ymfseo_term_nonce" );
 
 					include YMFSEO_ROOT_DIR . 'parts/term-meta-fields.php';
-				});
+				}, 10, 2 );
 			}
 		}, 30 );
 
@@ -437,6 +455,10 @@ class YMFSEO_Meta_Fields {
 
 						if ( 'default' === $meta_fields[ 'page_type' ] ) {
 							$meta_fields[ 'page_type' ] = 'CollectionPage';
+						}
+
+						if ( YMFSEO_Settings::get_option( "taxonomy_noindex_{$taxonomy}" ) ) {
+							$meta_fields[ 'noindex' ] = true;
 						}
 					}
 

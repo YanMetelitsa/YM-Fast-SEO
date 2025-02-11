@@ -23,6 +23,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 # Changelog
 
+# 3.2.7
+* New: Taxonomy default `Indexing` settings option
+* New: Default terms Title & Description values in placeholders
+* Fix: Quick edit SEO fields
+
 ## 3.2.6
 * New: Preview image media state
 * Fix: Gutenber meta box style fix

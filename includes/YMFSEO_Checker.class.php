@@ -169,7 +169,9 @@ class YMFSEO_Checker {
 				$status = 'noindex';
 				$notes[] = __( 'Post status is "not published".', 'ym-fast-seo' );
 			}
+		}
 
+		if ( $object instanceof WP_Post || $object instanceof WP_Term ) {
 			// Noindex.
 			if ( $meta_fields->noindex ) {
 				$status = 'noindex';
