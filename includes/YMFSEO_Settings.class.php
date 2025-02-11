@@ -198,6 +198,7 @@ class YMFSEO_Settings {
 					'taxonomies',
 					'checkbox',
 					[
+						'class' => 'sub-field',
 						'label' => __( 'Disallow indexing', 'ym-fast-seo' ),
 					],
 				);
