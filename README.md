@@ -29,7 +29,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * Fix: Quick edit SEO fields
 
 ## 3.2.6
-* New: Preview image media state
+* New: `Preview Image` media state
 * Fix: Gutenber meta box style fix
 
 ## 3.2.4
