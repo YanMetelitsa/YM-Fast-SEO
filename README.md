@@ -23,6 +23,10 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 # Changelog
 
+# 3.2.8
+* New: Now `noindex` taxonomies are not displayed in sitemaps
+* New: `Representative's Image` media state
+
 # 3.2.7
 * New: Taxonomy default `Indexing` settings option
 * New: Default terms Title & Description values in placeholders

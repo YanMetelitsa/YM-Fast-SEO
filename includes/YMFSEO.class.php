@@ -188,6 +188,19 @@ class YMFSEO {
 			]);
 		}, 70 );
 
+		// Adds image media states.
+		add_filter( 'display_media_states', function ( array $media_states, WP_Post $post ) : array {
+			if ( YMFSEO_Settings::get_option( 'preview_image_id' ) == $post->ID ) {
+				$media_states[] =  __( 'Preview Image', 'ym-fast-seo' );
+			}
+
+			if ( YMFSEO_Settings::get_option( 'rep_image_id' ) == $post->ID ) {
+				$media_states[] =  __( 'Representative\'s Image', 'ym-fast-seo' );
+			}
+		
+			return $media_states;
+		}, 10, 2 );
+
 
 		// Modifies title tag parts.
 		add_filter( 'document_title_parts', function ( array $title ) : array {
@@ -242,6 +255,19 @@ class YMFSEO {
 			include YMFSEO_ROOT_DIR . 'parts/head.php';
 		}, 1 );
 
+		// Removes headings from post excerpts.
+		add_filter( 'excerpt_allowed_blocks', function ( array $allowed_blocks ) : array {
+			if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
+				return $allowed_blocks;
+			}
+
+			return array_filter( $allowed_blocks, function ( $block ) {
+				return ! in_array( $block, [
+					'core/heading',
+				]);
+			});
+		});
+
 
 		// Adds redirects.
 		// add_filter( 'mod_rewrite_rules', function ( string $rules ) : string {
@@ -292,19 +318,6 @@ class YMFSEO {
 
 			return $output;
 		}, 999 );
-		
-		// Removes headings from post excerpts.
-		add_filter( 'excerpt_allowed_blocks', function ( array $allowed_blocks ) : array {
-			if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
-				return $allowed_blocks;
-			}
-
-			return array_filter( $allowed_blocks, function ( $block ) {
-				return ! in_array( $block, [
-					'core/heading',
-				]);
-			});
-		});
 
 		// Removes users from the sitemap.
 		add_filter( 'wp_sitemaps_add_provider', function ( WP_Sitemaps_Provider $provider, string $name ) : bool|WP_Sitemaps_Provider {
@@ -341,14 +354,16 @@ class YMFSEO {
 			return $args;
 		}, 10, 2 );
 
-		// Adds preview image media state.
-		add_filter( 'display_media_states', function ( array $media_states, WP_Post $post ) : array {
-			if ( YMFSEO_Settings::get_option( 'preview_image_id' ) == $post->ID ) {
-				$media_states[] =  __( 'Preview Image', 'ym-fast-seo' );
+		// Removes `noindex` taxonomies from the sitemap.
+		add_filter( 'wp_sitemaps_taxonomies', function ( array $taxonomies ) : array {
+			foreach ( $taxonomies as $slug => $taxonomy ) {
+				if ( YMFSEO_Settings::get_option( "ymfseo_taxonomy_noindex_{$slug}" ) ) {
+					unset( $taxonomies[ $slug ] );
+				}
 			}
 		
-			return $media_states;
-		}, 10, 2 );
+			return $taxonomies;
+		});
 	}
 
 	/**
