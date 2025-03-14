@@ -536,6 +536,7 @@ class YMFSEO_Settings {
 	 */
 	public static function add_section ( string $slug, string $title, string $icon, array $args = [] ) : void {
 		YMFSEO_Settings::$registered_sections[] = [
+			'slug'  => $slug,
 			'title' => $title,
 			'icon'  => $icon,
 		];
@@ -545,10 +546,13 @@ class YMFSEO_Settings {
 			fn ( $args ) => include YMFSEO_ROOT_DIR . 'parts/settings-section.php',
 			YMFSEO_Settings::$params[ 'page_slug' ],
 			[
-				'after_section' => sprintf( '<div class="ymfseo-submit"><button class="%s">%s</button></div>',
-					esc_attr( 'button button-primary' ),
-					esc_attr__( 'Save Changes', 'ym-fast-seo' ),
-				),
+				'after_section' => implode( ' ', [
+					sprintf( '<div class="ymfseo-submit"><button class="%s">%s</button></div>',
+						esc_attr( 'button button-primary' ),
+						esc_attr__( 'Save Changes', 'ym-fast-seo' ),
+					),
+					sprintf( '</section><section>' ),
+				]),
 				...$args,
 			]
 		);
@@ -639,6 +643,7 @@ class YMFSEO_Settings {
 		}
 
 		// Registers setting.
+		// phpcs:ignore
 		register_setting( YMFSEO_Settings::$params[ 'page_slug' ], "ymfseo_$slug", [
 			'type'              => $type,
 			'default'           => YMFSEO_Settings::$default_settings[ $slug ],

@@ -165,7 +165,7 @@ class YMFSEO_Site_Health {
 			$title       = __( 'Site preview image is specified', 'ym-fast-seo' );
 			$description = [];
 			$links = [
-				__( 'Manage Site Preview Image', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php?page=ymfseo-settings#ymfseo_preview_image_id' ),
+				__( 'Manage Site Preview Image', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php?page=ymfseo-settings#preview' ),
 			];
 
 			// Get data.

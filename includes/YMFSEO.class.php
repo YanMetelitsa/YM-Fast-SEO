@@ -91,10 +91,11 @@ class YMFSEO {
 			];
 
 			// Defines replace tags.
-			YMFSEO_Meta_Fields::$replace_tags = [
+			YMFSEO_Meta_Fields::$replace_tags = apply_filters( 'ymfseo_tags', [
 				'%site_name%' => get_bloginfo( 'name' ),
+				'%tagline%'   => get_bloginfo( 'description' ),
 				'%sep%'       => YMFSEO::get_separator(),
-			];
+			]);
 		});
 
 
@@ -334,12 +335,13 @@ class YMFSEO {
 
 		// Removes `noindex` pages from the sitemap.
 		add_filter( 'wp_sitemaps_posts_query_args', function ( array $args, string $post_type ) : array {
+			// phpcs:ignore
 			$args[ 'post__not_in' ] = $args[ 'post__not_in' ] ?? [];
 
 			$page_query = new WP_Query([
 				'post_type'      => YMFSEO::get_public_post_types(),
-				'meta_key'       => 'ymfseo_fields',
-				'meta_value'     => 'noindex";s:1',
+				'meta_key'       => 'ymfseo_fields',	// phpcs:ignore
+				'meta_value'     => 'noindex";s:1',		// phpcs:ignore
 				'meta_compare'   => 'LIKE',
 				'posts_per_page' => -1,
 				'fields'         => 'ids',

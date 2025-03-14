@@ -7,6 +7,7 @@
 	--ymfseo-yellow: #ffb900;
 	--ymfseo-blue: #0073aa;
 
+	--ymfseo-gap-primary: 20px;
 	--ymfseo-border-radius: 4px;
 }
 
@@ -236,6 +237,7 @@ td.ymfseo.column-ymfseo {
 		scroll-behavior: smooth;
 	}
 
+	/* Notice */
 	.notice {
 		border-top-color: var( --ymfseo-settings-border );
 		border-right-color: var( --ymfseo-settings-border );
@@ -251,14 +253,13 @@ td.ymfseo.column-ymfseo {
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		gap: 8px;
+		gap: 10px;
 
 		&-item {
 			background-color: var( --ymfseo-settings-bg );
-			padding: 4px 8px 4px 4px;
+			padding: 6px 10px 6px 6px;
 			border: 1px solid var( --ymfseo-settings-border );
 			border-radius: var( --ymfseo-border-radius );
-			transition: color ease-in-out .05s;
 
 			cursor: pointer;
 
@@ -267,16 +268,21 @@ td.ymfseo.column-ymfseo {
 			justify-content: center;
 			gap: 5px;
 
-			color: var( --ymfseo-primary );
 			text-decoration: none;
 
 			&:hover {
-				color: var( --ymfseo-secondary );
+				color: var( --ymfseo-primary );
 			}
 
-			span {
+			&.active {
+				background-color: var( --ymfseo-primary );
+
+				color: #fff;
+			}
+
+			.dashicons {
 				margin-bottom: -1px;
-				transition: color ease-in-out .05s;
+				transition: none;
 
 				display: flex;
 				align-items: center;
@@ -285,143 +291,162 @@ td.ymfseo.column-ymfseo {
 				font-size: 14px;
 
 				&::before {
-					transition: color ease-in-out .05s;
+					transition: none;
 				}
+			}
+
+			.label {
+				margin-top: -1px;
 			}
 		}
 	}
 
 	/* Form */
 	form {
-		/* Section title */
-		> h2 {
+		/* Section */
+		section {
 			background-color: var( --ymfseo-settings-bg );
-			margin: 20px 0 0 0;
-			padding: 20px;
+			margin-top: var( --ymfseo-gap-primary );
 			border: 1px solid var( --ymfseo-settings-border );
-			border-bottom: none;
-			border-radius: var( --ymfseo-border-radius ) var( --ymfseo-border-radius ) 0 0;
+			border-radius: var( --ymfseo-border-radius );
 
-			display: flex;
-			align-items: center;
-			gap: 10px;
-
-			color: var( --ymfseo-primary );
-
-			@include wp-not-mobile {
-				scroll-margin-top: 20px;
-			}
-		}
-
-		/* Section description */
-		> p {
-			&:not( .submit ) {
-				background-color: var( --ymfseo-settings-bg );
-				margin: -10px 0 0 0;
-				padding: 0 20px 10px 20px;
-				border: 1px solid var( --ymfseo-settings-border );
-				border-top: none;
-				border-bottom: none;
+			&:not( .active ) {
+				visibility: hidden;
+				position: absolute;
+				top: -200vh;
+				left: -200vw;
 			}
 
-			code {
+			&:last-of-type {
+				display: none;
+			}
+
+			/* Title */
+			> h2 {
 				margin: 0;
-				padding: 2px 5px 2px;
-				border-radius: 3px;
-			}
-		}
+				padding: var( --ymfseo-gap-primary );
 
-		/* Table */
-		.form-table {
-			background-color: var( --ymfseo-settings-bg );
-			margin: 0;
-			padding: 20px;
-			border: 1px solid var( --ymfseo-settings-border );
-			border-radius: 0 0 var( --ymfseo-border-radius ) var( --ymfseo-border-radius );
+				display: flex;
+				align-items: center;
+				gap: 10px;
 
-			display: block;
+				color: var( --ymfseo-secondary );
 
-			@include wp-mobile {
-				th {
-					padding-bottom: 4px;
-				}
-				tr:first-of-type th {
-					padding-top: 0;
+				@include wp-not-mobile {
+					scroll-margin-top: var( --ymfseo-gap-primary );
 				}
 			}
 
-			tbody {
-				width: 100%;
-    			display: block;
+			/* Description */
+			> p {
+				&:not( .submit ) {
+					margin: 0;
+					padding: 0 var( --ymfseo-gap-primary ) var( --ymfseo-gap-primary ) var( --ymfseo-gap-primary );
 
-				tr {
-					width: 100%;
-    				display: block;
+					&:not( :last-of-type ) {
+						margin-bottom: -15px;
+					}
+				}
 
+				code {
+					margin: 0;
+					padding: 2px 5px 2px;
+					border-radius: 3px;
+				}
+			}
+
+			/* Table */
+			.form-table {
+				margin: 0;
+				padding: var( --ymfseo-gap-primary );
+				border-top: 1px solid var( --ymfseo-settings-border );
+				
+				display: block;
+
+				@include wp-mobile {
 					th {
-						flex-shrink: 0;
+						padding-bottom: 4px;
+					}
 
-						label {
-							display: flex;
-							align-items: center;
-							gap: 6px;
+					tr:first-of-type th {
+						padding-top: 0;
+					}
+				}
 
-							.dashicons {
+				tbody {
+					width: 100%;
+					display: block;
+
+					tr {
+						width: 100%;
+						display: block;
+
+						th {
+							flex-shrink: 0;
+
+							label {
 								display: flex;
 								align-items: center;
-								justify-content: center;
+								gap: 6px;
 
-								font-size: 16px;
+								.dashicons {
+									display: flex;
+									align-items: center;
+									justify-content: center;
+
+									font-size: 16px;
+								}
 							}
 						}
-					}
 
-					&.sub-field {
-						th {
-							font-weight: 400;
-							color: #494e51;
-						}
-					}
-
-					&:has( .CodeMirror ) {
-						@include wp-not-mobile {
-							display: flex;
+						&.sub-field {
+							th {
+								font-weight: 400;
+								color: #494e51;
+							}
 						}
 
-						td {
-							width: 100%;
+						&:has( .CodeMirror ) {
+							@include wp-not-mobile {
+								display: flex;
+							}
 
-							overflow-x: auto;
-
-							.CodeMirror {
+							td {
 								width: 100%;
-								box-sizing: border-box;
 
-								border-radius: 4px;
-								border: 1px solid var( --ymfseo-settings-border );
+								overflow-x: auto;
+
+								.CodeMirror {
+									width: 100%;
+									box-sizing: border-box;
+
+									border-radius: 4px;
+									border: 1px solid var( --ymfseo-settings-border );
+								}
 							}
 						}
-					}
 
-					&:has( .ymfseo-settings-redirects-section ) {
-						display: flex;
+						&:has( .ymfseo-settings-redirects-section ) {
+							display: flex;
 
-						td:last-of-type {
-							flex: 1;
+							td:last-of-type {
+								flex: 1;
+							}
 						}
 					}
 				}
 			}
-		}
 
-		/* Custom save button */
-		> .ymfseo-submit {
-			margin-top: 14px;
+			/* Custom save button */
+			> .ymfseo-submit {
+				padding: var( --ymfseo-gap-primary );
+				border-top: 1px solid var( --ymfseo-settings-border );
 
-			display: flex;
+				display: flex;
 
-			@include wp-mobile {
-				justify-content: flex-end;
+				@include wp-mobile {
+					justify-content: flex-end;
+				}
 			}
 		}
 
@@ -465,8 +490,8 @@ td.ymfseo.column-ymfseo {
 			}
 	
 			&:has( input:checked ) {
-				border-color: #2271b1;
-				box-shadow: 0 0 0 1px #2271b1;
+				border-color: var( --ymfseo-secondary );
+				box-shadow: 0 0 0 1px var( --ymfseo-secondary );
 				outline: 2px solid transparent;
 			}
 	

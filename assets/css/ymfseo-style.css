@@ -5,6 +5,7 @@
   --ymfseo-green: #46B450;
   --ymfseo-yellow: #ffb900;
   --ymfseo-blue: #0073aa;
+  --ymfseo-gap-primary: 20px;
   --ymfseo-border-radius: 4px;
 }
 
@@ -177,6 +178,7 @@ td.ymfseo.column-ymfseo {
 
 /* Settings */
 .ymfseo-seettings-page {
+  /* Notice */
   /* Navigation */
   /* Form */
   /* Separator grid */
@@ -199,142 +201,157 @@ html:has(.ymfseo-seettings-page) {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 .ymfseo-seettings-page__nav-item {
   background-color: var(--ymfseo-settings-bg);
-  padding: 4px 8px 4px 4px;
+  padding: 6px 10px 6px 6px;
   border: 1px solid var(--ymfseo-settings-border);
   border-radius: var(--ymfseo-border-radius);
-  transition: color ease-in-out 0.05s;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  color: var(--ymfseo-primary);
   text-decoration: none;
 }
 .ymfseo-seettings-page__nav-item:hover {
-  color: var(--ymfseo-secondary);
+  color: var(--ymfseo-primary);
 }
-.ymfseo-seettings-page__nav-item span {
+.ymfseo-seettings-page__nav-item.active {
+  background-color: var(--ymfseo-primary);
+  color: #fff;
+}
+.ymfseo-seettings-page__nav-item .dashicons {
   margin-bottom: -1px;
-  transition: color ease-in-out 0.05s;
+  transition: none;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
 }
-.ymfseo-seettings-page__nav-item span::before {
-  transition: color ease-in-out 0.05s;
+.ymfseo-seettings-page__nav-item .dashicons::before {
+  transition: none;
+}
+.ymfseo-seettings-page__nav-item .label {
+  margin-top: -1px;
 }
 .ymfseo-seettings-page form {
-  /* Section title */
-  /* Section description */
-  /* Table */
-  /* Custom save button */
+  /* Section */
   /* WordPress save button */
 }
-.ymfseo-seettings-page form > h2 {
+.ymfseo-seettings-page form section {
   background-color: var(--ymfseo-settings-bg);
-  margin: 20px 0 0 0;
-  padding: 20px;
+  margin-top: var(--ymfseo-gap-primary);
   border: 1px solid var(--ymfseo-settings-border);
-  border-bottom: none;
-  border-radius: var(--ymfseo-border-radius) var(--ymfseo-border-radius) 0 0;
+  border-radius: var(--ymfseo-border-radius);
+  /* Title */
+  /* Description */
+  /* Table */
+  /* Custom save button */
+}
+.ymfseo-seettings-page form section:not(.active) {
+  visibility: hidden;
+  position: absolute;
+  top: -200vh;
+  left: -200vw;
+}
+.ymfseo-seettings-page form section:last-of-type {
+  display: none;
+}
+.ymfseo-seettings-page form section > h2 {
+  margin: 0;
+  padding: var(--ymfseo-gap-primary);
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--ymfseo-primary);
+  color: var(--ymfseo-secondary);
 }
 @media screen and (min-width: 782px) {
-  .ymfseo-seettings-page form > h2 {
-    scroll-margin-top: 20px;
+  .ymfseo-seettings-page form section > h2 {
+    scroll-margin-top: var(--ymfseo-gap-primary);
   }
 }
-.ymfseo-seettings-page form > p:not(.submit) {
-  background-color: var(--ymfseo-settings-bg);
-  margin: -10px 0 0 0;
-  padding: 0 20px 10px 20px;
-  border: 1px solid var(--ymfseo-settings-border);
-  border-top: none;
-  border-bottom: none;
+.ymfseo-seettings-page form section > p:not(.submit) {
+  margin: 0;
+  padding: 0 var(--ymfseo-gap-primary) var(--ymfseo-gap-primary) var(--ymfseo-gap-primary);
 }
-.ymfseo-seettings-page form > p code {
+.ymfseo-seettings-page form section > p:not(.submit):not(:last-of-type) {
+  margin-bottom: -15px;
+}
+.ymfseo-seettings-page form section > p code {
   margin: 0;
   padding: 2px 5px 2px;
   border-radius: 3px;
 }
-.ymfseo-seettings-page form .form-table {
-  background-color: var(--ymfseo-settings-bg);
+.ymfseo-seettings-page form section .form-table {
   margin: 0;
-  padding: 20px;
-  border: 1px solid var(--ymfseo-settings-border);
-  border-radius: 0 0 var(--ymfseo-border-radius) var(--ymfseo-border-radius);
+  padding: var(--ymfseo-gap-primary);
+  border-top: 1px solid var(--ymfseo-settings-border);
   display: block;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page form .form-table th {
+  .ymfseo-seettings-page form section .form-table th {
     padding-bottom: 4px;
   }
-  .ymfseo-seettings-page form .form-table tr:first-of-type th {
+  .ymfseo-seettings-page form section .form-table tr:first-of-type th {
     padding-top: 0;
   }
 }
-.ymfseo-seettings-page form .form-table tbody {
+.ymfseo-seettings-page form section .form-table tbody {
   width: 100%;
   display: block;
 }
-.ymfseo-seettings-page form .form-table tbody tr {
+.ymfseo-seettings-page form section .form-table tbody tr {
   width: 100%;
   display: block;
 }
-.ymfseo-seettings-page form .form-table tbody tr th {
+.ymfseo-seettings-page form section .form-table tbody tr th {
   flex-shrink: 0;
 }
-.ymfseo-seettings-page form .form-table tbody tr th label {
+.ymfseo-seettings-page form section .form-table tbody tr th label {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.ymfseo-seettings-page form .form-table tbody tr th label .dashicons {
+.ymfseo-seettings-page form section .form-table tbody tr th label .dashicons {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
 }
-.ymfseo-seettings-page form .form-table tbody tr.sub-field th {
+.ymfseo-seettings-page form section .form-table tbody tr.sub-field th {
   font-weight: 400;
   color: #494e51;
 }
 @media screen and (min-width: 782px) {
-  .ymfseo-seettings-page form .form-table tbody tr:has(.CodeMirror) {
+  .ymfseo-seettings-page form section .form-table tbody tr:has(.CodeMirror) {
     display: flex;
   }
 }
-.ymfseo-seettings-page form .form-table tbody tr:has(.CodeMirror) td {
+.ymfseo-seettings-page form section .form-table tbody tr:has(.CodeMirror) td {
   width: 100%;
   overflow-x: auto;
 }
-.ymfseo-seettings-page form .form-table tbody tr:has(.CodeMirror) td .CodeMirror {
+.ymfseo-seettings-page form section .form-table tbody tr:has(.CodeMirror) td .CodeMirror {
   width: 100%;
   box-sizing: border-box;
   border-radius: 4px;
   border: 1px solid var(--ymfseo-settings-border);
 }
-.ymfseo-seettings-page form .form-table tbody tr:has(.ymfseo-settings-redirects-section) {
+.ymfseo-seettings-page form section .form-table tbody tr:has(.ymfseo-settings-redirects-section) {
   display: flex;
 }
-.ymfseo-seettings-page form .form-table tbody tr:has(.ymfseo-settings-redirects-section) td:last-of-type {
+.ymfseo-seettings-page form section .form-table tbody tr:has(.ymfseo-settings-redirects-section) td:last-of-type {
   flex: 1;
 }
-.ymfseo-seettings-page form > .ymfseo-submit {
-  margin-top: 14px;
+.ymfseo-seettings-page form section > .ymfseo-submit {
+  padding: var(--ymfseo-gap-primary);
+  border-top: 1px solid var(--ymfseo-settings-border);
   display: flex;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page form > .ymfseo-submit {
+  .ymfseo-seettings-page form section > .ymfseo-submit {
     justify-content: flex-end;
   }
 }
@@ -372,8 +389,8 @@ html:has(.ymfseo-seettings-page) {
   }
 }
 .ymfseo-seettings-page .ymfseo-settings-separator-grid__item:has(input:checked) {
-  border-color: #2271b1;
-  box-shadow: 0 0 0 1px #2271b1;
+  border-color: var(--ymfseo-secondary);
+  box-shadow: 0 0 0 1px var(--ymfseo-secondary);
   outline: 2px solid transparent;
 }
 .ymfseo-seettings-page .ymfseo-settings-separator-grid__item input {

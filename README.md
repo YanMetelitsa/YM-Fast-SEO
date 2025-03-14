@@ -23,6 +23,12 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 # Changelog
 
+# 3.3.0
+* New: Splitting the settings page into tabs
+* New: Ability to use shortcodes in meta fields
+* New: `%tagline%` tag and [`ymfseo_tags`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_tags) filter
+* Fix: Settings page design
+
 # 3.2.8
 * New: `Representative's Image` media state
 * Fix: Now `noindex` taxonomies are not displayed in sitemaps
@@ -51,7 +57,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * Fix: IndexNow sending logic
 
 ## 3.1.3
-* New: [`ymfseo_title_separator`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation) filter
+* New: [`ymfseo_title_separator`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_title_separator) filter
 * Fix: Terms pages now have the `CollectionPage` type as default
 * Fix: Limit resending URL to IndexNow within 10 minutes
 

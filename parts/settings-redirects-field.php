@@ -64,13 +64,13 @@
 					esc_attr__( 'Target URL', 'ym-fast-seo' ),
 				); ?>
 	
-				<span class="dashicons dashicons-trash" onclick="YMFSEO.removeRedirectRow( this )"></span>
+				<span class="dashicons dashicons-trash" onclick="YMFSEO_Settings.removeRedirectRow( this )"></span>
 			</div>
 		<?php endforeach; ?>
 	</div>
 
 	<!-- Add Button -->
-	<div class="button button-secondary" onclick="YMFSEO.addRedirectRow( this )">
+	<div class="button button-secondary" onclick="YMFSEO_Settings.addRedirectRow( this )">
 		<span>
 			<?php esc_html_e( 'Add Redirect', 'ym-fast-seo' ); ?>
 		</span>

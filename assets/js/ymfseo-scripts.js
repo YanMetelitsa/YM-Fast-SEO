@@ -5,6 +5,55 @@
  */
 class YMFSEO {
 	/**
+	 * Sets cookie.
+	 * 
+	 * @param {string} name Cookie name.
+	 * @param {any} value Cookie value.
+	 * @param {int} days Days expires.
+	 */
+	static setCookie ( name, value, days = 10 ) {
+		let expires = '';
+
+		if ( days ) {
+			const date = new Date();
+			date.setTime( date.getTime() + ( days * 24 * 60 * 60 * 1000 ) );
+			expires = `expires=${date.toUTCString()}`;
+		}
+
+		document.cookie = `ymfseo-${name}=${( value || "" )}; ${expires}; path=/`;
+	}
+
+	/**
+	 * Retrives cookie value.
+	 * 
+	 * @param {string} name Cookie name.
+	 * 
+	 * @returns Cookie value or null.
+	 */
+	static getCookie ( name ) {
+		const cookies = document.cookie.split( '; ' );
+
+		for ( let cookie of cookies ) {
+			const [ key, value ] = cookie.split( '=' );
+
+			if ( key === `ymfseo-${name}` ) {
+				return value;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Deletes cookie.
+	 * 
+	 * @param {string} name Cookie name.
+	 */
+	static deleteCookie ( name ) {
+		document.cookie = `ymfseo-${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+	}
+	
+	/**
 	 * Inits inputs SEO length checkers.
 	 */
 	static initLengthCheckers () {
@@ -69,37 +118,6 @@ class YMFSEO {
 	}
 
 	/**
-	 * Inits settings navigation bar.
-	 */
-	static initSettingsNav () {
-		const settingsSections = document.querySelectorAll( '.ymfseo-seettings-page form h2' );
-		const settingsNav      = document.querySelector( '.ymfseo-seettings-page__nav' );
-		const navItems         = settingsNav.querySelectorAll( '.ymfseo-seettings-page__nav-item' );
-
-		navItems.forEach( item => {
-			item.addEventListener( 'click', e => {
-				settingsSections.forEach( h2 => {
-					if ( item.innerText == h2.innerText ) {
-						h2.scrollIntoView();
-					}
-				});
-			});
-		});
-	}
-
-	/**
-	 * Inits settings additional `Save` buttons.
-	 */
-	static initSettingsSaveButtons () {
-		const mainButton  = document.querySelector( '.ymfseo-seettings-page .submit input[ type=submit ]' );
-		const saveButtons = document.querySelectorAll( '.ymfseo-submit .button' );
-	
-		saveButtons.forEach( btn => {
-			btn.addEventListener( 'click', e => btn.focus() );
-		});
-	}
-
-	/**
 	 * Inits meta box checkboxes.
 	 */
 	static initMetaBoxCheckboxes () {
@@ -113,6 +131,106 @@ class YMFSEO {
 				} else {
 					span.classList.remove( 'is-checked' );
 				}
+			});
+		});
+	}
+}
+
+/**
+ * YMFSEO Settings JS class.
+ */
+class YMFSEO_Settings {
+	/**
+	 * Retrives settings sections.
+	 * 
+	 * @returns Sections object.
+	 */
+	static #getSections () {
+		const page = document.querySelector( '.ymfseo-seettings-page' );
+		const nav  = document.querySelector( '.ymfseo-seettings-page__nav' );
+
+		let output = [];
+
+		if ( page && nav ) {
+			const slugs    = Array.from( nav.querySelectorAll( '[ data-target ]' ) ).map( item => item.getAttribute( 'data-target' ) );
+			const sections = page.querySelectorAll( '.ymfseo-seettings-page section' );
+
+			output = slugs.reduce( ( acc, slug, index ) => {
+				acc[ slug ] = sections[ index ];
+				return acc;
+			}, {} );
+		}
+
+		return output;
+	}
+
+	/**
+	 * Activates settings section.
+	 * 
+	 * @param {string} slug Section slug.
+	 */
+	static activateSection ( slug ) {
+		const sections = YMFSEO_Settings.#getSections();
+		
+		if ( sections[ slug ] ) {
+			window.location.hash = `#${slug}`;
+
+			Object.entries( sections ).forEach( ( [ name, element ] ) => {
+				element.classList.remove( 'active' );
+			});
+
+			sections[ slug ].classList.add( 'active' );
+		}
+	}
+
+	/**
+	 *  Inits settings sections.
+	 */
+	static initSettingsSections () {
+		let slug = 'general';
+
+		const hash     = window.location.hash;
+		const sections = YMFSEO_Settings.#getSections();
+
+		/* Check hash slug. */
+		if ( hash && sections[ hash.replace( '#', '' ) ] ) {
+			slug = hash.replace( '#', '' );
+		}
+
+		/* Check cookie slug. */
+		const cookieSlug = YMFSEO.getCookie( 'last-settings-tab' );
+
+		if ( cookieSlug && sections[ cookieSlug ] ) {
+			slug = cookieSlug;
+
+			YMFSEO.deleteCookie( 'last-settings-tab' );
+		}
+
+		/* Activate section. */
+		YMFSEO_Settings.activateSection( slug );
+
+		/* Activate nav item. */
+		const navItem = document.querySelector( `.ymfseo-seettings-page__nav-item[ data-target=${slug} ]` );
+
+		if ( navItem ) {
+			navItem.classList.add( 'active' );
+		}
+	}
+
+	/**
+	 * Inits settings navigation bar.
+	 */
+	static initSettingsNav () {
+		const navItems = document.querySelectorAll( '.ymfseo-seettings-page__nav-item' );
+
+		navItems.forEach( item => {
+			item.addEventListener( 'click', e => {
+				const slug = item.getAttribute( 'data-target' );
+
+				navItems.forEach( item => item.classList.remove( 'active' ) );
+				item.classList.add( 'active' );
+
+				YMFSEO_Settings.activateSection( slug );
 			});
 		});
 	}
@@ -131,6 +249,20 @@ class YMFSEO {
 	// static removeRedirectRow ( button ) {
 	// 	alert( 2 );
 	// }
+
+	/**
+	 * Inits settings additional `Save` buttons.
+	 */
+	static initSettingsSaveButtons () {
+		const saveButtons = document.querySelectorAll( '.ymfseo-submit .button' );
+
+		saveButtons.forEach( btn => {
+			btn.addEventListener( 'click', e => {
+				YMFSEO.setCookie( 'last-settings-tab', window.location.hash.replace( '#', '' ) );
+				btn.focus();
+			});
+		});
+	}
 }
 
 window.addEventListener( 'load', e => {

@@ -16,15 +16,18 @@
 		esc_attr( $image_id ),
 	); ?>
 
-	<?php printf( '<img src="%s" id="%s" alt="%s" style="%s" %s onclick="%s">',
-		esc_url( $image_uri ?? '' ),
-		esc_attr( "{$args[ 'label_for' ]}-img" ),
-		esc_attr__( 'Image', 'ym-fast-seo' ),
-		'cursor:pointer;',
-		esc_attr( $image_uri ? '' : 'hidden' ),
-		"document.querySelector( '#" . esc_attr( $args[ 'label_for' ] ) . "-change-button' ).click()",
-	); ?>
-	
+	<?php
+		// phpcs:ignore
+		printf( '<img src="%s" id="%s" alt="%s" style="%s" %s onclick="%s">',
+			esc_url( $image_uri ?? '' ),
+			esc_attr( "{$args[ 'label_for' ]}-img" ),
+			esc_attr__( 'Image', 'ym-fast-seo' ),
+			'cursor:pointer;',
+			esc_attr( $image_uri ? '' : 'hidden' ),
+			"document.querySelector( '#" . esc_attr( $args[ 'label_for' ] ) . "-change-button' ).click()",
+		);
+	?>
+
 	<div class="action-buttons site-icon-action-buttons">
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-upload-button" ),
@@ -32,14 +35,14 @@
 			esc_attr( $image_uri ? 'hidden' : '' ),
 			esc_html__( 'Choose an Image', 'ym-fast-seo' ),
 		); ?>
-		
+
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-change-button" ),
 			'button',
 			esc_attr( $image_uri ? '' : 'hidden' ),
 			esc_html__( 'Change Image', 'ym-fast-seo' ),
 		); ?>
-		
+
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-remove-button" ),
 			'button button-secondary reset remove-site-icon',
@@ -47,7 +50,7 @@
 			esc_html__( 'Remove Image', 'ym-fast-seo' ),
 		); ?>
 	</div>
-	
+
 	<?php if ( isset( $args[ 'description' ] ) ) : ?>
 		<p class="description">
 			<?php echo wp_kses_post( $args[ 'description' ] ); ?>

@@ -30,7 +30,7 @@ if ( $head_scripts ) {
 	$only_visitors_head_scripts = YMFSEO_Settings::get_option( 'head_scripts_only_visitors' );
 
 	if ( ! $only_visitors_head_scripts || ! is_user_logged_in() ) {
-		echo $head_scripts;
+		echo $head_scripts; // phpcs:ignore
 	}
 }
 
@@ -116,14 +116,13 @@ do_action( 'ymfseo_after_print_metas' );
 
 // Debugs queried object data.
 if ( $queried_object ) {
-	printf( '<!-- %s-%s -->',
+	printf( '<!-- / YM Fast SEO | %s ID – %s -->',
+		// phpcs:ignore
 		...match ( get_class( $queried_object ) ) {
-			'WP_Post'      => [ 'P',  esc_html( $queried_object->ID ) ],
-			'WP_Post_Type' => [ 'PT', esc_html( $queried_object->name ) ],
-			'WP_Term'      => [ 'T',  esc_html( $queried_object->term_id ) ],
-			'WP_User'      => [ 'U',  esc_html( $queried_object->ID ) ],
+			'WP_Post'      => [ 'Post',      esc_html( $queried_object->ID ) ],
+			'WP_Post_Type' => [ 'Post Type', esc_html( $queried_object->name ) ],
+			'WP_Term'      => [ 'Term',      esc_html( $queried_object->term_id ) ],
+			'WP_User'      => [ 'User',      esc_html( $queried_object->ID ) ],
 		},
 	);
 }
-
-echo '<!-- / YM Fast SEO -->';

@@ -11,28 +11,30 @@
 	<!-- Navigation -->
 	<nav class="ymfseo-seettings-page__nav">
 		<?php foreach ( YMFSEO_Settings::$registered_sections as $section ) : ?>
-			<div class="ymfseo-seettings-page__nav-item">
+			<div class="ymfseo-seettings-page__nav-item" data-target="<?php echo esc_attr( $section[ 'slug' ] ); ?>">
 				<span class="dashicons <?php echo esc_attr( $section[ 'icon' ] ); ?>"></span>
-				<?php echo esc_attr( $section[ 'title' ] ); ?>
+				<span class="label"><?php echo esc_attr( $section[ 'title' ] ); ?></span>
 			</div>
 		<?php endforeach; ?>
 	</nav>
 
 	<!-- Form -->
 	<form method="POST" action="options.php">
-		<?php
-			settings_fields( YMFSEO_Settings::$params[ 'page_slug' ] );
-			do_settings_sections( YMFSEO_Settings::$params[ 'page_slug' ] );
+		<?php settings_fields( YMFSEO_Settings::$params[ 'page_slug' ] ); ?>
 
-			submit_button();
-		?>
+		<section>
+		<?php do_settings_sections( YMFSEO_Settings::$params[ 'page_slug' ] ); ?>
+		</section>
+			
+		<?php submit_button(); ?>
 	</form>
 
 	<!-- JS -->
 	<script>
 		window.addEventListener( 'DOMContentLoaded', e => {
-			YMFSEO.initSettingsNav();
-			YMFSEO.initSettingsSaveButtons();
+			YMFSEO_Settings.initSettingsNav();
+			YMFSEO_Settings.initSettingsSaveButtons();
+			YMFSEO_Settings.initSettingsSections();
 		});
 	</script>
 </div>
