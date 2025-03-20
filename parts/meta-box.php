@@ -13,13 +13,14 @@
 		<div class="ymfseo-box__field-box">
 			<label for="ymfseo-title"><?php esc_html_e( 'Title', 'ym-fast-seo' ); ?></label>
 
-			<?php printf( '<input type="text" name="%1$s" id="%1$s" class="%2$s" value="%3$s" data-min="%4$s" data-rec="%5$s" data-max="%6$s">',
+			<?php printf( '<input type="text" name="%1$s" id="%1$s" class="%2$s" value="%3$s" data-min="%4$s" data-rec="%5$s" data-max="%6$s" placeholder="%7$s">',
 				'ymfseo-title',
 				'components-text-control__input',
 				esc_attr( $meta_fields->title ),
 				esc_attr( YMFSEO_Checker::$meta_lengths[ 'title' ][ 'min' ] ),
 				esc_attr( implode( '-', YMFSEO_Checker::$meta_lengths[ 'title' ][ 'rec' ] ) ),
 				esc_attr( YMFSEO_Checker::$meta_lengths[ 'title' ][ 'max' ] ),
+				esc_attr( YMFSEO_Settings::get_option( "post_type_title_{$post->post_type}", '' ) ),
 			); ?>
 
 			<div class="ymfseo-length-checker" data-for="ymfseo-title"></div>

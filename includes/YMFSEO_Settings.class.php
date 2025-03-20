@@ -50,7 +50,10 @@ class YMFSEO_Settings {
 
 		// Adds YM Fast SEO settings sections and options.
 		add_action( 'admin_init', function () {
-			// General section.
+			/**
+			 * General section.
+			 */
+
 			/* translators: Settings section name */
 			YMFSEO_Settings::add_section( 'general', __( 'General', 'ym-fast-seo' ), 'dashicons-admin-settings', [
 				/* translators: %s: Link to general settings page */
@@ -111,7 +114,10 @@ class YMFSEO_Settings {
 				],
 			);
 
-			// Post Types section.
+			/**
+			 * Post Types section.
+			 */
+
 			/* translators: Settings section name */
 			YMFSEO_Settings::add_section( 'post-types', __( 'Post Types', 'ym-fast-seo' ), 'dashicons-admin-post', [
 				'description' => implode( "</p><p>",[
@@ -153,7 +159,10 @@ class YMFSEO_Settings {
 				);
 			}
 
-			// Taxonomies section.
+			/**
+			 * Taxonomies section.
+			 */
+
 			/* translators: Settings section name */
 			YMFSEO_Settings::add_section( 'taxonomies', __( 'Taxonomies', 'ym-fast-seo' ), 'dashicons-tag', [
 				'description' => implode( "</p><p>",[
@@ -204,7 +213,10 @@ class YMFSEO_Settings {
 				);
 			}
 
-			// Site Preview section.
+			/**
+			 * Site Preview section.
+			 */
+
 			/* translators: Settings section name */
 			YMFSEO_Settings::add_section( 'preview', __( 'Site Preview', 'ym-fast-seo' ), 'dashicons-format-image' );
 			YMFSEO_Settings::register_option(
@@ -239,7 +251,10 @@ class YMFSEO_Settings {
 				],
 			);
 
-			// Representative section.
+			/**
+			 * Representative section.
+			 */
+
 			/* translators: Settings section name */
 			YMFSEO_Settings::add_section( 'representative', __( 'Representative', 'ym-fast-seo' ), 'dashicons-businessperson', [
 				'description' => __( 'If this website represents a company or person, you can include some details. This information will not be visible to visitors but will be available to search engines.', 'ym-fast-seo' ),
@@ -388,7 +403,10 @@ class YMFSEO_Settings {
 				],
 			);
 
-			// Integrations section.
+			/**
+			 * Integrations section.
+			 */
+
 			/* translators: Settings section name */
 			YMFSEO_Settings::add_section( 'integrations', __( 'Integrations', 'ym-fast-seo' ), 'dashicons-rest-api', [
 				'description' => sprintf(
@@ -458,15 +476,21 @@ class YMFSEO_Settings {
 				'checkbox',
 				[
 					'label'       => __( 'Enable IndexNow sending', 'ym-fast-seo' ),
-					'description' => sprintf(
-						/* translators: %s - link to settings page */
-						__( 'When the site is configured to <a href="%s">discourage indexing</a>, IndexNow will remain disabled irrespective of this option.', 'ym-fast-seo' ),
-						get_admin_url( null, 'options-reading.php#blog_public' ),
-					),
+					'description' => implode([
+						get_option( 'blog_public' ) ? '' : '<strong>' . __( 'Search engines are discouraged by the site\'s settings.', 'ym-fast-seo' ) . '</strong><br>',
+						sprintf(
+							/* translators: %s - link to settings page */
+							__( 'If the site is configured to <a href="%s">discourage indexing</a>, IndexNow will not function, regardless of this option.', 'ym-fast-seo' ),
+							get_admin_url( null, 'options-reading.php#blog_public' ),
+						),
+					]),
 				],
 			);
 
-			// Redirects section.
+			/**
+			 * Redirects section.
+			 */
+
 			/* translators: Redirects section name */
 			// YMFSEO_Settings::add_section( 'redirects', __( 'Redirects', 'ym-fast-seo' ), 'dashicons-randomize' );
 			// YMFSEO_Settings::register_option(
@@ -477,7 +501,10 @@ class YMFSEO_Settings {
 			// 	'redirects',
 			// );
 
-			// Additional section.
+			/**
+			 * Additional section.
+			 */
+
 			/* translators: Settings section name */
 			YMFSEO_Settings::add_section( 'additional', __( 'Additional', 'ym-fast-seo' ), 'dashicons-admin-generic' );
 			YMFSEO_Settings::register_option(

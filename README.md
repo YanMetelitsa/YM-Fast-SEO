@@ -23,6 +23,10 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 # Changelog
 
+## 3.3.1
+* New: Post meta fields placeholders
+* Fix: Fatal error `Uncaught TypeError: YMFSEO_Meta_Fields` on taxonomy pages
+
 ## 3.3.0
 * New: Splitting the settings page into tabs
 * New: Ability to use shortcodes in meta fields

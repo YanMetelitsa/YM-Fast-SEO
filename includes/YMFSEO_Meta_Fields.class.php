@@ -162,7 +162,7 @@ class YMFSEO_Meta_Fields {
 			// Post types.
 			foreach ( YMFSEO::get_public_post_types() as $post_type ) {
 				add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO_Meta_Fields::manage_seo_columns' );
-				add_action( "manage_{$post_type}_posts_custom_column" , function ( string $column, int $post_id ) {
+				add_action( "manage_{$post_type}_posts_custom_column" , function ( string $column, int $post_id ) : void {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_post( $post_id ) );
 
@@ -184,7 +184,7 @@ class YMFSEO_Meta_Fields {
 			// Taxonomies.
 			foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
 				add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO_Meta_Fields::manage_seo_columns' );
-				add_action( "manage_{$taxonomy}_custom_column" , function ( string $string, string $column, int $term_id  ) {
+				add_action( "manage_{$taxonomy}_custom_column" , function ( $string, string $column, int $term_id  ) : void {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_term( $term_id ) );
 
