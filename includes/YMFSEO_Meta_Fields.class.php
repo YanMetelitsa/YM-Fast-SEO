@@ -385,9 +385,11 @@ class YMFSEO_Meta_Fields {
 				case 'WP_Post':
 					// Gets post meta data.
 					$post_meta = get_post_meta( $queried_object_id, 'ymfseo_fields', true );
+
 					if ( ! empty( $post_meta ) ) {
 						$meta_fields = wp_parse_args( $post_meta, $meta_fields );
 					}
+					
 					$meta_fields[ 'image_uri' ] = get_the_post_thumbnail_url( $queried_object_id, 'full' );
 
 					// Sets post/page meta title and description.
@@ -421,6 +423,7 @@ class YMFSEO_Meta_Fields {
 						if ( empty( $meta_fields[ 'title' ] ) ) {
 							$meta_fields[ 'title' ] = $queried_object->label;
 						}
+
 						if ( empty( $meta_fields[ 'description' ] ) ) {
 							$meta_fields[ 'description' ] = $queried_object->description;
 						}
@@ -432,6 +435,7 @@ class YMFSEO_Meta_Fields {
 				case 'WP_Term':
 					// Gets term meta data.
 					$term_meta = get_term_meta( $queried_object_id, 'ymfseo_fields', true );
+
 					if ( ! empty( $term_meta ) ) {
 						$meta_fields = wp_parse_args( $term_meta, $meta_fields );
 					}
