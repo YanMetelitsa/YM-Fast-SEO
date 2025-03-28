@@ -47,8 +47,8 @@ class YMFSEO_IndexNow {
 
 		// Sends IndexNow after any post save.
 		add_action( 'save_post', function ( int $post_id, WP_Post $post ) {
-			// Is post type public.
-			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
+			// Is not autosave.
+			if ( wp_is_post_autosave( $post_id ) ) {
 				return;
 			}
 
@@ -57,8 +57,8 @@ class YMFSEO_IndexNow {
 				return;
 			}
 
-			// Is not autosave.
-			if ( wp_is_post_autosave( $post_id ) ) {
+			// Is post type public.
+			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
 				return;
 			}
 

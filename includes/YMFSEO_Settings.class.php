@@ -658,6 +658,17 @@ class YMFSEO_Settings {
 			};
 		}
 
+		$tagged_options = [
+			'post_type_title_', 'post_type_description_',
+			'taxonomy_title_', 'taxonomy_description_'
+		];
+		
+		foreach ( $tagged_options as $option_slug ) {
+			if ( str_contains( $slug, $option_slug ) ) {
+				$sanitize_callback = [ 'YMFSEO_Sanitizer', 'sanitize_text_field' ];
+			}
+		}
+
 		// Check menu icon.
 		$menu_icon = false;
 

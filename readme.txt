@@ -1,7 +1,7 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimization
-Stable tag: 3.3.1
+Stable tag: 3.3.2
 Requires PHP: 7.4
 Requires at least: 6.0
 Tested up to: 6.7.2
@@ -35,13 +35,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 4. Settings screen.
 5. Site SEO Health screen.
 
-== Installation ==
-
-1. **Visit** Plugins > Add New
-1. **Search** for "YM Fast SEO"
-1. **Install and Activate** YM Fast SEO from the Plugins page
-
 == Changelog ==
+
+= 3.3.2 =
+
+* Fix: Text fields sanitizing does not remove custom tags now
 
 = 3.3.1 =
 * New: Post meta fields placeholders

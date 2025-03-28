@@ -271,30 +271,31 @@ class YMFSEO {
 
 
 		// Adds redirects.
-		// add_filter( 'mod_rewrite_rules', function ( string $rules ) : string {
-		// 	$redirects_option = YMFSEO_Settings::get_option( 'redirects', [] );
+		add_filter( 'mod_rewrite_rules', function ( string $rules ) : string {
+			// $redirects_option = YMFSEO_Settings::get_option( 'redirects', [] );
 
-		// 	if ( empty( $redirects_option ) ) {
-		// 		return $rules;
-		// 	}
+			// if ( empty( $redirects_option ) ) {
+			// 	return $rules;
+			// }
 
-		// 	$redirects = [
-		// 		"\n# BEGIN YMFSEO Redirects",
-		// 	];
+			// $redirects = [
+			// 	"\n# BEGIN YMFSEO Redirects",
+			// ];
 
-		// 	foreach ( $redirects_option as $item ) {
-		// 		$redirects[] = sprintf( '%s %d %s %s',
-		// 			esc_html( $item[ 'is_regex' ] ? 'RedirectMatch' : 'Redirect' ),
-		// 			esc_html( $item[ 'type' ] ),
-		// 			esc_html( $item[ 'from' ] ),
-		// 			esc_html( $item[ 'to' ] ),
-		// 		);
-		// 	}
+			// foreach ( $redirects_option as $item ) {
+			// 	$redirects[] = sprintf( '%s %d %s %s',
+			// 		esc_html( $item[ 'is_regex' ] ? 'RedirectMatch' : 'Redirect' ),
+			// 		esc_html( $item[ 'type' ] ),
+			// 		esc_html( $item[ 'from' ] ),
+			// 		esc_html( $item[ 'to' ] ),
+			// 	);
+			// }
 
-		// 	$redirects[] = "# END YMFSEO Redirects\n\n";
+			// $redirects[] = "# END YMFSEO Redirects\n\n";
 		
-		// 	return implode( "\n", $redirects ) . $rules;
-		// });
+			// return implode( "\n", $redirects ) . $rules;
+			return $rules;
+		});
 
 		// Modifies robots.txt file.
 		add_filter( 'robots_txt', function ( string $output ) : string {

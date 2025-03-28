@@ -15,13 +15,11 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * `Robots.txt` Editor
 * Other Useful Tools & Improvement
 
-# Installation
-
-1. **Visit** Plugins > Add New
-1. **Search** for "YM Fast SEO"
-1. **Install and Activate** YM Fast SEO from the Plugins page
-
 # Changelog
+
+## 3.3.2
+
+* Fix: Text fields sanitizing does not remove custom tags now
 
 ## 3.3.1
 * New: Post meta fields placeholders

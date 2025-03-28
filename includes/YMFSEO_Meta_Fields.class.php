@@ -228,6 +228,16 @@ class YMFSEO_Meta_Fields {
 
 		// Saves post metas after saving post.
 		add_action( 'save_post', function ( int $post_id ) {
+			// Is not autosave.
+			if ( wp_is_post_autosave( $post_id ) ) {
+				return;
+			}
+
+			// Is not revision.
+			if ( wp_is_post_revision( $post_id ) ) {
+				return;
+			}
+
 			// Is user can edit metas.
 			if ( ! YMFSEO_Checker::is_current_user_can_edit_metas() ) {
 				return;
@@ -249,23 +259,23 @@ class YMFSEO_Meta_Fields {
 				return;
 			}
 
-			// Is not revision.
-			if ( wp_is_post_revision( $post_id ) ) {
-				return;
-			}
-
-			// Is not autosave.
-			if ( wp_is_post_autosave( $post_id ) ) {
-				return;
-			}
-
 			// Updates metas.
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			YMFSEO_Meta_Fields::update_meta([
-				'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
-				'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
-				'page_type'   =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-page-type' ]   ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ] ) ),
-				'noindex'     =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ]     ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ] ) ),
+				'title'       => YMFSEO_Sanitizer::sanitize_text_field(
+					$_POST[ 'ymfseo-title' ] ?? YMFSEO_Meta_Fields::$default_values[ 'title' ]
+				),
+				'description' => YMFSEO_Sanitizer::sanitize_text_field(
+					$_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ]
+				),
+				'page_type'   => YMFSEO_Sanitizer::sanitize_text_field(
+					$_POST[ 'ymfseo-page-type' ] ?? YMFSEO_Meta_Fields::$default_values[ 'page_type' ]
+				),
+				'noindex'     => YMFSEO_Sanitizer::sanitize_text_field(
+					$_POST[ 'ymfseo-noindex' ] ?? YMFSEO_Meta_Fields::$default_values[ 'noindex' ]
+				),
 			], $post_id, 'post' );
+			// phpcs:enable
 		});
 
 
@@ -293,10 +303,16 @@ class YMFSEO_Meta_Fields {
 			}
 
 			// Updates metas.
+			// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			YMFSEO_Meta_Fields::update_meta([
-				'title'       =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-title' ]       ?? YMFSEO_Meta_Fields::$default_values[ 'title' ] ) ),
-				'description' =>  sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ] ) ),
+				'title'       => YMFSEO_Sanitizer::sanitize_text_field(
+					$_POST[ 'ymfseo-title' ] ?? YMFSEO_Meta_Fields::$default_values[ 'title' ]
+				),
+				'description' => YMFSEO_Sanitizer::sanitize_text_field(
+					$_POST[ 'ymfseo-description' ] ?? YMFSEO_Meta_Fields::$default_values[ 'description' ]
+				),
 			], $term_id, 'term' );
+			// phpcs:enable
 		}, 10, 3 );
 	}
 

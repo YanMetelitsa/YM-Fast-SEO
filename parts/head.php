@@ -69,12 +69,13 @@ if ( $queried_object && 'WP_Post' == get_class( $queried_object ) ) {
 	printf( '<meta property="article:modified_time"  content="%s">', esc_attr( get_the_modified_date( 'c', $queried_object ) ) );
 }
 
-// Canonical URL and pagination.
-if ( is_singular() ) {
+// Canonical URL.
+if ( $canonical_url ) {
 	printf( '<meta property="og:url"  content="%s">', esc_url( $canonical_url ) );
 	printf( '<meta name="twitter:url" content="%s">', esc_url( $canonical_url ) );
 }
 
+// Pagination URLs.
 $prev_page_url = get_previous_posts_page_link();
 $next_page_url = get_next_posts_page_link( $GLOBALS[ 'wp_query' ]->max_num_pages ?: 1 );
 
