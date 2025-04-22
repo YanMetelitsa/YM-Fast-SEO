@@ -410,10 +410,20 @@ class YMFSEO_Meta_Fields {
 
 					// Sets post/page meta title and description.
 					if ( $format ) {
+						// Get theme excerpt length and set 20.
+						$theme_excerpt_length = apply_filters( 'excerpt_length', 55 );
+						add_filter( 'excerpt_length', fn () : int => 20, 999 );
+
+						// Get data.
 						$post_title   = $queried_object->post_title;
-						$post_excerpt = wp_trim_words( get_the_excerpt( $queried_object ), 22 );
+						$post_excerpt = get_the_excerpt( $queried_object );
 						$post_type    = $queried_object->post_type;
 
+						// Revert excerpt length back.
+						remove_all_filters( 'excerpt_length', 999 );
+						add_filter( 'excerpt_length', fn () : int => $theme_excerpt_length );
+
+						// Format data.
 						$this->format_fields(
 							$meta_fields,
 							$post_title,
@@ -458,10 +468,12 @@ class YMFSEO_Meta_Fields {
 
 					// Sets term meta title and description.
 					if ( $format ) {
+						// Get data.
 						$term_title       = $queried_object->name;
 						$term_description = $queried_object->description;
 						$taxonomy         = $queried_object->taxonomy;
 
+						// Format data.
 						$this->format_fields(
 							$meta_fields,
 							$term_title,

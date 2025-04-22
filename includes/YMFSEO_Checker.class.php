@@ -105,6 +105,19 @@ class YMFSEO_Checker {
 	}
 
 	/**
+	 * Retrives `true` if taxonomy noindex.
+	 * 
+	 * @since 3.3.3
+	 *
+	 * @param string $taxonomy Taxonomy slug.
+	 * 
+	 * @return bool
+	 */
+	public static function is_taxonomy_noindex ( string $taxonomy ) : bool {
+		return YMFSEO_Settings::get_option( "ymfseo_taxonomy_noindex_{$taxonomy}" );
+	}
+
+	/**
 	 * Checks post SEO status.
 	 * 
 	 * @since 3.0.0 Is YMFSEO_Checker method.

@@ -1,10 +1,10 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimization
-Stable tag: 3.3.2
+Stable tag: 3.3.3
 Requires PHP: 7.4
 Requires at least: 6.0
-Tested up to: 6.7.2
+Tested up to: 6.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,8 +37,12 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 == Changelog ==
 
-= 3.3.2 =
+= 3.3.3 =
+* Fix: Open Graph/Twitter canonical URL
+* Fix: IndexNow sending for noindex taxonomies
+* Fix: Posts auto descriptions length
 
+= 3.3.2 =
 * Fix: Text fields sanitizing does not remove custom tags now
 
 = 3.3.1 =

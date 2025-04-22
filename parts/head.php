@@ -69,8 +69,8 @@ if ( $queried_object && 'WP_Post' == get_class( $queried_object ) ) {
 	printf( '<meta property="article:modified_time"  content="%s">', esc_attr( get_the_modified_date( 'c', $queried_object ) ) );
 }
 
-// Canonical URL.
-if ( $canonical_url ) {
+// Canonical URLs.
+if ( $canonical_url && YMFSEO::is_current_page_has_canonical() ) {
 	printf( '<meta property="og:url"  content="%s">', esc_url( $canonical_url ) );
 	printf( '<meta name="twitter:url" content="%s">', esc_url( $canonical_url ) );
 }

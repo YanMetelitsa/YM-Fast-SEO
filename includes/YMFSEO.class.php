@@ -359,8 +359,8 @@ class YMFSEO {
 
 		// Removes `noindex` taxonomies from the sitemap.
 		add_filter( 'wp_sitemaps_taxonomies', function ( array $taxonomies ) : array {
-			foreach ( $taxonomies as $slug => $taxonomy ) {
-				if ( YMFSEO_Settings::get_option( "ymfseo_taxonomy_noindex_{$slug}" ) ) {
+			foreach ( $taxonomies as $slug => $data ) {
+				if ( YMFSEO_Checker::is_taxonomy_noindex( $slug ) ) {
 					unset( $taxonomies[ $slug ] );
 				}
 			}
@@ -415,5 +415,28 @@ class YMFSEO {
 		$sep = apply_filters( 'ymfseo_title_separator', $sep );
 
 		return $sep;
+	}
+
+	/**
+	 * Retrives `true` if current page has canonical output;
+	 * 
+	 * @since 3.3.3
+	 * 
+	 * @return void
+	 */
+	public static function is_current_page_has_canonical () : bool {
+		$has_canonical = false;
+
+		ob_start();
+			
+		rel_canonical();
+		
+		if ( ob_get_contents() ) {
+			$has_canonical = true;
+		}
+		
+		ob_end_clean();
+
+		return $has_canonical;
 	}
 }

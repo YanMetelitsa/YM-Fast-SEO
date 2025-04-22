@@ -17,8 +17,12 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 # Changelog
 
-## 3.3.2
+## 3.3.3
+* Fix: Open Graph/Twitter canonical URL
+* Fix: IndexNow sending for noindex taxonomies
+* Fix: Posts auto descriptions length
 
+## 3.3.2
 * Fix: Text fields sanitizing does not remove custom tags now
 
 ## 3.3.1

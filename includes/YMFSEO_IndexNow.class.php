@@ -79,6 +79,11 @@ class YMFSEO_IndexNow {
 				return;
 			}
 
+			// Is taxonomy not noindex.
+			if ( YMFSEO_Checker::is_taxonomy_noindex( $taxonomy ) ) {
+				return;
+			}
+			
 			// Sends IndexNow.
 			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
 		}, 10, 3 );
@@ -90,6 +95,11 @@ class YMFSEO_IndexNow {
 				return;
 			}
 			
+			// Is taxonomy not noindex.
+			if ( YMFSEO_Checker::is_taxonomy_noindex( $taxonomy ) ) {
+				return;
+			}
+			
 			// Sends IndexNow.
 			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
 		}, 10, 3 );
@@ -98,6 +108,11 @@ class YMFSEO_IndexNow {
 		add_action( 'pre_delete_term', function ( int $term_id, string $taxonomy ) {
 			// Checks is taxonomy public.
 			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+				return;
+			}
+
+			// Is taxonomy not noindex.
+			if ( YMFSEO_Checker::is_taxonomy_noindex( $taxonomy ) ) {
 				return;
 			}
 
