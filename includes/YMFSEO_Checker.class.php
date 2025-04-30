@@ -132,6 +132,13 @@ class YMFSEO_Checker {
 
 		$meta_fields = new YMFSEO_Meta_Fields( $object );
 
+		/**
+		 * Trim description for check.
+		 * 
+		 * @since 3.3.3
+		 */
+		$meta_fields->description = wp_trim_words( $meta_fields->description, 20 );
+
 		$title_length       = mb_strlen( $meta_fields->title );
 		$description_length = mb_strlen( $meta_fields->description );
 
