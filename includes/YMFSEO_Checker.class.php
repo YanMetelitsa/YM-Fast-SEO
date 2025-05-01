@@ -132,13 +132,6 @@ class YMFSEO_Checker {
 
 		$meta_fields = new YMFSEO_Meta_Fields( $object );
 
-		/**
-		 * Trim description for check.
-		 * 
-		 * @since 3.3.3
-		 */
-		$meta_fields->description = wp_trim_words( $meta_fields->description, 20 );
-
 		$title_length       = mb_strlen( $meta_fields->title );
 		$description_length = mb_strlen( $meta_fields->description );
 
@@ -152,7 +145,7 @@ class YMFSEO_Checker {
 		}
 		// Too long title.
 		if ( $title_length > YMFSEO_Checker::$meta_lengths[ 'title' ][ 'max' ] ) {
-			$status = 'bad';
+			$status = 'alert';
 			/* translators: %d: Number of symbols */
 			$notes[] = sprintf( __( 'The title is too long (%d).', 'ym-fast-seo' ),
 				esc_html( $title_length ),
@@ -175,7 +168,7 @@ class YMFSEO_Checker {
 
 			// Too long description.
 			if ( $description_length > YMFSEO_Checker::$meta_lengths[ 'description' ][ 'max' ] ) {
-				$status = 'bad';
+				$status = 'alert';
 				/* translators: %d: Number of symbols */
 				$notes[] = sprintf( __( 'The description is too long (%d).', 'ym-fast-seo' ),
 					esc_html( $description_length ),

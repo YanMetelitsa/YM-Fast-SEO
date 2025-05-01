@@ -52,6 +52,19 @@ class YMFSEO_Meta_Fields {
 	public static array $default_values = [];
 
 	/**
+	 * Length of excerpt used for auto description.
+	 * 
+	 * @since  3.3.4
+	 * 
+	 * @var int[]
+	 */
+	public static array $excerpt_length_map = [
+		'ru_RU'   => 15,
+		'bel'     => 15,
+		'default' => 20,
+	];
+
+	/**
 	 * Tags for replacing in meta fields.
 	 * 
 	 * @var array
@@ -362,6 +375,23 @@ class YMFSEO_Meta_Fields {
 	}
 
 	/**
+	 * Retrives plugin excerpt length.
+	 * 
+	 * @since 3.3.4
+	 * 
+	 * @return int
+	 */
+	public static function get_excerpt_length () : int {
+		$locale = get_locale();
+
+		if ( isset( YMFSEO_Meta_Fields::$excerpt_length_map[ $locale ] ) ) {
+			return YMFSEO_Meta_Fields::$excerpt_length_map[ $locale ];
+		}
+
+		return YMFSEO_Meta_Fields::$excerpt_length_map[ 'default' ];
+	}
+
+	/**
 	 * Class that contains meta fields values.
 	 * 
 	 * @param WP_Post|WP_Post_Type|WP_Term|WP_User|null  $queried_object Queried object.
@@ -410,18 +440,29 @@ class YMFSEO_Meta_Fields {
 
 					// Sets post/page meta title and description.
 					if ( $format ) {
-						// Get theme excerpt length and set 20.
-						$theme_excerpt_length = apply_filters( 'excerpt_length', 55 );
-						add_filter( 'excerpt_length', fn () : int => 20, 999 );
+						// Plugin excerpt data.
+						$plugin_excerpt_length = YMFSEO_Meta_Fields::get_excerpt_length();
+						$plugin_excerpt_more   = '&hellip;';
+
+						// Theme excerpt data.
+						$theme_excerpt_length  = apply_filters( 'excerpt_length', 55 );
+						$theme_excerpt_more    = apply_filters( 'excerpt_more', '[&hellip;]' );
+
+						// Rewrite excerpt data..
+						add_filter( 'excerpt_length', fn () : int    => $plugin_excerpt_length, PHP_INT_MAX );
+						add_filter( 'excerpt_more',   fn () : string => $plugin_excerpt_more,   PHP_INT_MAX );
 
 						// Get data.
 						$post_title   = $queried_object->post_title;
 						$post_excerpt = get_the_excerpt( $queried_object );
 						$post_type    = $queried_object->post_type;
 
-						// Revert excerpt length back.
-						remove_all_filters( 'excerpt_length', 999 );
-						add_filter( 'excerpt_length', fn () : int => $theme_excerpt_length );
+						// Revert excerpt data back.
+						remove_all_filters( 'excerpt_length', PHP_INT_MAX );
+						remove_all_filters( 'excerpt_more',   PHP_INT_MAX );
+						
+						add_filter( 'excerpt_length', fn () : int    => $theme_excerpt_length );
+						add_filter( 'excerpt_more',   fn () : string => $theme_excerpt_more );
 
 						// Format data.
 						$this->format_fields(
