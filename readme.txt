@@ -41,7 +41,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * New: [`ymfseo_{$post_type}_posts_tags`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_post_type_tags) filter that allows you to create custom tags for post types
 
 = 3.3.3 =
-* Fix: Open Graph/Twitter canonical URL
+* Fix: Open Graph/Twitter Cards canonical URL
 * Fix: IndexNow sending for noindex taxonomies
 * Fix: Posts auto descriptions length
 
