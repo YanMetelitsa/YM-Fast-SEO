@@ -20,7 +20,7 @@ class YMFSEO_Logs {
 	];
 
 	/**
-	 * Prepares and retrive global $wp_filesystem.
+	 * Prepares and retrieve global $wp_filesystem.
 	 * 
 	 * @global $wp_filesystem
 	 */
@@ -37,7 +37,7 @@ class YMFSEO_Logs {
 	}
 
 	/**
-	 * Retrives current UTC time string.
+	 * Retrieves current UTC time string.
 	 * 
 	 * @since 3.1.3
 	 * 
@@ -48,7 +48,7 @@ class YMFSEO_Logs {
 	}
 
 	/**
-	 * Retrives parsed DateTime object from string.
+	 * Retrieves parsed DateTime object from string.
 	 * 
 	 * @since 3.1.3
 	 * 
@@ -114,7 +114,7 @@ class YMFSEO_Logs {
 	 * @param string $file  File name.
 	 * @param array  $slice How much entries returns.
 	 * 
-	 * @return bool|array Dara array or `false` on error.
+	 * @return bool|array Data array or `false` on error.
 	 */
 	public static function read ( string $file, int $slice = 20 ) : bool|array {
 		// Is file name allowed.

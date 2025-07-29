@@ -41,7 +41,7 @@ class YMFSEO_IndexNow {
 			}
 		});
 
-		// Updates rewrite rules after plugin deactivationn.
+		// Updates rewrite rules after plugin deactivation.
 		register_deactivation_hook( YMFSEO_BASENAME, 'flush_rewrite_rules' );
 
 
@@ -140,7 +140,7 @@ class YMFSEO_IndexNow {
 	}
 
 	/**
-	 * Retrives IndexNow API key.
+	 * Retrieves IndexNow API key.
 	 * 
 	 * @return string IndexNow API key.
 	 */

@@ -375,7 +375,7 @@ class YMFSEO_Meta_Fields {
 	}
 
 	/**
-	 * Retrives plugin excerpt length.
+	 * Retrieves plugin excerpt length.
 	 * 
 	 * @since 3.3.4
 	 * 
@@ -565,7 +565,7 @@ class YMFSEO_Meta_Fields {
 			$this->set_default_preview_image( $meta_fields );
 
 			// Replaces tags.
-			$this->replace_tags( $meta_fields );
+			$this->replace_tags( $meta_fields, $queried_object );
 
 			// Applies shortcodes.
 			$meta_fields = array_map( fn ( $item ) => do_shortcode( $item ), $meta_fields );
@@ -652,12 +652,27 @@ class YMFSEO_Meta_Fields {
 	 * Looks for and replaces tags in some meta fields.
 	 * 
 	 * @since 2.1.0 Is private.
+	 * @since 3.4.0 Has `$queried_object` argument.
 	 * 
-	 * @param array $meta_fields Meta fields.
+	 * @param array                                      $meta_fields    Meta fields.
+	 * @param WP_Post|WP_Post_Type|WP_Term|WP_User|null  $queried_object Queried object.
 	 */
-	private function replace_tags ( array &$meta_fields ) : void {
+	private function replace_tags ( array &$meta_fields, WP_Post|WP_Post_Type|WP_Term|WP_User|null $queried_object ) : void {
 		foreach ( [ 'title', 'description' ] as $key ) {
-			foreach ( YMFSEO_Meta_Fields::$replace_tags as $tag => $value ) {
+			$tags = YMFSEO_Meta_Fields::$replace_tags;
+
+			if ( $queried_object ) {
+				switch ( get_class( $queried_object ) ) {
+					case 'WP_Post':
+						$post_type = get_post_type( $queried_object );
+						$post_id   = $queried_object->ID;
+
+						$tags = array_merge( $tags, apply_filters( "ymfseo_{$post_type}_posts_tags", [], $post_id ) );
+						break;
+				}
+			}
+
+			foreach ( $tags as $tag => $value ) {
 				$meta_fields[ $key ] = str_replace( $tag, $value, $meta_fields[ $key ] );
 			}
 		}

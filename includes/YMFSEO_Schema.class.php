@@ -17,7 +17,7 @@ class YMFSEO_Schema {
 	 * @param YMFSEO_Meta_Fields $meta_fields    Meta fields instance.
 	 * @param mixed              $queried_object Queried object
 	 * 
-	 * @return array Prepared Shema.org array for printing JSON-LD.
+	 * @return array Prepared Schema.org array for printing JSON-LD.
 	 */
 	public static function build ( YMFSEO_Meta_Fields $meta_fields, $queried_object = null ) : array {
 		global $wp;

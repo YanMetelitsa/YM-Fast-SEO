@@ -117,13 +117,13 @@ do_action( 'ymfseo_after_print_metas' );
 
 // Debugs queried object data.
 if ( $queried_object ) {
-	printf( '<!-- / YM Fast SEO | %s ID – %s -->',
+	printf( '<!-- / YM Fast SEO | %s – %s -->',
 		// phpcs:ignore
 		...match ( get_class( $queried_object ) ) {
-			'WP_Post'      => [ 'Post',      esc_html( $queried_object->ID ) ],
+			'WP_Post'      => [ 'Post ID',   esc_html( $queried_object->ID ) ],
 			'WP_Post_Type' => [ 'Post Type', esc_html( $queried_object->name ) ],
-			'WP_Term'      => [ 'Term',      esc_html( $queried_object->term_id ) ],
-			'WP_User'      => [ 'User',      esc_html( $queried_object->ID ) ],
+			'WP_Term'      => [ 'Term ID',   esc_html( $queried_object->term_id ) ],
+			'WP_User'      => [ 'User ID',   esc_html( $queried_object->ID ) ],
 		},
 	);
 }

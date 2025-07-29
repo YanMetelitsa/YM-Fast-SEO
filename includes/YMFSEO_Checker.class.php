@@ -31,7 +31,7 @@ class YMFSEO_Checker {
 	];
 
 	/**
-	 * Retirves `true` if current site is not `noindex`.
+	 * Retrieves `true` if current site is not `noindex`.
 	 * 
 	 * @return bool
 	 */
@@ -52,7 +52,7 @@ class YMFSEO_Checker {
 	}
 
 	/**
-	 * Retrives `true` if user can edit metas.
+	 * Retrieves `true` if user can edit metas.
 	 * 
 	 * @return bool
 	 */
@@ -61,7 +61,7 @@ class YMFSEO_Checker {
 	}
 
 	/**
-	 * Retrives `true` if user can view site health.
+	 * Retrieves `true` if user can view site health.
 	 * 
 	 * @since 3.1.1
 	 * 
@@ -72,7 +72,7 @@ class YMFSEO_Checker {
 	}
 
 	/**
-	 * Retrives `true` if user can manage options
+	 * Retrieves `true` if user can manage options
 	 * 
 	 * @since 3.1.1
 	 * 
@@ -83,7 +83,7 @@ class YMFSEO_Checker {
 	}
 
 	/**
-	 * Retrives `true` if post type is public.
+	 * Retrieves `true` if post type is public.
 	 *
 	 * @param int $post_id Post ID.
 	 * 
@@ -94,7 +94,7 @@ class YMFSEO_Checker {
 	}
 
 	/**
-	 * Retrives `true` if taxonomy public.
+	 * Retrieves `true` if taxonomy public.
 	 *
 	 * @param string $taxonomy Taxonomy slug.
 	 * 
@@ -105,7 +105,7 @@ class YMFSEO_Checker {
 	}
 
 	/**
-	 * Retrives `true` if taxonomy noindex.
+	 * Retrieves `true` if taxonomy noindex.
 	 * 
 	 * @since 3.3.3
 	 *

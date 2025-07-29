@@ -24,7 +24,7 @@ class YMFSEO {
 	}
 
 	/**
-	 * Retrives cookie value.
+	 * Retrieves cookie value.
 	 * 
 	 * @param {string} name Cookie name.
 	 * 
@@ -89,17 +89,17 @@ class YMFSEO {
 		const max = parseInt( input.getAttribute( 'data-max' ) );
 
 		/* Get raw input data */
-		const rawInputvalue = input.value;
+		const rawInputValue = input.value;
 			
 		/* Format input string */
-		let inputvalue = rawInputvalue;
+		let inputValue = rawInputValue;
 
 		for ( const [ tag, replace ] of Object.entries( YMFSEO_WP.replaceTags ) ) {
-			inputvalue = inputvalue.replaceAll( tag, replace );
+			inputValue = inputValue.replaceAll( tag, replace );
 		}
 
 		/* Get input length */
-		const inputLength = inputvalue.trim().length;
+		const inputLength = inputValue.trim().length;
 
 		/* Set condition */
 		checker.style.setProperty( '--ymfseo-checker-width', `${( inputLength / max ) * 100}%` );
@@ -141,19 +141,19 @@ class YMFSEO {
  */
 class YMFSEO_Settings {
 	/**
-	 * Retrives settings sections.
+	 * Retrieves settings sections.
 	 * 
 	 * @returns Sections object.
 	 */
 	static #getSections () {
-		const page = document.querySelector( '.ymfseo-seettings-page' );
-		const nav  = document.querySelector( '.ymfseo-seettings-page__nav' );
+		const page = document.querySelector( '.ymfseo-settings-page' );
+		const nav  = document.querySelector( '.ymfseo-settings-page__nav' );
 
 		let output = [];
 
 		if ( page && nav ) {
 			const slugs    = Array.from( nav.querySelectorAll( '[ data-target ]' ) ).map( item => item.getAttribute( 'data-target' ) );
-			const sections = page.querySelectorAll( '.ymfseo-seettings-page section' );
+			const sections = page.querySelectorAll( '.ymfseo-settings-page section' );
 
 			output = slugs.reduce( ( acc, slug, index ) => {
 				acc[ slug ] = sections[ index ];
@@ -210,7 +210,7 @@ class YMFSEO_Settings {
 		YMFSEO_Settings.activateSection( slug );
 
 		/* Activate nav item. */
-		const navItem = document.querySelector( `.ymfseo-seettings-page__nav-item[ data-target=${slug} ]` );
+		const navItem = document.querySelector( `.ymfseo-settings-page__nav-item[ data-target=${slug} ]` );
 
 		if ( navItem ) {
 			navItem.classList.add( 'active' );
@@ -221,7 +221,7 @@ class YMFSEO_Settings {
 	 * Inits settings navigation bar.
 	 */
 	static initSettingsNav () {
-		const navItems = document.querySelectorAll( '.ymfseo-seettings-page__nav-item' );
+		const navItems = document.querySelectorAll( '.ymfseo-settings-page__nav-item' );
 
 		navItems.forEach( item => {
 			item.addEventListener( 'click', e => {

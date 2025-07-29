@@ -20,6 +20,7 @@ class YMFSEO {
 	 * Inits YM Fast SEO Plugin.
 	 */
 	public static function init () : void {
+		// Defines classes parameters.
 		add_action( 'init', function () {
 			// Defines available page types.
 			YMFSEO::$page_types = [
@@ -145,7 +146,9 @@ class YMFSEO {
 			]), 'before' );
 
 			// WordPress
-			if ( 'settings_page_' . YMFSEO_Settings::$params[ 'page_slug' ] == $hook_suffix ) {
+			wp_enqueue_style( 'dashicons' );
+
+			if ( $hook_suffix == 'settings_page_' . YMFSEO_Settings::$params[ 'page_slug' ] ) {
 				wp_enqueue_media();
 
 				wp_enqueue_code_editor([
@@ -251,7 +254,7 @@ class YMFSEO {
 			return $robots;
 		});
 
-		// Prints head metas.
+		// Prints head meta.
 		add_action( 'wp_head', function () {
 			include YMFSEO_ROOT_DIR . 'parts/head.php';
 		}, 1 );
@@ -404,7 +407,7 @@ class YMFSEO {
 	}
 
 	/**
-	 * Retrives filtered document title separator.
+	 * Retrieves filtered document title separator.
 	 * 
 	 * @since 3.1.3
 	 * 
@@ -418,7 +421,7 @@ class YMFSEO {
 	}
 
 	/**
-	 * Retrives `true` if current page has canonical output;
+	 * Retrieves `true` if current page has canonical output;
 	 * 
 	 * @since 3.3.3
 	 * 

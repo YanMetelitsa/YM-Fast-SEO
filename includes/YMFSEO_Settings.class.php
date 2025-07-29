@@ -24,7 +24,7 @@ class YMFSEO_Settings {
 	public static array $default_settings = [];
 	
 	/**
-	 * Contains info adbout registered sections.
+	 * Contains info about registered sections.
 	 * 
 	 * @var array
 	 */
@@ -128,13 +128,17 @@ class YMFSEO_Settings {
 						implode( ', ',[
 							'<code>%post_title%</code>',
 							...array_map( function ( $tag ) {
-								return "<code>$tag</code>";
+								return "<code>{$tag}</code>";
 							}, array_keys( YMFSEO_Meta_Fields::$replace_tags ) ),
 						]),
 					),
 				]),
 			]);
 			foreach ( YMFSEO::get_public_post_types( 'objects' ) as $post_type ) {
+				$post_type_tags = array_map( function ( string $tag ) : string {
+					return "<code>{$tag}</code>";
+				}, array_keys( apply_filters( "ymfseo_{$post_type->name}_posts_tags", [], 0 ) ) );
+
 				YMFSEO_Settings::register_option(
 					"post_type_title_{$post_type->name}",
 					$post_type->label,
@@ -144,6 +148,11 @@ class YMFSEO_Settings {
 					[
 						'placeholder' => '%post_title%',
 						'menu_icon'   => $post_type->menu_icon,
+						'description' => $post_type_tags ? sprintf(
+							/* translators: %s: List of available tags */
+							__( 'Available tags: %s.', 'ym-fast-seo' ),
+							implode( ', ', $post_type_tags ),
+						) : '',
 					],
 				);
 				YMFSEO_Settings::register_option(
@@ -173,7 +182,7 @@ class YMFSEO_Settings {
 						implode( ', ',[
 							'<code>%term_title%</code>',
 							...array_map( function ( $tag ) {
-								return "<code>$tag</code>";
+								return "<code>{$tag}</code>";
 							}, array_keys( YMFSEO_Meta_Fields::$replace_tags ) ),
 						]),
 					),
@@ -477,10 +486,9 @@ class YMFSEO_Settings {
 				[
 					'label'       => __( 'Enable IndexNow sending', 'ym-fast-seo' ),
 					'description' => implode([
-						get_option( 'blog_public' ) ? '' : '<strong>' . __( 'Search engines are discouraged by the site\'s settings.', 'ym-fast-seo' ) . '</strong><br>',
-						sprintf(
-							/* translators: %s - link to settings page */
-							__( 'If the site is configured to <a href="%s">discourage indexing</a>, IndexNow will not function, regardless of this option.', 'ym-fast-seo' ),
+						sprintf( YMFSEO_Checker::is_site_public()
+							? ''
+							: '<span class="dashicons dashicons-warning"></span> ' . __( 'The site is configured to <a href="%s">discourage indexing</a>, IndexNow does not function, regardless of this option.', 'ym-fast-seo' ),
 							get_admin_url( null, 'options-reading.php#blog_public' ),
 						),
 					]),

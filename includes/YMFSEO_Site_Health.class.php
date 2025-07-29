@@ -84,12 +84,12 @@ class YMFSEO_Site_Health {
 			$is_passed   = 'yes';
 			$title       = __( 'Site is available for indexing', 'ym-fast-seo' );
 			$description = [];
-			$links = [
+			$links       = [
 				__( 'Reading Settings', 'ym-fast-seo' ) => get_admin_url( null, 'options-reading.php#blog_public' ),
 			];
 
 			// Check.
-			if ( 0 == get_option( 'blog_public' ) ) {
+			if ( ! YMFSEO_Checker::is_site_public() ) {
 				$is_passed = 'no';
 				$title     = __( 'Site is not available for indexing', 'ym-fast-seo' );
 			}
@@ -104,7 +104,7 @@ class YMFSEO_Site_Health {
 			$is_passed   = 'yes';
 			$title       = __( 'Site title is specified', 'ym-fast-seo' );
 			$description = [];
-			$links = [
+			$links       = [
 				__( 'General Settings', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php#blogname' ),
 			];
 
@@ -124,7 +124,7 @@ class YMFSEO_Site_Health {
 			$is_passed   = 'yes';
 			$title       = __( 'Site tagline is specified', 'ym-fast-seo' );
 			$description = [];
-			$links = [
+			$links       = [
 				__( 'General Settings', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php#blogdescription' ),
 			];
 
@@ -144,7 +144,7 @@ class YMFSEO_Site_Health {
 			$is_passed   = 'yes';
 			$title       = __( 'Site icon is specified', 'ym-fast-seo' );
 			$description = [];
-			$links = [
+			$links       = [
 				__( 'Manage Site Icon', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php' ),
 			];
 
@@ -164,7 +164,7 @@ class YMFSEO_Site_Health {
 			$is_passed   = 'yes';
 			$title       = __( 'Site preview image is specified', 'ym-fast-seo' );
 			$description = [];
-			$links = [
+			$links       = [
 				__( 'Manage Site Preview Image', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php?page=ymfseo-settings#preview' ),
 			];
 
@@ -182,7 +182,7 @@ class YMFSEO_Site_Health {
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-index-now-works', function () : YMFSEO_Site_Health {
+		YMFSEO_Site_Health::register_test( 'is-indexnow-works', function () : YMFSEO_Site_Health {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'IndexNow is active', 'ym-fast-seo' );
@@ -201,7 +201,7 @@ class YMFSEO_Site_Health {
 					'<strong>' . YMFSEO_IndexNow::$delay . '</strong>',
 				),
 			];
-			$content = [
+			$content     = [
 				'links' => [
 					__( 'IndexNow Response Formats', 'ym-fast-seo' ) => 'https://www.indexnow.org/documentation#response',
 				],
@@ -257,6 +257,17 @@ class YMFSEO_Site_Health {
 			if ( ! YMFSEO_Settings::get_option( 'indexnow_enabled' ) ) {
 				$is_passed = 'no';
 				$title     = __( 'IndexNow sending disabled', 'ym-fast-seo' );
+			}
+
+			if ( ! YMFSEO_Checker::is_site_public() ) {
+				$is_passed   = 'no';
+				$title       = __( 'IndexNow sending disabled', 'ym-fast-seo' );
+				$description = [];
+				$content     = [
+					'links' => [
+						__( 'Reading Settings', 'ym-fast-seo' ) => get_admin_url( null, 'options-reading.php#blog_public' ),
+					],
+				];
 			}
 
 			return new YMFSEO_Site_Health( $is_passed, $title, $description, $content );

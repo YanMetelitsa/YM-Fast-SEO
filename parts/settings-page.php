@@ -5,13 +5,13 @@
 	flush_rewrite_rules();
 ?>
 
-<div class="wrap ymfseo-seettings-page">
+<div class="wrap ymfseo-settings-page">
 	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 
 	<!-- Navigation -->
-	<nav class="ymfseo-seettings-page__nav">
+	<nav class="ymfseo-settings-page__nav">
 		<?php foreach ( YMFSEO_Settings::$registered_sections as $section ) : ?>
-			<div class="ymfseo-seettings-page__nav-item" data-target="<?php echo esc_attr( $section[ 'slug' ] ); ?>">
+			<div class="ymfseo-settings-page__nav-item" data-target="<?php echo esc_attr( $section[ 'slug' ] ); ?>">
 				<span class="dashicons <?php echo esc_attr( $section[ 'icon' ] ); ?>"></span>
 				<span class="label"><?php echo esc_attr( $section[ 'title' ] ); ?></span>
 			</div>

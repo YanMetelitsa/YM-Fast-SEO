@@ -177,7 +177,7 @@ td.ymfseo.column-ymfseo {
 }
 
 /* Settings */
-.ymfseo-seettings-page {
+.ymfseo-settings-page {
   /* Notice */
   /* Navigation */
   /* Form */
@@ -186,24 +186,24 @@ td.ymfseo.column-ymfseo {
   /* Redirects */
   /* Representative */
 }
-html:has(.ymfseo-seettings-page) {
+html:has(.ymfseo-settings-page) {
   scroll-behavior: smooth;
 }
-.ymfseo-seettings-page .notice {
+.ymfseo-settings-page .notice {
   border-top-color: var(--ymfseo-settings-border);
   border-right-color: var(--ymfseo-settings-border);
   border-bottom-color: var(--ymfseo-settings-border);
   border-radius: var(--ymfseo-border-radius);
   box-shadow: none;
 }
-.ymfseo-seettings-page__nav {
+.ymfseo-settings-page__nav {
   margin: 10px 0;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
 }
-.ymfseo-seettings-page__nav-item {
+.ymfseo-settings-page__nav-item {
   background-color: var(--ymfseo-settings-bg);
   padding: 6px 10px 6px 6px;
   border: 1px solid var(--ymfseo-settings-border);
@@ -215,14 +215,14 @@ html:has(.ymfseo-seettings-page) {
   gap: 5px;
   text-decoration: none;
 }
-.ymfseo-seettings-page__nav-item:hover {
+.ymfseo-settings-page__nav-item:hover {
   color: var(--ymfseo-primary);
 }
-.ymfseo-seettings-page__nav-item.active {
+.ymfseo-settings-page__nav-item.active {
   background-color: var(--ymfseo-primary);
   color: #fff;
 }
-.ymfseo-seettings-page__nav-item .dashicons {
+.ymfseo-settings-page__nav-item .dashicons {
   margin-bottom: -1px;
   transition: none;
   display: flex;
@@ -230,36 +230,37 @@ html:has(.ymfseo-seettings-page) {
   justify-content: center;
   font-size: 14px;
 }
-.ymfseo-seettings-page__nav-item .dashicons::before {
+.ymfseo-settings-page__nav-item .dashicons::before {
   transition: none;
 }
-.ymfseo-seettings-page__nav-item .label {
+.ymfseo-settings-page__nav-item .label {
   margin-top: -1px;
 }
-.ymfseo-seettings-page form {
+.ymfseo-settings-page form {
   /* Section */
   /* WordPress save button */
 }
-.ymfseo-seettings-page form section {
+.ymfseo-settings-page form section {
   background-color: var(--ymfseo-settings-bg);
   margin-top: var(--ymfseo-gap-primary);
   border: 1px solid var(--ymfseo-settings-border);
   border-radius: var(--ymfseo-border-radius);
   /* Title */
   /* Description */
+  /* Code */
   /* Table */
   /* Custom save button */
 }
-.ymfseo-seettings-page form section:not(.active) {
+.ymfseo-settings-page form section:not(.active) {
   visibility: hidden;
   position: absolute;
   top: -200vh;
   left: -200vw;
 }
-.ymfseo-seettings-page form section:last-of-type {
+.ymfseo-settings-page form section:last-of-type {
   display: none;
 }
-.ymfseo-seettings-page form section > h2 {
+.ymfseo-settings-page form section > h2 {
   margin: 0;
   padding: var(--ymfseo-gap-primary);
   display: flex;
@@ -268,97 +269,97 @@ html:has(.ymfseo-seettings-page) {
   color: var(--ymfseo-secondary);
 }
 @media screen and (min-width: 782px) {
-  .ymfseo-seettings-page form section > h2 {
+  .ymfseo-settings-page form section > h2 {
     scroll-margin-top: var(--ymfseo-gap-primary);
   }
 }
-.ymfseo-seettings-page form section > p:not(.submit) {
+.ymfseo-settings-page form section > p:not(.submit) {
   margin: 0;
   padding: 0 var(--ymfseo-gap-primary) var(--ymfseo-gap-primary) var(--ymfseo-gap-primary);
 }
-.ymfseo-seettings-page form section > p:not(.submit):not(:last-of-type) {
+.ymfseo-settings-page form section > p:not(.submit):not(:last-of-type) {
   margin-bottom: -15px;
 }
-.ymfseo-seettings-page form section > p code {
+.ymfseo-settings-page form section code {
   margin: 0;
   padding: 2px 5px 2px;
   border-radius: 3px;
 }
-.ymfseo-seettings-page form section .form-table {
+.ymfseo-settings-page form section .form-table {
   margin: 0;
   padding: var(--ymfseo-gap-primary);
   border-top: 1px solid var(--ymfseo-settings-border);
   display: block;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page form section .form-table th {
+  .ymfseo-settings-page form section .form-table th {
     padding-bottom: 4px;
   }
-  .ymfseo-seettings-page form section .form-table tr:first-of-type th {
+  .ymfseo-settings-page form section .form-table tr:first-of-type th {
     padding-top: 0;
   }
 }
-.ymfseo-seettings-page form section .form-table tbody {
+.ymfseo-settings-page form section .form-table tbody {
   width: 100%;
   display: block;
 }
-.ymfseo-seettings-page form section .form-table tbody tr {
+.ymfseo-settings-page form section .form-table tbody tr {
   width: 100%;
   display: block;
 }
-.ymfseo-seettings-page form section .form-table tbody tr th {
+.ymfseo-settings-page form section .form-table tbody tr th {
   flex-shrink: 0;
 }
-.ymfseo-seettings-page form section .form-table tbody tr th label {
+.ymfseo-settings-page form section .form-table tbody tr th label {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.ymfseo-seettings-page form section .form-table tbody tr th label .dashicons {
+.ymfseo-settings-page form section .form-table tbody tr th label .dashicons {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
 }
-.ymfseo-seettings-page form section .form-table tbody tr.sub-field th {
+.ymfseo-settings-page form section .form-table tbody tr.sub-field th {
   font-weight: 400;
   color: #494e51;
 }
 @media screen and (min-width: 782px) {
-  .ymfseo-seettings-page form section .form-table tbody tr:has(.CodeMirror) {
+  .ymfseo-settings-page form section .form-table tbody tr:has(.CodeMirror) {
     display: flex;
   }
 }
-.ymfseo-seettings-page form section .form-table tbody tr:has(.CodeMirror) td {
+.ymfseo-settings-page form section .form-table tbody tr:has(.CodeMirror) td {
   width: 100%;
   overflow-x: auto;
 }
-.ymfseo-seettings-page form section .form-table tbody tr:has(.CodeMirror) td .CodeMirror {
+.ymfseo-settings-page form section .form-table tbody tr:has(.CodeMirror) td .CodeMirror {
   width: 100%;
   box-sizing: border-box;
   border-radius: 4px;
   border: 1px solid var(--ymfseo-settings-border);
 }
-.ymfseo-seettings-page form section .form-table tbody tr:has(.ymfseo-settings-redirects-section) {
+.ymfseo-settings-page form section .form-table tbody tr:has(.ymfseo-settings-redirects-section) {
   display: flex;
 }
-.ymfseo-seettings-page form section .form-table tbody tr:has(.ymfseo-settings-redirects-section) td:last-of-type {
+.ymfseo-settings-page form section .form-table tbody tr:has(.ymfseo-settings-redirects-section) td:last-of-type {
   flex: 1;
 }
-.ymfseo-seettings-page form section > .ymfseo-submit {
+.ymfseo-settings-page form section > .ymfseo-submit {
   padding: var(--ymfseo-gap-primary);
   border-top: 1px solid var(--ymfseo-settings-border);
   display: flex;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page form section > .ymfseo-submit {
+  .ymfseo-settings-page form section > .ymfseo-submit {
     justify-content: flex-end;
   }
 }
-.ymfseo-seettings-page form > .submit {
+.ymfseo-settings-page form > .submit {
   display: none;
 }
-.ymfseo-seettings-page .ymfseo-settings-separator-grid {
+.ymfseo-settings-page .ymfseo-settings-separator-grid {
   width: 25em;
   margin-bottom: 10px;
   display: grid;
@@ -366,13 +367,13 @@ html:has(.ymfseo-seettings-page) {
   gap: 8px;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page .ymfseo-settings-separator-grid {
+  .ymfseo-settings-page .ymfseo-settings-separator-grid {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
   }
 }
-.ymfseo-seettings-page .ymfseo-settings-separator-grid__item {
+.ymfseo-settings-page .ymfseo-settings-separator-grid__item {
   background-color: #fff;
   max-width: 50px;
   border-radius: 4px;
@@ -384,16 +385,16 @@ html:has(.ymfseo-seettings-page) {
   justify-content: center;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page .ymfseo-settings-separator-grid__item {
+  .ymfseo-settings-page .ymfseo-settings-separator-grid__item {
     width: 45px;
   }
 }
-.ymfseo-seettings-page .ymfseo-settings-separator-grid__item:has(input:checked) {
+.ymfseo-settings-page .ymfseo-settings-separator-grid__item:has(input:checked) {
   border-color: var(--ymfseo-secondary);
   box-shadow: 0 0 0 1px var(--ymfseo-secondary);
   outline: 2px solid transparent;
 }
-.ymfseo-seettings-page .ymfseo-settings-separator-grid__item input {
+.ymfseo-settings-page .ymfseo-settings-separator-grid__item input {
   width: 100%;
   height: 100%;
   margin: 0 !important;
@@ -401,7 +402,7 @@ html:has(.ymfseo-seettings-page) {
   position: absolute;
   opacity: 0;
 }
-.ymfseo-seettings-page .ymfseo-settings-separator-grid__item span {
+.ymfseo-settings-page .ymfseo-settings-separator-grid__item span {
   width: 100%;
   height: 100%;
   display: flex;
@@ -410,76 +411,76 @@ html:has(.ymfseo-seettings-page) {
   font-size: 17px;
   color: #2c3338;
 }
-.ymfseo-seettings-page .ymfseo-settings-image-section img {
+.ymfseo-settings-page .ymfseo-settings-image-section img {
   width: 25em;
   height: auto;
   margin-bottom: 16px;
   border-radius: 6px;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page .ymfseo-settings-image-section img {
+  .ymfseo-settings-page .ymfseo-settings-image-section img {
     width: 100%;
   }
 }
-.ymfseo-seettings-page .ymfseo-settings-image-section .action-buttons button[hidden] {
+.ymfseo-settings-page .ymfseo-settings-image-section .action-buttons button[hidden] {
   display: none;
 }
-.ymfseo-seettings-page .ymfseo-settings-redirects-section {
+.ymfseo-settings-page .ymfseo-settings-redirects-section {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
-.ymfseo-seettings-page .ymfseo-settings-redirects-section__grid {
+.ymfseo-settings-page .ymfseo-settings-redirects-section__grid {
   display: flex;
   flex-direction: column;
   row-gap: 20px;
 }
-.ymfseo-seettings-page .ymfseo-settings-redirects-section__item {
+.ymfseo-settings-page .ymfseo-settings-redirects-section__item {
   display: grid;
   grid-template-columns: auto 1fr auto 1fr auto;
   align-items: center;
   gap: 6px;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page .ymfseo-settings-redirects-section__item {
+  .ymfseo-settings-page .ymfseo-settings-redirects-section__item {
     width: 100%;
     grid-template-columns: 1fr auto 1fr;
   }
 }
-.ymfseo-seettings-page .ymfseo-settings-redirects-section__item .regex {
+.ymfseo-settings-page .ymfseo-settings-redirects-section__item .regex {
   padding: 0 10px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.ymfseo-seettings-page .ymfseo-settings-redirects-section__item .regex input {
+.ymfseo-settings-page .ymfseo-settings-redirects-section__item .regex input {
   margin: 0;
   justify-self: center;
 }
 @media screen and (max-width: 782px) {
-  .ymfseo-seettings-page .ymfseo-settings-redirects-section__item .regex input {
+  .ymfseo-settings-page .ymfseo-settings-redirects-section__item .regex input {
     order: 4;
   }
 }
-.ymfseo-seettings-page .ymfseo-settings-redirects-section__item > .dashicons {
+.ymfseo-settings-page .ymfseo-settings-redirects-section__item > .dashicons {
   padding-left: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
 }
-.ymfseo-seettings-page .ymfseo-settings-redirects-section__item > .dashicons:hover {
+.ymfseo-settings-page .ymfseo-settings-redirects-section__item > .dashicons:hover {
   cursor: pointer;
   color: var(--ymfseo-red);
 }
-.ymfseo-seettings-page .ymfseo-settings-redirects-section .button {
+.ymfseo-settings-page .ymfseo-settings-redirects-section .button {
   margin-bottom: 10px;
   align-self: flex-end;
 }
-.ymfseo-seettings-page tbody:has(tr.rep-type option[value=org][selected]) tr.rep-person {
+.ymfseo-settings-page tbody:has(tr.rep-type option[value=org][selected]) tr.rep-person {
   display: none;
 }
-.ymfseo-seettings-page tbody:has(tr.rep-type option[value=person][selected]) tr.rep-org {
+.ymfseo-settings-page tbody:has(tr.rep-type option[value=person][selected]) tr.rep-org {
   display: none;
 }
 
@@ -498,4 +499,6 @@ html:has(.ymfseo-seettings-page) {
 }
 .ymfseo-site-health .health-check-accordion .health-check-accordion-panel {
   overflow-x: auto;
-}/*# sourceMappingURL=ymfseo-style.css.map */
+}
+
+/*# sourceMappingURL=ymfseo-style.css.map */
