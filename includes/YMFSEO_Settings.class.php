@@ -488,7 +488,7 @@ class YMFSEO_Settings {
 					'description' => implode([
 						sprintf( YMFSEO_Checker::is_site_public()
 							? ''
-							: '<span class="dashicons dashicons-warning"></span> ' . __( 'The site is configured to <a href="%s">discourage indexing</a>, IndexNow does not function, regardless of this option.', 'ym-fast-seo' ),
+							: '<span class="dashicons dashicons-warning"></span> ' . __( 'The site is configured to <a href="%s">discourage indexing</a>, IndexNow is disabled regardless of this option.', 'ym-fast-seo' ),
 							get_admin_url( null, 'options-reading.php#blog_public' ),
 						),
 					]),
