@@ -196,7 +196,13 @@ class YMFSEO_Meta_Fields {
 
 			// Taxonomies.
 			foreach ( YMFSEO::get_public_taxonomies() as $taxonomy ) {
-				add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO_Meta_Fields::manage_seo_columns' );
+				if ( class_exists( 'WooCommerce' ) ) {
+					if ( in_array( $taxonomy, [ 'product_cat', 'product_brand' ] ) ) {
+						break;
+					}
+				}
+
+				add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO_Meta_Fields::manage_seo_columns', 20 );
 				add_action( "manage_{$taxonomy}_custom_column" , function ( $string, string $column, int $term_id  ) : void {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_term( $term_id ) );
