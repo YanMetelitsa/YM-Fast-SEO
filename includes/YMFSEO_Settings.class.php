@@ -189,6 +189,10 @@ class YMFSEO_Settings {
 				]),
 			]);
 			foreach ( YMFSEO::get_public_taxonomies( 'objects' ) as $taxonomy ) {
+				$taxonomy_tags = array_map( function ( string $tag ) : string {
+					return "<code>{$tag}</code>";
+				}, array_keys( apply_filters( "ymfseo_{$taxonomy->name}_taxonomy_tags", [], 0 ) ) );
+
 				YMFSEO_Settings::register_option(
 					"taxonomy_title_{$taxonomy->name}",
 					$taxonomy->label,
@@ -206,7 +210,12 @@ class YMFSEO_Settings {
 					'taxonomies',
 					'textarea',
 					[
-						'class' => 'sub-field',
+						'class'       => 'sub-field',
+						'description' => $taxonomy_tags ? sprintf(
+							/* translators: %s: List of available tags */
+							__( 'Available tags: %s.', 'ym-fast-seo' ),
+							implode( ', ', $taxonomy_tags ),
+						) : '',
 					],
 				);
 				YMFSEO_Settings::register_option(

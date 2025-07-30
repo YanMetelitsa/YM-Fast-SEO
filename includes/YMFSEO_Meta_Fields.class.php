@@ -675,6 +675,12 @@ class YMFSEO_Meta_Fields {
 
 						$tags = array_merge( $tags, apply_filters( "ymfseo_{$post_type}_posts_tags", [], $post_id ) );
 						break;
+					case 'WP_Term':
+						$taxonomy = $queried_object->taxonomy;
+						$term_id  = $queried_object->term_id;
+						
+						$tags = array_merge( $tags, apply_filters( "ymfseo_{$taxonomy}_taxonomy_tags", [], $term_id ) );
+						break;
 				}
 			}
 

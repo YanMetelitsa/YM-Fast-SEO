@@ -1,7 +1,7 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimization
-Stable tag: 3.4.0
+Stable tag: 3.4.1
 Requires PHP: 7.4
 Requires at least: 6.0
 Tested up to: 6.8
@@ -36,6 +36,9 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 5. Site SEO Health screen.
 
 == Changelog ==
+
+= 3.4.1 =
+* New: [`ymfseo_{$taxonomy}_taxonomy_tags`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_taxonomy_tags) filter that allows you to create custom tags for taxonomy
 
 = 3.4.0 =
 * New: [`ymfseo_{$post_type}_posts_tags`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_post_type_tags) filter that allows you to create custom tags for post types
