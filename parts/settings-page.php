@@ -23,7 +23,7 @@
 		<?php settings_fields( YMFSEO_Settings::$params[ 'page_slug' ] ); ?>
 
 		<section>
-		<?php do_settings_sections( YMFSEO_Settings::$params[ 'page_slug' ] ); ?>
+			<?php do_settings_sections( YMFSEO_Settings::$params[ 'page_slug' ] ); ?>
 		</section>
 			
 		<?php submit_button(); ?>

@@ -35,7 +35,7 @@ class YMFSEO_Settings {
 	 * 
 	 * @since 3.0.0
 	 */
-	public static function init () : void {
+	public static function init () {
 		// Registers YM Fast SEO settings page.
 		add_action( 'admin_menu', function () {
 			add_options_page(
@@ -150,7 +150,7 @@ class YMFSEO_Settings {
 						'menu_icon'   => $post_type->menu_icon,
 						'description' => $post_type_tags ? sprintf(
 							/* translators: %s: List of available tags */
-							__( 'Available tags: %s.', 'ym-fast-seo' ),
+							__( 'Custom tags: %s.', 'ym-fast-seo' ),
 							implode( ', ', $post_type_tags ),
 						) : '',
 					],
@@ -213,7 +213,7 @@ class YMFSEO_Settings {
 						'class'       => 'sub-field',
 						'description' => $taxonomy_tags ? sprintf(
 							/* translators: %s: List of available tags */
-							__( 'Available tags: %s.', 'ym-fast-seo' ),
+							__( 'Custom tags: %s.', 'ym-fast-seo' ),
 							implode( ', ', $taxonomy_tags ),
 						) : '',
 					],
@@ -497,6 +497,7 @@ class YMFSEO_Settings {
 					'description' => implode([
 						sprintf( YMFSEO_Checker::is_site_public()
 							? ''
+							/* translators: %s: Link to settings page */
 							: '<span class="dashicons dashicons-warning"></span> ' . __( 'The site is configured to <a href="%s">discourage indexing</a>, IndexNow is disabled regardless of this option.', 'ym-fast-seo' ),
 							get_admin_url( null, 'options-reading.php#blog_public' ),
 						),
@@ -578,7 +579,7 @@ class YMFSEO_Settings {
 	 * 		@type string $description Section description below title. 
 	 * }
 	 */
-	public static function add_section ( string $slug, string $title, string $icon, array $args = [] ) : void {
+	public static function add_section ( string $slug, string $title, string $icon, array $args = [] ) {
 		YMFSEO_Settings::$registered_sections[] = [
 			'slug'  => $slug,
 			'title' => $title,
@@ -586,7 +587,7 @@ class YMFSEO_Settings {
 		];
 
 		add_settings_section( "ymfseo_{$slug}_section",
-			"<span class=\"dashicons $icon\"></span> $title",
+			"<span class=\"dashicons {$icon}\"></span> {$title}",
 			fn ( $args ) => include YMFSEO_ROOT_DIR . 'parts/settings-section.php',
 			YMFSEO_Settings::$params[ 'page_slug' ],
 			[
@@ -603,6 +604,19 @@ class YMFSEO_Settings {
 	}
 
 	/**
+	 * Prepares option name before usage.
+	 * 
+	 * @since 3.0.0
+	 * 
+	 * @param string $option Option name.
+	 */
+	public static function prepare_option_name ( string &$option ) {
+		if ( 'ymfseo_' !== mb_substr( $option, 0, 7 ) ) {
+			$option = "ymfseo_{$option}";
+		}
+	}
+
+	/**
 	 * Registers YM Fast SEO settings option.
 	 * 
 	 * @param string $slug       Option name.
@@ -616,7 +630,7 @@ class YMFSEO_Settings {
 	 * 		@type string $menu_icon Menu dashicon name.
 	 * }
 	 */
-	public static function register_option ( string $slug, string $title, string $type, string $section, string $field_part, array $args = [] ) : void {
+	public static function register_option ( string $slug, string $title, string $type, string $section, string $field_part, array $args = [] ) {
 		// Checks is default value exist.
 		if ( ! isset( YMFSEO_Settings::$default_settings[ $slug ] ) ) {
 			$break   = true;
@@ -699,52 +713,23 @@ class YMFSEO_Settings {
 
 		// Registers setting.
 		// phpcs:ignore
-		register_setting( YMFSEO_Settings::$params[ 'page_slug' ], "ymfseo_$slug", [
+		register_setting( YMFSEO_Settings::$params[ 'page_slug' ], "ymfseo_{$slug}", [
 			'type'              => $type,
 			'default'           => YMFSEO_Settings::$default_settings[ $slug ],
 			'sanitize_callback' => $sanitize_callback,
 		]);
 
 		// Adds field.
-		add_settings_field( "ymfseo_$slug",
+		add_settings_field( "ymfseo_{$slug}",
 			sprintf( '%s %s',
 				$menu_icon ? "<span class=\"dashicons {$menu_icon}\"></span>" : '',
 				$title,
 			),
-			fn ( $args ) => include YMFSEO_ROOT_DIR . "parts/settings-$field_part-field.php",
+			fn ( $args ) => include YMFSEO_ROOT_DIR . "parts/settings-{$field_part}-field.php",
 			YMFSEO_Settings::$params[ 'page_slug' ],
 			"ymfseo_{$section}_section",
-			array_merge( [ 'label_for' => "ymfseo_$slug" ], $args )
+			array_merge( [ 'label_for' => "ymfseo_{$slug}" ], $args )
 		);
-	}
-
-	/**
-	 * Prepares option name before usage.
-	 * 
-	 * @since 3.0.0
-	 * 
-	 * @param string $option Option name.
-	 */
-	public static function prepare_option_name ( string &$option ) : void {
-		if ( 'ymfseo_' !== mb_substr( $option, 0, 7 ) ) {
-			$option = "ymfseo_$option";
-		}
-	}
-
-	/**
-	 * Updates option value in database or create new.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param string $option Option name. Allowed without 'ymfseo_'.
-	 * @param mixed  $value  Option value.
-
-	 * @return bool `true` if option updated, `false` if no changes or error.
-	 */
-	public static function update_option ( string $option, mixed $value ) : bool {
-		YMFSEO_Settings::prepare_option_name( $option );
-
-		return update_option( $option, $value );
 	}
 
 	/**
@@ -763,5 +748,21 @@ class YMFSEO_Settings {
 		$default_value = YMFSEO_Settings::$default_settings[ str_replace( 'ymfseo_', '', $option ) ] ?? $default;
 
 		return get_option( $option, $default_value );
+	}
+
+	/**
+	 * Updates option value in database or create new.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $option Option name. Allowed without 'ymfseo_'.
+	 * @param mixed  $value  Option value.
+
+	 * @return bool `true` if option updated, `false` if no changes or error.
+	 */
+	public static function update_option ( string $option, mixed $value ) : bool {
+		YMFSEO_Settings::prepare_option_name( $option );
+
+		return update_option( $option, $value );
 	}
 }

@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * 
  * @since 3.0.0
  */
-class YMFSEO_Logs {
+class YMFSEO_Logger {
 	/**
 	 * Allowed file names for logging.
 	 * 
@@ -18,23 +18,6 @@ class YMFSEO_Logs {
 		'debug',
 		'IndexNow',
 	];
-
-	/**
-	 * Prepares and retrieve global $wp_filesystem.
-	 * 
-	 * @global $wp_filesystem
-	 */
-	private static function get_filesystem () {
-		global $wp_filesystem;
-
-		if ( ! $wp_filesystem ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-
-			WP_Filesystem();
-		}
-
-		return $wp_filesystem;
-	}
 
 	/**
 	 * Retrieves current UTC time string.
@@ -73,14 +56,14 @@ class YMFSEO_Logs {
 	 */
 	public static function write ( string $file, array $entry ) : bool {
 		// Is file name allowed.
-		if ( ! in_array( $file, YMFSEO_Logs::$allowed_files ) ) {
+		if ( ! in_array( $file, YMFSEO_Logger::$allowed_files ) ) {
 			return false;
 		}
 		
-		$filesystem = YMFSEO_Logs::get_filesystem();
+		$filesystem =  YMFSEO::get_filesystem();
 
 		// Get file path.
-		$file_path = YMFSEO_ROOT_DIR . "logs/$file.json";
+		$file_path = YMFSEO_ROOT_DIR . "logs/{$file}.json";
 
 		// Write empty array if file not exists or empty.
 		if ( ! $filesystem->exists( $file_path ) || ! $filesystem->get_contents( $file_path ) ) {
@@ -93,7 +76,7 @@ class YMFSEO_Logs {
 		// Write entry.
 		array_unshift( $logs, [
 			...$entry,
-			'date' => YMFSEO_Logs::get_current_datetime(),
+			'date' => YMFSEO_Logger::get_current_datetime(),
 		]);
 
 		// Slice only first 100 items.
@@ -118,14 +101,14 @@ class YMFSEO_Logs {
 	 */
 	public static function read ( string $file, int $slice = 20 ) : bool|array {
 		// Is file name allowed.
-		if ( ! in_array( $file, YMFSEO_Logs::$allowed_files ) ) {
+		if ( ! in_array( $file, YMFSEO_Logger::$allowed_files ) ) {
 			return false;
 		}
 
-		$filesystem = YMFSEO_Logs::get_filesystem();
+		$filesystem =  YMFSEO::get_filesystem();
 
 		// Get file path.
-		$file_path = YMFSEO_ROOT_DIR . "logs/$file.json";
+		$file_path = YMFSEO_ROOT_DIR . "logs/{$file}.json";
 
 		if ( ! $filesystem->exists( $file_path ) ) {
 			return [];

@@ -12,7 +12,7 @@ class YMFSEO_Sanitizer {
 	 * 
 	 * @param string $value Text value.
 	 * 
-	 * @return string
+	 * @return string Sanitized string.
 	 */
 	public static function sanitize_text_field ( string $value ) : string {
 		$value = wp_unslash( $value );

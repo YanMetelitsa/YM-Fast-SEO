@@ -58,9 +58,10 @@ if ( $meta_fields->description ) {
 }
 
 // Common meta tags.
-printf( '<meta property="og:site_name" content="%s">', esc_attr( $site_name ) );
-printf( '<meta property="og:type"      content="%s">', esc_attr( $is_front_page ? 'website' : 'article' ) );
-printf( '<meta property="og:locale"    content="%s">', esc_attr( $site_locale ) );
+printf( '<meta name="apple-mobile-web-app-title" content="%s">', esc_attr( $site_name ) );
+printf( '<meta property="og:site_name"           content="%s">', esc_attr( $site_name ) );
+printf( '<meta property="og:type"                content="%s">', esc_attr( $is_front_page ? 'website' : 'article' ) );
+printf( '<meta property="og:locale"              content="%s">', esc_attr( $site_locale ) );
 
 printf( '<meta name="twitter:card" content="%s">', esc_attr( YMFSEO_Settings::get_option( 'preview_size' ) ) );
 

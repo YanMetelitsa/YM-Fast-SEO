@@ -33,6 +33,8 @@ class YMFSEO_Meta_Fields {
 	/**
 	 * Schema.org WebPage type.
 	 * 
+	 * @see https://schema.org/WebPage#subtypes
+	 * 
 	 * @var string
 	 */
 	public string $page_type;
@@ -43,6 +45,7 @@ class YMFSEO_Meta_Fields {
 	 * @var bool
 	 */
 	public bool $noindex;
+
 
 	/**
 	 * Default meta fields values.
@@ -81,7 +84,7 @@ class YMFSEO_Meta_Fields {
 	/**
 	 * Inits YMFSEO meta fields subclass.
 	 */
-	public static function init () : void {
+	public static function init () {
 		// Adds posts quick edit fields.
 		add_action( 'quick_edit_custom_box', function ( string $column_name, string $post_type ) {
 			if ( ! in_array( $post_type, array_values( YMFSEO::get_public_post_types() ) ) ) {
@@ -115,7 +118,7 @@ class YMFSEO_Meta_Fields {
 							<span class="title"><?php esc_html_e( 'Page Type', 'ym-fast-seo' ); ?></span>
 							<select name="ymfseo-page-type">
 								<?php
-									$default_page_type       = YMFSEO_Settings::get_option( "post_type_page_type_$post_type" );
+									$default_page_type       = YMFSEO_Settings::get_option( "post_type_page_type_{$post_type}" );
 									$default_page_type_label = __( YMFSEO::$page_types[ $default_page_type ], 'ym-fast-seo' ); // phpcs:ignore
 				
 									printf( '<option value="default">%s (%s)</option>',
@@ -175,7 +178,7 @@ class YMFSEO_Meta_Fields {
 			// Post types.
 			foreach ( YMFSEO::get_public_post_types() as $post_type ) {
 				add_filter( "manage_{$post_type}_posts_columns", 'YMFSEO_Meta_Fields::manage_seo_columns' );
-				add_action( "manage_{$post_type}_posts_custom_column" , function ( string $column, int $post_id ) : void {
+				add_action( "manage_{$post_type}_posts_custom_column" , function ( string $column, int $post_id ) {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_post( $post_id ) );
 
@@ -203,7 +206,7 @@ class YMFSEO_Meta_Fields {
 				}
 
 				add_filter( "manage_edit-{$taxonomy}_columns", 'YMFSEO_Meta_Fields::manage_seo_columns', 20 );
-				add_action( "manage_{$taxonomy}_custom_column" , function ( $string, string $column, int $term_id  ) : void {
+				add_action( "manage_{$taxonomy}_custom_column" , function ( $string, string $column, int $term_id  ) {
 					if ( 'ymfseo' === $column ) {
 						$check = YMFSEO_Checker::check_seo( get_term( $term_id ) );
 
@@ -297,7 +300,6 @@ class YMFSEO_Meta_Fields {
 			// phpcs:enable
 		});
 
-
 		// Saves term metas after saving term.
 		add_action( 'saved_term', function ( int $term_id, int $tt_id, string $taxonomy ) {
 			// Is user can edit metas.
@@ -358,10 +360,10 @@ class YMFSEO_Meta_Fields {
 	 * @since 3.1.0 Is YMFSEO_Meta_Fields method.
 	 * 
 	 * @param array  $meta_fields Meta fields.
-	 * @param int    $id          Post/term ID.
+	 * @param int    $id          Post/Term ID.
 	 * @param string $type        Object type. Can be 'post' or 'term'.
 	 */
-	public static function update_meta ( array $meta_fields, int $id, string $type ) : void {
+	public static function update_meta ( array $meta_fields, int $id, string $type ) {
 		$meta_value = [];
 
 		$update_function_name = "update_{$type}_meta";
@@ -483,7 +485,7 @@ class YMFSEO_Meta_Fields {
 						);
 
 						if ( 'default' === $meta_fields[ 'page_type' ] ) {
-							$meta_fields[ 'page_type' ] = YMFSEO_Settings::get_option( "post_type_page_type_$post_type", 'ItemPage' );
+							$meta_fields[ 'page_type' ] = YMFSEO_Settings::get_option( "post_type_page_type_{$post_type}", 'ItemPage' );
 						}
 					}
 
@@ -597,7 +599,7 @@ class YMFSEO_Meta_Fields {
 	 * @param string $settings_mask Settings mask.
 	 * @param array  $tags          Tags list in tag - value format.
 	 */
-	private function format_fields ( array &$meta_fields, string $title, string $description, string $settings_mask, array $tags ) : void {
+	private function format_fields ( array &$meta_fields, string $title, string $description, string $settings_mask, array $tags ) {
 		// Sets title.
 		if ( empty( $meta_fields[ 'title' ] ) ) {
 			$settings_title = YMFSEO_Settings::get_option( sprintf( $settings_mask, 'title' ) );
@@ -641,7 +643,7 @@ class YMFSEO_Meta_Fields {
 	 * 
 	 * @param array $meta_fields Meta fields.
 	 */
-	private function set_default_preview_image ( array &$meta_fields ) : void {
+	private function set_default_preview_image ( array &$meta_fields ) {
 		if ( empty( $meta_fields[ 'image_uri' ] ) ) {
 			$default_preview_image_id = YMFSEO_Settings::get_option( 'preview_image_id' );
 
@@ -663,7 +665,7 @@ class YMFSEO_Meta_Fields {
 	 * @param array                                      $meta_fields    Meta fields.
 	 * @param WP_Post|WP_Post_Type|WP_Term|WP_User|null  $queried_object Queried object.
 	 */
-	private function replace_tags ( array &$meta_fields, WP_Post|WP_Post_Type|WP_Term|WP_User|null $queried_object ) : void {
+	private function replace_tags ( array &$meta_fields, WP_Post|WP_Post_Type|WP_Term|WP_User|null $queried_object ) {
 		foreach ( [ 'title', 'description' ] as $key ) {
 			$tags = YMFSEO_Meta_Fields::$replace_tags;
 
@@ -695,7 +697,7 @@ class YMFSEO_Meta_Fields {
 	 * 
 	 * @param array $meta_fields Meta fields values.
 	 */
-	private function set_meta_fields ( array $meta_fields ) : void {
+	private function set_meta_fields ( array $meta_fields ) {
 		$this->title       = $meta_fields[ 'title' ];
 		$this->description = $meta_fields[ 'description' ];
 		$this->image_uri   = $meta_fields[ 'image_uri' ];

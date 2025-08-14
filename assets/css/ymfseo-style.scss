@@ -1,16 +1,4 @@
-:root {
-	--ymfseo-settings-bg: #fefefe;
-	--ymfseo-settings-border: #dcdcde;
-
-	--ymfseo-red: #dc3232;
-	--ymfseo-green: #46B450;
-	--ymfseo-yellow: #ffb900;
-	--ymfseo-blue: #0073aa;
-
-	--ymfseo-gap-primary: 20px;
-	--ymfseo-border-radius: 4px;
-}
-
+/* Media */
 @mixin wp-mobile {
 	@media screen and ( max-width: 782px ) {
 		@content;
@@ -20,6 +8,21 @@
 	@media screen and ( min-width: 782px ) {
 		@content;
 	}
+}
+
+/* Variables */
+:root {
+	--ymfseo-settings-background: #fefefe;
+	--ymfseo-settings-border:     #dcdcde;
+
+	--ymfseo-red:    #dc3232;
+	--ymfseo-green:  #46B450;
+	--ymfseo-yellow: #ffb900;
+	--ymfseo-blue:   #0073aa;
+
+	--ymfseo-gap-primary: 20px;
+
+	--ymfseo-border-radius: 4px;
 }
 
 /* Columns */
@@ -256,7 +259,7 @@ td.ymfseo.column-ymfseo {
 		gap: 10px;
 
 		&-item {
-			background-color: var( --ymfseo-settings-bg );
+			background-color: var( --ymfseo-settings-background );
 			padding: 6px 10px 6px 6px;
 			border: 1px solid var( --ymfseo-settings-border );
 			border-radius: var( --ymfseo-border-radius );
@@ -305,7 +308,7 @@ td.ymfseo.column-ymfseo {
 	form {
 		/* Section */
 		section {
-			background-color: var( --ymfseo-settings-bg );
+			background-color: var( --ymfseo-settings-background );
 			margin-top: var( --ymfseo-gap-primary );
 			border: 1px solid var( --ymfseo-settings-border );
 			border-radius: var( --ymfseo-border-radius );

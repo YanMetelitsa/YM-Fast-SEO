@@ -3,7 +3,7 @@
 /*
  * Plugin Name:       YM Fast SEO
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
- * Version:           3.4.1
+ * Version:           4.0.0
  * Requires PHP:      7.4
  * Requires at least: 6.0
  * Tested up to:      6.8
@@ -29,18 +29,21 @@ define( 'YMFSEO_ROOT_URI',    plugin_dir_url( __FILE__ ) );
 define( 'YMFSEO_BASENAME',    plugin_basename( __FILE__ ) );
 
 // Includes plugin components.
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Sanitizer.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Meta_Fields.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Schema.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Checker.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Settings.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_IndexNow.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Editor_Role.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Site_Health.class.php';
-require_once YMFSEO_ROOT_DIR . 'includes/YMFSEO_Logs.class.php';
+require_once YMFSEO_ROOT_DIR . 'includes/plugin.php';
+require_once YMFSEO_ROOT_DIR . 'includes/favicon.php';
+require_once YMFSEO_ROOT_DIR . 'includes/sanitizer.php';
+require_once YMFSEO_ROOT_DIR . 'includes/meta-fields.php';
+require_once YMFSEO_ROOT_DIR . 'includes/schema.php';
+require_once YMFSEO_ROOT_DIR . 'includes/checker.php';
+require_once YMFSEO_ROOT_DIR . 'includes/settings.php';
+require_once YMFSEO_ROOT_DIR . 'includes/indexnow.php';
+require_once YMFSEO_ROOT_DIR . 'includes/editor-role.php';
+require_once YMFSEO_ROOT_DIR . 'includes/site-health.php';
+require_once YMFSEO_ROOT_DIR . 'includes/logger.php';
 
+// Inits plugin components.
 YMFSEO::init();
+YMFSEO_Favicon::init();
 YMFSEO_Editor_Role::init();
 YMFSEO_Settings::init();
 YMFSEO_Meta_fields::init();

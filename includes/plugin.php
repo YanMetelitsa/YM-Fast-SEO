@@ -19,7 +19,7 @@ class YMFSEO {
 	/**
 	 * Inits YM Fast SEO Plugin.
 	 */
-	public static function init () : void {
+	public static function init () {
 		// Defines classes parameters.
 		add_action( 'init', function () {
 			// Defines available page types.
@@ -57,7 +57,7 @@ class YMFSEO {
 				'menu_label'    => __( 'SEO', 'ym-fast-seo' ),
 				'menu_position' => 3,
 				'capability'    => 'manage_options',
-				'page_slug'     => 'ymfseo-settings',
+				'page_slug'     => 'ymfseo',
 			];
 
 			// Defines default settings.
@@ -100,30 +100,29 @@ class YMFSEO {
 		});
 
 
+		// Adds WordPress theme supports.
+		add_action( 'after_setup_theme', function () {
+			add_theme_support( 'title-tag' );
+			add_theme_support( 'post-thumbnails' );
+		});
+
 		// Adds links to plugin's card on Plugins page.
 		add_filter( 'plugin_action_links_' . YMFSEO_BASENAME, function ( array $links ) : array {
 			if ( YMFSEO_Checker::is_current_user_can_view_site_health() ) {
 				array_unshift( $links, sprintf( '<a href="%s">%s</a>',
-					admin_url( 'site-health.php?tab=ymfseo-site-health-tab' ),
+					admin_url( 'site-health.php?tab=ymfseo' ),
 					__( 'SEO Health', 'ym-fast-seo' ),
 				));
 			}
 
 			if ( YMFSEO_Checker::is_current_user_can_manage_options() ) {
 				array_unshift( $links, sprintf( '<a href="%s">%s</a>',
-					menu_page_url( 'ymfseo-settings', false ),
+					menu_page_url( 'ymfseo', false ),
 					__( 'Settings', 'ym-fast-seo' ),
 				));
 			}
 
 			return $links;
-		});
-
-
-		// Adds WordPress theme supports.
-		add_action( 'after_setup_theme', function () {
-			add_theme_support( 'title-tag' );
-			add_theme_support( 'post-thumbnails' );
 		});
 
 		// Connects styles and scripts.
@@ -165,30 +164,30 @@ class YMFSEO {
 
 		// Adds admin bar menu.
 		add_action( 'admin_bar_menu', function ( WP_Admin_Bar $wp_admin_bar ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
+			if ( ! YMFSEO_Checker::is_current_user_can_manage_options() ) {
 				return;
 			}
 
 			$wp_admin_bar->add_menu([
-				'id'     => 'ymfseo-admin-bar-menu',
+				'id'     => 'ymfseo',
 				'title'  => sprintf(
 					'<span class="ab-icon dashicons-welcome-view-site" style="top:2px"></span><span class="ab-label">%s</span>',
 					__( 'SEO', 'ym-fast-seo' )
 				),
-				'href'   => admin_url( 'options-general.php?page=ymfseo-settings' ),
+				'href'   => admin_url( 'options-general.php?page=ymfseo' ),
 			]);
 
 			$wp_admin_bar->add_menu([
-				'id'     => 'ymfseo-admin-bar-menu-settings',
+				'id'     => 'ymfseo-settings',
 				'title'  => __( 'Settings', 'ym-fast-seo' ),
-				'href'   => admin_url( 'options-general.php?page=ymfseo-settings' ),
-				'parent' => 'ymfseo-admin-bar-menu',
+				'href'   => admin_url( 'options-general.php?page=ymfseo' ),
+				'parent' => 'ymfseo',
 			]);
 			$wp_admin_bar->add_menu([
-				'id'     => 'ymfseo-admin-bar-menu-health',
+				'id'     => 'ymfseo-health',
 				'title'  => __( 'Health', 'ym-fast-seo' ),
-				'href'   => admin_url( 'site-health.php?tab=ymfseo-site-health-tab' ),
-				'parent' => 'ymfseo-admin-bar-menu',
+				'href'   => admin_url( 'site-health.php?tab=ymfseo' ),
+				'parent' => 'ymfseo',
 			]);
 		}, 70 );
 
@@ -225,7 +224,7 @@ class YMFSEO {
 		});
 
 		// Modifies title tag separator.
-		add_filter( 'document_title_separator', function ( string $sep ) : string {
+		add_filter( 'document_title_separator', function () : string {
 			return YMFSEO::get_separator();
 		});
 
@@ -259,6 +258,7 @@ class YMFSEO {
 			include YMFSEO_ROOT_DIR . 'parts/head.php';
 		}, 1 );
 
+		
 		// Removes headings from post excerpts.
 		add_filter( 'excerpt_allowed_blocks', function ( array $allowed_blocks ) : array {
 			if ( ! YMFSEO_Settings::get_option( 'clear_excerpts' ) ) {
@@ -338,7 +338,7 @@ class YMFSEO {
 		}, 10, 2 );
 
 		// Removes `noindex` pages from the sitemap.
-		add_filter( 'wp_sitemaps_posts_query_args', function ( array $args, string $post_type ) : array {
+		add_filter( 'wp_sitemaps_posts_query_args', function ( array $args ) : array {
 			// phpcs:ignore
 			$args[ 'post__not_in' ] = $args[ 'post__not_in' ] ?? [];
 
@@ -358,7 +358,7 @@ class YMFSEO {
 			wp_reset_postdata();
 		
 			return $args;
-		}, 10, 2 );
+		});
 
 		// Removes `noindex` taxonomies from the sitemap.
 		add_filter( 'wp_sitemaps_taxonomies', function ( array $taxonomies ) : array {
@@ -370,6 +370,27 @@ class YMFSEO {
 		
 			return $taxonomies;
 		});
+	}
+
+	/**
+	 * Prepares and retrieve global $wp_filesystem.
+	 * 
+	 * @global $wp_filesystem
+	 * 
+	 * @since 4.0.0 Is YMFSEO method instead of YMFSEO_Logger
+	 * 
+	 * @return mixed WP_Filesystem object.
+	 */
+	public static function get_filesystem () {
+		global $wp_filesystem;
+
+		if ( ! $wp_filesystem ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+
+			WP_Filesystem();
+		}
+
+		return $wp_filesystem;
 	}
 
 	/**
@@ -425,7 +446,7 @@ class YMFSEO {
 	 * 
 	 * @since 3.3.3
 	 * 
-	 * @return void
+	 * @return bool
 	 */
 	public static function is_current_page_has_canonical () : bool {
 		$has_canonical = false;

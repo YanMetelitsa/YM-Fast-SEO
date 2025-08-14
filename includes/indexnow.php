@@ -18,20 +18,20 @@ class YMFSEO_IndexNow {
 	/**
 	 * Inits IndexNow features.
 	 */
-	public static function init () : void {
-		// Registers virtual .txt file API key address.
+	public static function init () {
+		// Registers virtual TXT file API key address.
 		add_action( 'init', function () {
 			$api_key = YMFSEO_IndexNow::get_api_key();
 
 			add_rewrite_rule(
-				"^$api_key.txt/?$",
-				"index.php?ymfseo_indexnow_key=$api_key",
+				"^{$api_key}.txt/?$",
+				"index.php?ymfseo_indexnow_key={$api_key}",
 				'top'
 			);
 			add_rewrite_tag( '%ymfseo_indexnow_key%', '([^&]+)' );
 		});
 
-		// Prints API key when virtual .txt file accessed.
+		// Prints API key when virtual TXT file accessed.
 		add_action( 'template_redirect', function () {
 			$api_key = YMFSEO_IndexNow::get_api_key();
 
@@ -45,7 +45,7 @@ class YMFSEO_IndexNow {
 		register_deactivation_hook( YMFSEO_BASENAME, 'flush_rewrite_rules' );
 
 
-		// Sends IndexNow after any post save.
+		// Sends IndexNow after saving post.
 		add_action( 'save_post', function ( int $post_id, WP_Post $post ) {
 			// Is not autosave.
 			if ( wp_is_post_autosave( $post_id ) ) {
@@ -177,8 +177,8 @@ class YMFSEO_IndexNow {
 		}
 
 		// Checks is IndexNow was sent recently
-		$indexNow_logs = YMFSEO_Logs::read( 'IndexNow' );
-		$current_time  = YMFSEO_Logs::parse_datetime( YMFSEO_Logs::get_current_datetime() );
+		$indexNow_logs = YMFSEO_Logger::read( 'IndexNow' );
+		$current_time  = YMFSEO_Logger::parse_datetime( YMFSEO_Logger::get_current_datetime() );
 
 		foreach ( $indexNow_logs as $entry ) {
 			// Checks is data exists.
@@ -186,7 +186,7 @@ class YMFSEO_IndexNow {
 				break;
 			}
 
-			$send_time = YMFSEO_Logs::parse_datetime( $entry[ 'date' ] );
+			$send_time = YMFSEO_Logger::parse_datetime( $entry[ 'date' ] );
 
 			// Looks for the same URL.
 			if ( $permalink == $entry[ 'URL' ] ) {
@@ -212,7 +212,7 @@ class YMFSEO_IndexNow {
 		$response_code = intval( $response[ 'response' ][ 'code' ] );
 
 		// Writes logs entry.
-		YMFSEO_Logs::write( 'IndexNow', [
+		YMFSEO_Logger::write( 'IndexNow', [
 			'URL'    => $permalink,
 			'status' => $response_code,
 		]);

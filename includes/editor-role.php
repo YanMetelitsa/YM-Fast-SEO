@@ -12,7 +12,7 @@ class YMFSEO_Editor_Role {
 	/**
 	 * Inits SEO Editor role.
 	 */
-	public static function init () : void {
+	public static function init () {
 		// Creates SEO Editor role and adds caps.
 		register_activation_hook( YMFSEO_BASENAME, function () {
 			/* translators: User role name */
@@ -39,11 +39,13 @@ class YMFSEO_Editor_Role {
 			]);
 
 			$admin_role = get_role( 'administrator' );
+
 			if ( $admin_role ) {
 				$admin_role->add_cap( 'ymfseo_edit_metas' );
 			}
 
 			$editor_role = get_role( 'editor' );
+
 			if ( $editor_role ) {
 				$editor_role->add_cap( 'ymfseo_edit_metas' );
 			}
@@ -54,11 +56,13 @@ class YMFSEO_Editor_Role {
 			remove_role( 'ymfseo_seo_editor' );
 
 			$admin_role = get_role( 'administrator' );
+
 			if ( $admin_role ) {
 				$admin_role->remove_cap( 'ymfseo_edit_metas' );
 			}
 
 			$editor_role = get_role( 'editor' );
+			
 			if ( $editor_role ) {
 				$editor_role->remove_cap( 'ymfseo_edit_metas' );
 			}

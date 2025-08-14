@@ -7,21 +7,27 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 ## Features
 
 * Lightweight & Extendable
-* Posts/Taxonomies Meta Tags Fields
+* Fields for Posts and Taxonomies Meta Tags
 * Automated Open Graph, Twitter Card, and Schema.org Markups
-* Quick SEO Analysis + Site SEO Health Page
-* Services Integration (Analytics + Webmasters)
 * Automatic IndexNow Sending
+* Quick SEO Analysis and Site SEO Health Page
+* Services Integration (Analytics + Webmasters)
+* SVG Favicon Support
 * `Robots.txt` Editor
 * Other Useful Tools & Improvement
 
 # Changelog
+
+## 4.0.0
+* New: Wide support for SVG site icons. If you use an SVG site icon (requires a [third-party plugin](https://wordpress.org/plugins/search/SVG/)), it will now be rendered according to modern web standards
+* Fix: SEO check with enabled unnecessary title parts
+
 ## 3.4.1
 * New: [`ymfseo_{$taxonomy}_taxonomy_tags`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_taxonomy_tags) filter that allows you to create custom tags for taxonomy
 
-
 ## 3.4.0
 * New: [`ymfseo_{$post_type}_posts_tags`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_post_type_tags) filter that allows you to create custom tags for post types
+* Fix: WooCommerce SEO column
 
 ## 3.3.3
 * Fix: Open Graph/Twitter Cards canonical URL

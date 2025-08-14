@@ -62,17 +62,17 @@ class YMFSEO_Site_Health {
 	/**
 	 * Inits Site SEO Health features.
 	 */
-	public static function init () : void {
+	public static function init () {
 		// Adds site health SEO navigation tab.
 		add_filter( 'site_health_navigation_tabs', function (array  $tabs ) : array {
-			$tabs[ 'ymfseo-site-health-tab' ] = __( 'SEO', 'ym-fast-seo' );
+			$tabs[ 'ymfseo' ] = __( 'SEO', 'ym-fast-seo' );
 		
 			return $tabs;
 		});
 
 		// Includes site health SEO navigation tab content.
 		add_action( 'site_health_tab_content', function ( string $tab ) {
-			if ( 'ymfseo-site-health-tab' !== $tab ) {
+			if ( 'ymfseo' !== $tab ) {
 				return;
 			}
 		
@@ -142,16 +142,38 @@ class YMFSEO_Site_Health {
 		YMFSEO_Site_Health::register_test( 'is-site-has-icon', function () : YMFSEO_Site_Health {
 			// Default.
 			$is_passed   = 'yes';
-			$title       = __( 'Site icon is specified', 'ym-fast-seo' );
+			$title       = __( 'Site icon is specified and configured', 'ym-fast-seo' );
 			$description = [];
 			$links       = [
-				__( 'Manage Site Icon', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php' ),
+				__( 'Manage Site Icon', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php#site-icon-preview' ),
 			];
 
 			// Check.
+			if ( ! YMFSEO_Checker::is_imagick_available() ) {
+				$is_passed     = 'warning';
+				$title         = __( 'Site icon could not be converted', 'ym-fast-seo' );
+				/* translators: %s: File formats list */
+				$description[] = sprintf( __( 'To install the site icon correctly, Imagick must be installed and support the following file formats: %s.', 'ym-fast-seo' ),
+					implode( ', ', [ 'SVG', 'PNG', 'ICO' ] )
+				);
+				$links = array_merge(
+					[
+						'About Imagick' => 'https://www.php.net/manual/book.imagick.php',
+					],
+					$links,
+				);
+			}
+
+			if ( ! YMFSEO_Checker::is_svg_favicon() ) {
+				$is_passed     = 'warning';
+				$title         = __( 'Site icon is not in SVG format', 'ym-fast-seo' );
+				$description[] = __( 'Modern web standards recommend using SVG icons. YM Fast SEO will automatically generate required PNG and ICO files.', 'ym-fast-seo' );
+			}
+
 			if ( empty( get_option( 'site_icon' ) ) ) {
-				$is_passed = 'no';
-				$title     = __( 'Site icon is not specified', 'ym-fast-seo' );
+				$is_passed   = 'no';
+				$title       = __( 'Site icon is not specified', 'ym-fast-seo' );
+				$description = [];
 			}
 
 			return new YMFSEO_Site_Health( $is_passed, $title, $description, [
@@ -165,7 +187,7 @@ class YMFSEO_Site_Health {
 			$title       = __( 'Site preview image is specified', 'ym-fast-seo' );
 			$description = [];
 			$links       = [
-				__( 'Manage Site Preview Image', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php?page=ymfseo-settings#preview' ),
+				__( 'Manage Site Preview Image', 'ym-fast-seo' ) => get_admin_url( null, 'options-general.php?page=ymfseo#preview' ),
 			];
 
 			// Get data.
@@ -214,7 +236,7 @@ class YMFSEO_Site_Health {
 			];
 
 			// Get data.
-			$logs = YMFSEO_Logs::read( 'IndexNow', 10 );
+			$logs = YMFSEO_Logger::read( 'IndexNow', 10 );
 
 			// If has logs.
 			if ( $logs ) {
@@ -239,8 +261,11 @@ class YMFSEO_Site_Health {
 
 				// Set table.
 				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
-					$datetime = YMFSEO_Logs::parse_datetime( $item[ 'date' ] );
-					$format   = get_option( 'date_format' ) . ', H:i:s';
+					$datetime = YMFSEO_Logger::parse_datetime( $item[ 'date' ] );
+					$format   = sprintf( '%s (%s)', 
+						get_option( 'date_format' ),
+						get_option( 'time_format' ),
+					);
 
 					$item[ 'date' ] = $datetime->format( $format );
 
@@ -280,7 +305,7 @@ class YMFSEO_Site_Health {
 	 * @param string   $id    Test ID.
 	 * @param callable $check Test function. Must returns YMFSEO_Site_Health instance.
 	 */
-	private static function register_test ( string $id, callable $check ) : void {
+	private static function register_test ( string $id, callable $check ) {
 		YMFSEO_Site_Health::$tests[ $id ] = $check;
 	}
 }

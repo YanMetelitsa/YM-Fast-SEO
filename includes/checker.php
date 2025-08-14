@@ -118,9 +118,41 @@ class YMFSEO_Checker {
 	}
 
 	/**
+	 * Retrieves `true` if site icon is SVG format.
+	 * 
+	 * @since 4.0.0
+	 * 
+	 * @return bool
+	 */
+	public static function is_svg_favicon () : bool {
+		return '.svg' == substr( get_site_icon_url(), -4 );
+	}
+
+	/**
+	 * Retrieves `true` if Imagick enabled.
+	 * 
+	 * @since 4.0.0
+	 * 
+	 * @return bool
+	 */
+	public static function is_imagick_available () : bool {
+		if ( ! class_exists( 'Imagick' ) ) {
+			return false;
+		}
+
+		return empty(
+			array_diff(
+				[ 'svg', 'ico', 'png' ],
+				array_map( fn ( $format ) => strtolower( $format ), Imagick::queryFormats() )
+			)
+		);
+	}
+
+	/**
 	 * Checks post SEO status.
 	 * 
 	 * @since 3.0.0 Is YMFSEO_Checker method.
+	 * @since 4.0.0 Adds title parts if needed.
 	 * 
 	 * @param WP_Post|WP_Term $object Post or Term object.
 	 * 
@@ -131,6 +163,15 @@ class YMFSEO_Checker {
 		$notes  = [];
 
 		$meta_fields = new YMFSEO_Meta_Fields( $object );
+
+		// Adds title parts if not hidden via settings.
+		if ( ! YMFSEO_Settings::get_option( 'hide_title_parts' ) ) {
+			$meta_fields->title = implode( ' ', [
+				$meta_fields->title,
+				YMFSEO::get_separator(),
+				( $object instanceof WP_Post && $object->ID == get_option( 'page_on_front' ) ) ? get_bloginfo( 'description' ) : get_bloginfo( 'name' ),
+			]);
+		}
 
 		$title_length       = mb_strlen( $meta_fields->title );
 		$description_length = mb_strlen( $meta_fields->description );
