@@ -152,13 +152,15 @@ class YMFSEO_Site_Health {
 			if ( ! YMFSEO_Checker::is_imagick_available() ) {
 				$is_passed     = 'warning';
 				$title         = __( 'Site icon could not be converted', 'ym-fast-seo' );
-				/* translators: %s: File formats list */
-				$description[] = sprintf( __( 'To install the site icon correctly, Imagick must be installed and support the following file formats: %s.', 'ym-fast-seo' ),
+				/* translators: %1$s: Imagick, %2$s: File formats list */
+				$description[] = sprintf( __( 'To install the site icon correctly, %1$s must be installed and support the following file formats: %2$s.', 'ym-fast-seo' ),
+					'Imagick',	
 					implode( ', ', [ 'SVG', 'PNG', 'ICO' ] )
 				);
 				$links = array_merge(
 					[
-						'About Imagick' => 'https://www.php.net/manual/book.imagick.php',
+						/* translators: %s: Imagick */
+						sprintf( __( 'About %s', 'ym-fast-seo' ), 'Imagick' ) => 'https://www.php.net/manual/book.imagick.php',
 					],
 					$links,
 				);
