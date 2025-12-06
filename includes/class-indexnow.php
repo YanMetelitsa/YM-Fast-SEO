@@ -1,14 +1,16 @@
 <?php
 
+namespace YMFSEO;
+
 // Exits if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! \defined( 'ABSPATH' ) ) exit;
 
 /**
- * Main YM Fast SEO class.
+ * YMFSEO IndexNow class.
  * 
  * @since 3.0.0
  */
-class YMFSEO_IndexNow {
+class IndexNow {
 	/**
 	 * How many minutes should elapse between sending the same URLs.
 	 * 
@@ -21,7 +23,7 @@ class YMFSEO_IndexNow {
 	public static function init () {
 		// Registers virtual TXT file API key address.
 		add_action( 'init', function () {
-			$api_key = YMFSEO_IndexNow::get_api_key();
+			$api_key = IndexNow::get_api_key();
 
 			add_rewrite_rule(
 				"^{$api_key}.txt/?$",
@@ -33,7 +35,7 @@ class YMFSEO_IndexNow {
 
 		// Prints API key when virtual TXT file accessed.
 		add_action( 'template_redirect', function () {
-			$api_key = YMFSEO_IndexNow::get_api_key();
+			$api_key = IndexNow::get_api_key();
 
 			if ( $api_key == get_query_var( 'ymfseo_indexnow_key' ) ) {
 				echo esc_html( $api_key );
@@ -46,7 +48,7 @@ class YMFSEO_IndexNow {
 
 
 		// Sends IndexNow after saving post.
-		add_action( 'save_post', function ( int $post_id, WP_Post $post ) {
+		add_action( 'save_post', function ( int $post_id, \WP_Post $post ) {
 			// Is not autosave.
 			if ( wp_is_post_autosave( $post_id ) ) {
 				return;
@@ -58,7 +60,7 @@ class YMFSEO_IndexNow {
 			}
 
 			// Is post type public.
-			if ( ! YMFSEO_Checker::is_post_type_public( $post_id ) ) {
+			if ( ! Checker::is_post_type_public( $post_id ) ) {
 				return;
 			}
 
@@ -68,56 +70,56 @@ class YMFSEO_IndexNow {
 			}
 
 			// Sends IndexNow.
-			YMFSEO_IndexNow::send( get_permalink( $post_id ) );
+			IndexNow::send( get_permalink( $post_id ) );
 		}, 20, 2 );
 
 
 		// Sends IndexNow after creating term.
 		add_action( 'create_term', function ( int $term_id, int $tt_id, string $taxonomy ) {
 			// Is taxonomy public.
-			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+			if ( ! Checker::is_taxonomy_public( $taxonomy ) ) {
 				return;
 			}
 
 			// Is taxonomy not noindex.
-			if ( YMFSEO_Checker::is_taxonomy_noindex( $taxonomy ) ) {
+			if ( Checker::is_taxonomy_noindex( $taxonomy ) ) {
 				return;
 			}
 			
 			// Sends IndexNow.
-			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+			IndexNow::send( get_term_link( $term_id ) );
 		}, 10, 3 );
 
 		// Sends IndexNow after saving term.
 		add_action( 'saved_term', function ( int $term_id, int $tt_id, string $taxonomy ) {
 			// Is taxonomy public.
-			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+			if ( ! Checker::is_taxonomy_public( $taxonomy ) ) {
 				return;
 			}
 			
 			// Is taxonomy not noindex.
-			if ( YMFSEO_Checker::is_taxonomy_noindex( $taxonomy ) ) {
+			if ( Checker::is_taxonomy_noindex( $taxonomy ) ) {
 				return;
 			}
 			
 			// Sends IndexNow.
-			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+			IndexNow::send( get_term_link( $term_id ) );
 		}, 10, 3 );
 
 		// Sends IndexNow before deleting term.
 		add_action( 'pre_delete_term', function ( int $term_id, string $taxonomy ) {
 			// Checks is taxonomy public.
-			if ( ! YMFSEO_Checker::is_taxonomy_public( $taxonomy ) ) {
+			if ( ! Checker::is_taxonomy_public( $taxonomy ) ) {
 				return;
 			}
 
 			// Is taxonomy not noindex.
-			if ( YMFSEO_Checker::is_taxonomy_noindex( $taxonomy ) ) {
+			if ( Checker::is_taxonomy_noindex( $taxonomy ) ) {
 				return;
 			}
 
 			// Sends IndexNow.
-			YMFSEO_IndexNow::send( get_term_link( $term_id ) );
+			IndexNow::send( get_term_link( $term_id ) );
 		}, 10, 2 );
 	}
 
@@ -145,14 +147,14 @@ class YMFSEO_IndexNow {
 	 * @return string IndexNow API key.
 	 */
 	private static function get_api_key () : string {
-		$api_key = YMFSEO_Settings::get_option( 'indexnow_key' );
+		$api_key = Settings::get_option( 'indexnow_key' );
 
 		if ( empty( $api_key ) ) {
-			YMFSEO_Settings::update_option( 'indexnow_key', YMFSEO_IndexNow::generate_api_key() );
+			Settings::update_option( 'indexnow_key', IndexNow::generate_api_key() );
 
 			flush_rewrite_rules();
 
-			$api_key = YMFSEO_Settings::get_option( 'indexnow_key' );
+			$api_key = Settings::get_option( 'indexnow_key' );
 		}
 
 		return $api_key;
@@ -168,17 +170,17 @@ class YMFSEO_IndexNow {
 	 * @return int Response status code.
 	 */
 	public static function send ( string $permalink ) : int {
-		if ( ! YMFSEO_Checker::is_site_public() ) {
+		if ( ! Checker::is_site_public() ) {
 			return 0;
 		}
 
-		if ( ! YMFSEO_Settings::get_option( 'indexnow_enabled' ) ) {
+		if ( ! Settings::get_option( 'indexnow_enabled' ) ) {
 			return 0;
 		}
 
 		// Checks is IndexNow was sent recently
-		$indexNow_logs = YMFSEO_Logger::read( 'IndexNow' );
-		$current_time  = YMFSEO_Logger::parse_datetime( YMFSEO_Logger::get_current_datetime() );
+		$indexNow_logs = Logger::read( 'IndexNow' );
+		$current_time  = Logger::parse_datetime( Logger::get_current_datetime() );
 
 		foreach ( $indexNow_logs as $entry ) {
 			// Checks is data exists.
@@ -186,21 +188,21 @@ class YMFSEO_IndexNow {
 				break;
 			}
 
-			$send_time = YMFSEO_Logger::parse_datetime( $entry[ 'date' ] );
+			$send_time = Logger::parse_datetime( $entry[ 'date' ] );
 
 			// Looks for the same URL.
 			if ( $permalink == $entry[ 'URL' ] ) {
 				$difference = $current_time->getTimestamp() - $send_time->getTimestamp();
 
 				// Exits if difference less than 10 minutes.
-				if ( $difference < YMFSEO_IndexNow::$delay * 60 ) {
+				if ( $difference < IndexNow::$delay * 60 ) {
 					return 0;
 				}
 			}
 		}
 
 		// Gets API key.
-		$api_key = YMFSEO_IndexNow::get_api_key();
+		$api_key = IndexNow::get_api_key();
 
 		// Send request.
 		$response = wp_remote_get( 'https://api.indexnow.org/indexnow?' . build_query([
@@ -212,7 +214,7 @@ class YMFSEO_IndexNow {
 		$response_code = intval( $response[ 'response' ][ 'code' ] );
 
 		// Writes logs entry.
-		YMFSEO_Logger::write( 'IndexNow', [
+		Logger::write( 'IndexNow', [
 			'URL'    => $permalink,
 			'status' => $response_code,
 		]);

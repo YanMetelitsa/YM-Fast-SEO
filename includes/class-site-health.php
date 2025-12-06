@@ -1,14 +1,16 @@
 <?php
 
+namespace YMFSEO;
+
 // Exits if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! \defined( 'ABSPATH' ) ) exit;
 
 /**
  * Provides site SEO health validation functionality.
  * 
  * @since 3.0.0
  */
-class YMFSEO_Site_Health {
+class SiteHealth {
 	/**
 	 * Registered tests.
 	 * 
@@ -52,7 +54,7 @@ class YMFSEO_Site_Health {
 	 * @param array  $description Test result description.
 	 * @param array  $content     Test result content (table/links).
 	 */
-	function __construct ( string $is_passed, string $title, array $description, array $content = [] ) {
+	public function __construct ( string $is_passed, string $title, array $description, array $content = [] ) {
 		$this->is_passed   = $is_passed;
 		$this->title       = $title;
 		$this->description = $description;
@@ -79,7 +81,7 @@ class YMFSEO_Site_Health {
 			include YMFSEO_ROOT_DIR . 'parts/site-health-seo-tab.php';
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-indexing-available', function () : YMFSEO_Site_Health {
+		SiteHealth::register_test( 'is-indexing-available', function () : SiteHealth {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site is available for indexing', 'ym-fast-seo' );
@@ -89,17 +91,17 @@ class YMFSEO_Site_Health {
 			];
 
 			// Check.
-			if ( ! YMFSEO_Checker::is_site_public() ) {
+			if ( ! Checker::is_site_public() ) {
 				$is_passed = 'no';
 				$title     = __( 'Site is not available for indexing', 'ym-fast-seo' );
 			}
 
-			return new YMFSEO_Site_Health( $is_passed, $title, $description, [
+			return new SiteHealth( $is_passed, $title, $description, [
 				'links' => $links,
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-site-has-name', function () : YMFSEO_Site_Health {
+		SiteHealth::register_test( 'is-site-has-name', function () : SiteHealth {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site title is specified', 'ym-fast-seo' );
@@ -114,12 +116,12 @@ class YMFSEO_Site_Health {
 				$title     = __( 'Site title is not specified', 'ym-fast-seo' );
 			}
 
-			return new YMFSEO_Site_Health( $is_passed, $title, $description, [
+			return new SiteHealth( $is_passed, $title, $description, [
 				'links' => $links,
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-site-has-tagline', function () : YMFSEO_Site_Health {
+		SiteHealth::register_test( 'is-site-has-tagline', function () : SiteHealth {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site tagline is specified', 'ym-fast-seo' );
@@ -134,12 +136,12 @@ class YMFSEO_Site_Health {
 				$title     = __( 'Site tagline is not specified', 'ym-fast-seo' );
 			}
 
-			return new YMFSEO_Site_Health( $is_passed, $title, $description, [
+			return new SiteHealth( $is_passed, $title, $description, [
 				'links' => $links,
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-site-has-icon', function () : YMFSEO_Site_Health {
+		SiteHealth::register_test( 'is-site-has-icon', function () : SiteHealth {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site icon is specified and configured', 'ym-fast-seo' );
@@ -149,7 +151,7 @@ class YMFSEO_Site_Health {
 			];
 
 			// Check.
-			if ( ! YMFSEO_Checker::is_imagick_available() ) {
+			if ( ! Checker::is_imagick_available() ) {
 				$is_passed     = 'warning';
 				$title         = __( 'Site icon could not be converted', 'ym-fast-seo' );
 				/* translators: %1$s: Imagick, %2$s: File formats list */
@@ -166,7 +168,7 @@ class YMFSEO_Site_Health {
 				);
 			}
 
-			if ( ! YMFSEO_Checker::is_svg_favicon() ) {
+			if ( ! Checker::is_svg_favicon() ) {
 				$is_passed     = 'warning';
 				$title         = __( 'Site icon is not in SVG format', 'ym-fast-seo' );
 				$description[] = __( 'Modern web standards recommend using SVG icons. YM Fast SEO will automatically generate required PNG and ICO files.', 'ym-fast-seo' );
@@ -178,12 +180,12 @@ class YMFSEO_Site_Health {
 				$description = [];
 			}
 
-			return new YMFSEO_Site_Health( $is_passed, $title, $description, [
+			return new SiteHealth( $is_passed, $title, $description, [
 				'links' => $links,
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-site-has-preview-image', function () : YMFSEO_Site_Health {
+		SiteHealth::register_test( 'is-site-has-preview-image', function () : SiteHealth {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'Site preview image is specified', 'ym-fast-seo' );
@@ -193,7 +195,7 @@ class YMFSEO_Site_Health {
 			];
 
 			// Get data.
-			$preview_image_id = intval( YMFSEO_Settings::get_option( 'preview_image_id' ) );
+			$preview_image_id = intval( Settings::get_option( 'preview_image_id' ) );
 
 			// Check.
 			if ( 0 == $preview_image_id ) {
@@ -201,12 +203,12 @@ class YMFSEO_Site_Health {
 				$title     = __( 'Site preview image is not specified', 'ym-fast-seo' );
 			}
 
-			return new YMFSEO_Site_Health( $is_passed, $title, $description, [
+			return new SiteHealth( $is_passed, $title, $description, [
 				'links' => $links,
 			]);
 		});
 
-		YMFSEO_Site_Health::register_test( 'is-indexnow-works', function () : YMFSEO_Site_Health {
+		SiteHealth::register_test( 'is-indexnow-works', function () : SiteHealth {
 			// Default.
 			$is_passed   = 'yes';
 			$title       = __( 'IndexNow is active', 'ym-fast-seo' );
@@ -222,7 +224,7 @@ class YMFSEO_Site_Health {
 				sprintf(
 					/* translators: %s: Number of minutes */
 					__( 'The request will not be sent if the URL was already sent less than %s minutes ago.', 'ym-fast-seo' ),
-					'<strong>' . YMFSEO_IndexNow::$delay . '</strong>',
+					'<strong>' . IndexNow::$delay . '</strong>',
 				),
 			];
 			$content     = [
@@ -231,14 +233,16 @@ class YMFSEO_Site_Health {
 				],
 				'table' => [
 					'head' => [
-						__( 'URL', 'ym-fast-seo' ), __( 'Status', 'ym-fast-seo' ), __( 'Date', 'ym-fast-seo' ),
+						__( 'URL', 'ym-fast-seo' ),
+						__( 'Status', 'ym-fast-seo' ),
+						__( 'Date', 'ym-fast-seo' ),
 					],
 					'body' => [],
 				],
 			];
 
 			// Get data.
-			$logs = YMFSEO_Logger::read( 'IndexNow', 10 );
+			$logs = Logger::read( 'IndexNow', 10 );
 
 			// If has logs.
 			if ( $logs ) {
@@ -263,8 +267,9 @@ class YMFSEO_Site_Health {
 
 				// Set table.
 				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
-					$datetime = YMFSEO_Logger::parse_datetime( $item[ 'date' ] );
-					$format   = sprintf( '%s (%s)', 
+					$datetime = Logger::parse_datetime( $item[ 'date' ] );
+
+					$format = sprintf( '%s (%s)', 
 						get_option( 'date_format' ),
 						get_option( 'time_format' ),
 					);
@@ -276,17 +281,17 @@ class YMFSEO_Site_Health {
 			}
 
 			// Check.
-			if ( ! YMFSEO_Settings::get_option( 'indexnow_key' ) ) {
+			if ( ! Settings::get_option( 'indexnow_key' ) ) {
 				$is_passed = 'no';
 				$title     = __( 'IndexNow API key is missing', 'ym-fast-seo' );
 			}
 
-			if ( ! YMFSEO_Settings::get_option( 'indexnow_enabled' ) ) {
+			if ( ! Settings::get_option( 'indexnow_enabled' ) ) {
 				$is_passed = 'no';
 				$title     = __( 'IndexNow sending disabled', 'ym-fast-seo' );
 			}
 
-			if ( ! YMFSEO_Checker::is_site_public() ) {
+			if ( ! Checker::is_site_public() ) {
 				$is_passed   = 'no';
 				$title       = __( 'IndexNow sending disabled', 'ym-fast-seo' );
 				$description = [];
@@ -297,7 +302,64 @@ class YMFSEO_Site_Health {
 				];
 			}
 
-			return new YMFSEO_Site_Health( $is_passed, $title, $description, $content );
+			return new SiteHealth( $is_passed, $title, $description, $content );
+		});
+
+		SiteHealth::register_test( 'is-llms-enabled', function () : SiteHealth {
+			// Default.
+			$is_passed   = 'yes';
+			$title       = __( 'Site is optimized for AI crawlers', 'ym-fast-seo' );
+			$description = [
+				/* translators: %s: llms.txt */
+				sprintf( __( 'The %s file is an automatically generated index designed to help large language models (LLMs) discover and access structured content from a website, such as recent posts and pages.', 'ym-fast-seo' ),
+					wp_kses_post( '<code>llms.txt</code>' ),
+				),
+				/* translators: %s: llms.txt */
+				sprintf( __( 'Here is a list of the most recent requests made to the %s file.', 'ym-fast-seo' ),
+					wp_kses_post( '<code>llms.txt</code>' ),
+				),
+			];
+			$content     = [
+				'links' => [
+					__( 'Find out More', 'ym-fast-seo' ) => 'https://llmstxt.org/',
+				],
+				'table' => [
+					'head' => [
+						__( 'User-Agent', 'ym-fast-seo' ),
+						__( 'File', 'ym-fast-seo' ),
+						__( 'Date', 'ym-fast-seo' ),
+					],
+					'body' => [],
+				],
+			];
+
+			// Get data.
+			$logs = Logger::read( 'llms-txt', 10 );
+
+			// If has logs.
+			if ( $logs ) {
+				// Set table.
+				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
+					$datetime = Logger::parse_datetime( $item[ 'date' ] );
+
+					$format = sprintf( '%s (%s)', 
+						get_option( 'date_format' ),
+						get_option( 'time_format' ),
+					);
+
+					$item[ 'date' ] = $datetime->format( $format );
+
+					return $item;
+				}, $logs );
+			}
+
+			// Check.
+			if ( ! Settings::get_option( 'enable_llms_txt' ) ) {
+				$is_passed = 'warning';
+				$title     = __( 'Site is not optimized for AI crawlers', 'ym-fast-seo' );
+			}
+
+			return new SiteHealth( $is_passed, $title, $description, $content );
 		});
 	}
 
@@ -308,6 +370,6 @@ class YMFSEO_Site_Health {
 	 * @param callable $check Test function. Must returns YMFSEO_Site_Health instance.
 	 */
 	private static function register_test ( string $id, callable $check ) {
-		YMFSEO_Site_Health::$tests[ $id ] = $check;
+		SiteHealth::$tests[ $id ] = $check;
 	}
 }

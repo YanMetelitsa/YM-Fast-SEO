@@ -2,11 +2,11 @@
 	// Exits if accessed directly.
 	if ( ! defined( 'ABSPATH' ) ) exit;
 
-	$option_name  = $args[ 'label_for' ];
-	$option_value = YMFSEO_Settings::get_option( $option_name, [] );
+	$ymfseo_option_name  = $args[ 'label_for' ];
+	$ymfseo_option_value = YMFSEO\Settings::get_option( $ymfseo_option_name, [] );
 	
-	if ( empty( $option_value ) ) {
-		$option_value[] = [
+	if ( empty( $ymfseo_option_value ) ) {
+		$ymfseo_option_value[] = [
 			'type'     => '',
 			'from'     => '',
 			'is_regex' => false,
@@ -14,7 +14,7 @@
 		];
 	}
 
-	$redirect_types = [
+	$ymfseo_redirect_types = [
 		/* translators: Redirect type */
 		'301' => '301 – ' . __( 'Permanent', 'ym-fast-seo' ),
 		/* translators: Redirect type */
@@ -24,43 +24,42 @@
 
 <div class="ymfseo-settings-redirects-section">
 	<div class="ymfseo-settings-redirects-section__grid">
-		<!-- Items -->
-		<?php foreach ( $option_value as $i => $redirect ) : ?>		
-			<div class="ymfseo-settings-redirects-section__item" data-counter="<?php echo esc_attr( $i ); ?>">
+		<?php foreach ( $ymfseo_option_value as $ymfseo_index => $ymfseo_redirect ) : ?>		
+			<div class="ymfseo-settings-redirects-section__item" data-counter="<?php echo esc_attr( $ymfseo_index ); ?>">
 				<?php printf( '<select name="%s" id="%s">',
-					esc_attr( "{$option_name}[{$i}][type]" ),
-					esc_attr( "{$option_name}_{$i}_type" ),
+					esc_attr( "{$ymfseo_option_name}[{$ymfseo_index}][type]" ),
+					esc_attr( "{$ymfseo_option_name}_{$ymfseo_index}_type" ),
 				); ?>
-					<?php foreach ( $redirect_types as $value => $label ) {
+					<?php foreach ( $ymfseo_redirect_types as $ymfseo_value => $ymfseo_value ) {
 						printf( '<option value="%s"%s>%s</option>',
-							esc_attr( $value ),
-							selected( $redirect[ 'type' ], $value, false ),
-							esc_attr( $label ),
+							esc_attr( $ymfseo_value ),
+							selected( $ymfseo_redirect[ 'type' ], $ymfseo_value, false ),
+							esc_attr( $ymfseo_value ),
 						);
 					} ?>
 				</select>
 	
 				<?php printf( '<input type="text" name="%s" class="code" id="%s" value="%s" spellcheck="false" placeholder="%s">',
-					esc_attr( "{$option_name}[{$i}][from]" ),
-					esc_attr( "{$option_name}_{$i}_from" ),
-					esc_attr( $redirect[ 'from' ] ),
+					esc_attr( "{$ymfseo_option_name}[{$ymfseo_index}][from]" ),
+					esc_attr( "{$ymfseo_option_name}_{$ymfseo_index}_from" ),
+					esc_attr( $ymfseo_redirect[ 'from' ] ),
 					esc_attr__( 'Source URL', 'ym-fast-seo' ),
 				); ?>
 
 				<div class="regex">
 					<?php printf( '<input type="checkbox" name="%s" id="%s" value="1"%s>',
-						esc_attr( "{$option_name}[{$i}][is_regex]" ),
-						esc_attr( "{$option_name}_{$i}_is_regex" ),
-						checked( $redirect[ 'is_regex' ], true, false ),
+						esc_attr( "{$ymfseo_option_name}[{$ymfseo_index}][is_regex]" ),
+						esc_attr( "{$ymfseo_option_name}_{$ymfseo_index}_is_regex" ),
+						checked( $ymfseo_redirect[ 'is_regex' ], true, false ),
 					); ?>
 
-					<label for="<?php echo esc_attr( "{$option_name}_{$i}_is_regex" ) ?>">RegEx</label>
+					<label for="<?php echo esc_attr( "{$ymfseo_option_name}_{$ymfseo_index}_is_regex" ) ?>">RegEx</label>
 				</div>
 				
 				<?php printf( '<input type="text" name="%s" class="code" id="%s" value="%s" spellcheck="false" placeholder="%s">',
-					esc_attr( "{$option_name}[{$i}][to]" ),
-					esc_attr( "{$option_name}_{$i}_to" ),
-					esc_attr( $redirect[ 'to' ] ),
+					esc_attr( "{$ymfseo_option_name}[{$ymfseo_index}][to]" ),
+					esc_attr( "{$ymfseo_option_name}_{$ymfseo_index}_to" ),
+					esc_attr( $ymfseo_redirect[ 'to' ] ),
 					esc_attr__( 'Target URL', 'ym-fast-seo' ),
 				); ?>
 	
@@ -69,7 +68,6 @@
 		<?php endforeach; ?>
 	</div>
 
-	<!-- Add Button -->
 	<div class="button button-secondary" onclick="YMFSEO_Settings.addRedirectRow( this )">
 		<span>
 			<?php esc_html_e( 'Add Redirect', 'ym-fast-seo' ); ?>

@@ -1,22 +1,23 @@
 <?php
 
+namespace YMFSEO;
+
 // Exits if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! \defined( 'ABSPATH' ) ) exit;
 
 /**
  * Provides logs features.
  * 
  * @since 3.0.0
  */
-class YMFSEO_Logger {
+class Logger {
 	/**
 	 * Allowed file names for logging.
 	 * 
 	 * @var string[]
 	 */
 	private static array $allowed_files = [
-		'debug',
-		'IndexNow',
+		'debug', 'IndexNow', 'llms-txt',
 	];
 
 	/**
@@ -37,10 +38,10 @@ class YMFSEO_Logger {
 	 * 
 	 * @param string $date Time string in ISO 8601 format.
 	 * 
-	 * @return DateTime
+	 * @return \DateTime
 	 */
-	public static function parse_datetime ( string $date ) : DateTime {
-		$datetime = DateTime::createFromFormat( 'Y-m-d\TH:i:sP', $date );
+	public static function parse_datetime ( string $date ) : \DateTime {
+		$datetime = \DateTime::createFromFormat( 'Y-m-d\TH:i:sP', $date );
 		$datetime->setTimezone( wp_timezone() );
 
 		return $datetime;
@@ -56,11 +57,11 @@ class YMFSEO_Logger {
 	 */
 	public static function write ( string $file, array $entry ) : bool {
 		// Is file name allowed.
-		if ( ! in_array( $file, YMFSEO_Logger::$allowed_files ) ) {
+		if ( ! in_array( $file, Logger::$allowed_files ) ) {
 			return false;
 		}
 		
-		$filesystem =  YMFSEO::get_filesystem();
+		$filesystem =  Core::get_filesystem();
 
 		// Get file path.
 		$file_path = YMFSEO_ROOT_DIR . "logs/{$file}.json";
@@ -76,10 +77,10 @@ class YMFSEO_Logger {
 		// Write entry.
 		array_unshift( $logs, [
 			...$entry,
-			'date' => YMFSEO_Logger::get_current_datetime(),
+			'date' => Logger::get_current_datetime(),
 		]);
 
-		// Slice only first 100 items.
+		// Get only first 20 items.
 		$logs = array_slice( $logs, 0, 20 );
 
 		// Write to file.
@@ -95,17 +96,17 @@ class YMFSEO_Logger {
 	 * Reads log file data.
 	 * 
 	 * @param string $file  File name.
-	 * @param array  $slice How much entries returns.
+	 * @param int    $slice How much entries returns.
 	 * 
 	 * @return bool|array Data array or `false` on error.
 	 */
 	public static function read ( string $file, int $slice = 20 ) : bool|array {
 		// Is file name allowed.
-		if ( ! in_array( $file, YMFSEO_Logger::$allowed_files ) ) {
+		if ( ! in_array( $file, Logger::$allowed_files ) ) {
 			return false;
 		}
 
-		$filesystem =  YMFSEO::get_filesystem();
+		$filesystem =  Core::get_filesystem();
 
 		// Get file path.
 		$file_path = YMFSEO_ROOT_DIR . "logs/{$file}.json";

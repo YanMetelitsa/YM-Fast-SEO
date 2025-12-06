@@ -2,51 +2,51 @@
 	// Exits if accessed directly.
 	if ( ! defined( 'ABSPATH' ) ) exit;
 
-	$image_id  = YMFSEO_Settings::get_option( $args[ 'label_for' ] );
-	$image_uri = false;
+	$ymfseo_image_id  = YMFSEO\Settings::get_option( $args[ 'label_for' ] );
+	$ymfseo_image_uri = false;
 
-	if ( $image_id ) {
-		$image_uri = wp_get_attachment_image_url( $image_id, 'full' );
+	if ( $ymfseo_image_id ) {
+		$ymfseo_image_uri = wp_get_attachment_image_url( $ymfseo_image_id, 'full' );
 	}
 ?>
 
 <div class="ymfseo-settings-image-section site-icon-section">
 	<?php printf( '<input type="hidden" name="%1$s" id="%1$s" value="%2$s">',
 		esc_attr( $args[ 'label_for' ] ),
-		esc_attr( $image_id ),
+		esc_attr( $ymfseo_image_id ),
 	); ?>
 
 	<?php
 		// phpcs:ignore
 		printf( '<img src="%s" id="%s" alt="%s" style="%s" %s onclick="%s">',
-			esc_url( $image_uri ?? '' ),
+			esc_url( $ymfseo_image_uri ?? '' ),
 			esc_attr( "{$args[ 'label_for' ]}-img" ),
 			esc_attr__( 'Image', 'ym-fast-seo' ),
-			'cursor:pointer;',
-			esc_attr( $image_uri ? '' : 'hidden' ),
-			"document.querySelector( '#" . esc_attr( $args[ 'label_for' ] ) . "-change-button' ).click()",
+			esc_attr( 'cursor: pointer;' ),
+			esc_attr( $ymfseo_image_uri ? '' : 'hidden' ),
+			esc_attr( "document.querySelector( '#{$args[ 'label_for' ]}-change-button' ).click()" ),
 		);
 	?>
 
 	<div class="action-buttons site-icon-action-buttons">
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-upload-button" ),
-			'button-add-site-icon',
-			esc_attr( $image_uri ? 'hidden' : '' ),
+			esc_attr( 'button-add-site-icon' ),
+			esc_attr( $ymfseo_image_uri ? 'hidden' : '' ),
 			esc_html__( 'Choose an Image', 'ym-fast-seo' ),
 		); ?>
 
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-change-button" ),
-			'button',
-			esc_attr( $image_uri ? '' : 'hidden' ),
+			esc_attr( 'button' ),
+			esc_attr( $ymfseo_image_uri ? '' : 'hidden' ),
 			esc_html__( 'Change Image', 'ym-fast-seo' ),
 		); ?>
 
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-remove-button" ),
-			'button button-secondary reset remove-site-icon',
-			esc_attr( $image_uri ? '' : 'hidden' ),
+			esc_attr( 'button button-secondary reset remove-site-icon' ),
+			esc_attr( $ymfseo_image_uri ? '' : 'hidden' ),
 			esc_html__( 'Remove Image', 'ym-fast-seo' ),
 		); ?>
 	</div>
@@ -68,12 +68,13 @@
 			const changeButton = $( '#<?php echo esc_attr( $args[ 'label_for' ] ); ?>-change-button' );
 			const removeButton = $( '#<?php echo esc_attr( $args[ 'label_for' ] ); ?>-remove-button' );
 
-			// Uploads.
+			// Upload.
 			uploadButton.add( changeButton ).click( function ( e ) {
 				e.preventDefault();
 
 				if ( mediaUploader ) {
 					mediaUploader.open();
+
 					return;
 				}
 
@@ -110,7 +111,7 @@
 				mediaUploader.open();
 			});
 
-			// Removes.
+			// Remove.
 			removeButton.click( function ( e ) {
 				e.preventDefault();
 

@@ -2,11 +2,12 @@
 
 /*
  * Plugin Name:       YM Fast SEO
+ * Plugin URI:        https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
- * Version:           4.0.0
+ * Version:           4.1.0
  * Requires PHP:      7.4
  * Requires at least: 6.0
- * Tested up to:      6.8
+ * Tested up to:      6.9
  * Author:            Yan Metelitsa
  * Author URI:        https://yanmet.com/
  * License:           GPLv3
@@ -14,8 +15,10 @@
  * Text Domain:       ym-fast-seo
  */
 
+namespace YMFSEO;
+
 // Exits if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! \defined( 'ABSPATH' ) ) exit;
 
 // Gets plugin data.
 if ( ! function_exists( 'get_plugin_data' ) ) {
@@ -29,23 +32,23 @@ define( 'YMFSEO_ROOT_URI',    plugin_dir_url( __FILE__ ) );
 define( 'YMFSEO_BASENAME',    plugin_basename( __FILE__ ) );
 
 // Includes plugin components.
-require_once YMFSEO_ROOT_DIR . 'includes/plugin.php';
-require_once YMFSEO_ROOT_DIR . 'includes/favicon.php';
-require_once YMFSEO_ROOT_DIR . 'includes/sanitizer.php';
-require_once YMFSEO_ROOT_DIR . 'includes/meta-fields.php';
-require_once YMFSEO_ROOT_DIR . 'includes/schema.php';
-require_once YMFSEO_ROOT_DIR . 'includes/checker.php';
-require_once YMFSEO_ROOT_DIR . 'includes/settings.php';
-require_once YMFSEO_ROOT_DIR . 'includes/indexnow.php';
-require_once YMFSEO_ROOT_DIR . 'includes/editor-role.php';
-require_once YMFSEO_ROOT_DIR . 'includes/site-health.php';
-require_once YMFSEO_ROOT_DIR . 'includes/logger.php';
+require_once YMFSEO_ROOT_DIR . 'includes/class-core.php';
+require_once YMFSEO_ROOT_DIR . 'includes/class-settings.php';
+
+require_once YMFSEO_ROOT_DIR . 'includes/class-meta-fields.php';
+require_once YMFSEO_ROOT_DIR . 'includes/class-indexnow.php';
+
+require_once YMFSEO_ROOT_DIR . 'includes/class-checker.php';
+require_once YMFSEO_ROOT_DIR . 'includes/class-site-health.php';
+require_once YMFSEO_ROOT_DIR . 'includes/class-logger.php';
+
+require_once YMFSEO_ROOT_DIR . 'includes/deprecated.php';
 
 // Inits plugin components.
-YMFSEO::init();
-YMFSEO_Favicon::init();
-YMFSEO_Editor_Role::init();
-YMFSEO_Settings::init();
-YMFSEO_Meta_fields::init();
-YMFSEO_IndexNow::init();
-YMFSEO_Site_Health::init();
+Core::init();
+Settings::init();
+
+MetaFields::init();
+IndexNow::init();
+
+SiteHealth::init();

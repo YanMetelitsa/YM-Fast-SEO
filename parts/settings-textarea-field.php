@@ -6,7 +6,7 @@
 		esc_attr( $args[ 'label_for' ] ),
 		esc_attr( $args[ 'input_class' ] ?? '' ),
 		esc_attr( $args[ 'rows' ] ?? 4 ),
-		esc_textarea( YMFSEO_Settings::get_option( $args[ 'label_for' ] ) ),
+		esc_textarea( YMFSEO\Settings::get_option( $args[ 'label_for' ] ) ),
 	);
 
 	if ( isset( $args[ 'description' ] ) ) {
@@ -16,7 +16,7 @@
 
 <?php if ( $args[ 'codemirror' ] ?? false ) : ?>
 	<script>
-		jQuery( function( $ ) {
+		jQuery( function ( $ ) {
 			wp.codeEditor.initialize( '<?php echo esc_html( $args[ 'label_for' ] ); ?>', {} );
 		});
 	</script>

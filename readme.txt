@@ -1,10 +1,10 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimization
-Stable tag: 4.0.0
+Stable tag: 4.1.0
 Requires PHP: 7.4
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 6.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -12,21 +12,22 @@ Enhance your website with powerful, intuitive, and user-friendly SEO tools.
 
 == Description ==
 
-YM Fast SEO enhances your website with powerful, intuitive, and easy-to-use SEO tools. In today’s digital world, SEO is essential for driving organic traffic and improving your website’s visibility on search engines.
+YM Fast SEO enhances your website with powerful, intuitive, and user-friendly SEO tools. In today’s digital world, SEO is essential for driving organic traffic and improving your website’s visibility on search engines.
 
 With YM Fast SEO, you can easily manage important aspects of search optimization without unnecessary complexity. Unlike bulky alternatives, this lightweight plugin is efficient, flexible, and easy to extend, allowing you to keep full control over your website’s performance.
 
 = Features =
 
 * Lightweight & Extendable
-* Fields for Posts and Taxonomies Meta Tags
+* Meta Tag Fields for Posts and Taxonomies
 * Automated Open Graph, Twitter Card, and Schema.org Markups
+* AI Crawlers Support
 * Automatic IndexNow Sending
 * Quick SEO Analysis and Site SEO Health Page
 * Services Integration (Analytics + Webmasters)
 * SVG Favicon Support
 * `Robots.txt` Editor
-* Other Useful Tools & Improvement
+* Other Useful Tools & Improvements
 
 == Screenshots ==
 
@@ -38,9 +39,18 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 
 == Changelog ==
 
+= 4.1.0 =
+* New: Meta tags for Archive pages
+* New: Length indicators in quick edit
+* New: [`ymfseo_print_head_scripts`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_print_head_scripts) filter
+* New: Checking website optimization for working with AI crawlers
+* New: `llms.txt` and `llms-full.txt` files generation function
+* New: [`ymfseo_{$post_type}_posts_llms_txt_custom_fields`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_post_type_llms_txt_custom_fields) filter
+* Fix: SVG favicons low resolution and ICO sizes
+
 = 4.0.0 =
 * New: Wide support for SVG site icons. If you use an SVG site icon (requires a [third-party plugin](https://wordpress.org/plugins/search/SVG/)), it will now be rendered according to modern web standards
-* Fix: SEO check with enabled unnecessary title parts
+* Fix: SEO check when unnecessary title parts are enabled
 
 = 3.4.1 =
 * New: [`ymfseo_{$taxonomy}_taxonomy_tags`](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation#ymfseo_taxonomy_tags) filter that allows you to create custom tags for taxonomy
@@ -55,7 +65,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * Fix: Posts auto descriptions length
 
 = 3.3.2 =
-* Fix: Text fields sanitizing does not remove custom tags now
+* Fix: Text fields sanitization now preserves custom tags
 
 = 3.3.1 =
 * New: Post meta fields placeholders
@@ -138,7 +148,7 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * New: Taxonomy meta fields
 * New: SEO Editor role and capabilities
 * New: Bing Webmaster Tools integration
-* Fix: JSON-LD escaping
+* Fix: JSON-LD output escaping
 
 = 2.0.1 =
 * Fix: Multisite sitemaps in `robots.txt`

@@ -9,8 +9,8 @@ printf( '<input type="%1$s" name="%2$s" id="%2$s" autocomplete="%3$s" class="reg
 	esc_attr( $args[ 'autocomplete' ] ?? '' ),
 	esc_attr( $args[ 'input-class' ] ?? '' ),
 	esc_attr( $args[ 'placeholder' ] ?? null ),
-	esc_attr( YMFSEO_Settings::get_option( $args[ 'label_for' ] ) ),
-	$args[ 'readonly' ] ?? false ? 'readonly' : '',
+	esc_attr( YMFSEO\Settings::get_option( $args[ 'label_for' ] ) ),
+	esc_attr( $args[ 'readonly' ] ?? false ? 'readonly' : '' ),
 );
 
 if ( isset( $args[ 'description' ] ) ) {

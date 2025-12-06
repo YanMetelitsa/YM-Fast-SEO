@@ -1,21 +1,26 @@
 <?php
 
+namespace YMFSEO;
+
 // Exits if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! \defined( 'ABSPATH' ) ) exit;
 
 /**
- * Validates posts/terms when creating, saving (updating), deleting and other.
+ * YMFSEO Checker class.
  * 
  * @since 3.0.0
  */
-class YMFSEO_Checker {
+class Checker {
 	/**
 	 * Meta check length values.
 	 * 
 	 * @since 2.2.0
 	 * @since 3.0.0 Is YMFSEO_Checker property. 
 	 * 
-	 * @var array
+	 * @var array {
+	 * 		@type array $title       Title lengths.
+	 * 		@type array $description Description lengths.
+	 * }
 	 */
 	public static array $meta_lengths = [
 		'title' => [
@@ -29,6 +34,7 @@ class YMFSEO_Checker {
 			'max' => 170,
 		],
 	];
+
 
 	/**
 	 * Retrieves `true` if current site is not `noindex`.
@@ -50,6 +56,32 @@ class YMFSEO_Checker {
 	public static function is_subdir_multisite () : bool {
 		return is_multisite() && ! is_subdomain_install();
 	}
+
+
+	/**
+	 * Retrieves `true` if current page has canonical output;
+	 * 
+	 * @since 3.3.3
+	 * @since 4.1.0 Method of `YMFSEO_Checker` class instead of `YMFSEO`.
+	 * 
+	 * @return bool
+	 */
+	public static function is_current_page_has_canonical () : bool {
+		$has_canonical = false;
+
+		ob_start();
+			
+		rel_canonical();
+		
+		if ( ob_get_contents() ) {
+			$has_canonical = true;
+		}
+		
+		ob_end_clean();
+
+		return $has_canonical;
+	}
+
 
 	/**
 	 * Retrieves `true` if user can edit metas.
@@ -82,6 +114,7 @@ class YMFSEO_Checker {
 		return current_user_can( 'manage_options' );
 	}
 
+
 	/**
 	 * Retrieves `true` if post type is public.
 	 *
@@ -90,7 +123,7 @@ class YMFSEO_Checker {
 	 * @return bool
 	 */
 	public static function is_post_type_public ( int $post_id ) : bool {
-		return in_array( get_post_type( $post_id ), YMFSEO::get_public_post_types() );
+		return in_array( get_post_type( $post_id ), Core::get_public_post_types() );
 	}
 
 	/**
@@ -101,7 +134,7 @@ class YMFSEO_Checker {
 	 * @return bool
 	 */
 	public static function is_taxonomy_public ( string $taxonomy ) : bool {
-		return in_array( $taxonomy, YMFSEO::get_public_taxonomies() );
+		return in_array( $taxonomy, Core::get_public_taxonomies() );
 	}
 
 	/**
@@ -114,8 +147,9 @@ class YMFSEO_Checker {
 	 * @return bool
 	 */
 	public static function is_taxonomy_noindex ( string $taxonomy ) : bool {
-		return YMFSEO_Settings::get_option( "ymfseo_taxonomy_noindex_{$taxonomy}" );
+		return Settings::get_option( "ymfseo_taxonomy_noindex_{$taxonomy}" );
 	}
+
 
 	/**
 	 * Retrieves `true` if site icon is SVG format.
@@ -126,6 +160,17 @@ class YMFSEO_Checker {
 	 */
 	public static function is_svg_favicon () : bool {
 		return '.svg' == substr( get_site_icon_url(), -4 );
+	}
+
+	public static function should_print_head_scripts () : bool {
+		$should_print  = true;
+		$only_visitors = Settings::get_option( 'head_scripts_only_visitors' );
+
+		if ( $only_visitors && is_user_logged_in() ) {
+			$should_print = false;
+		}
+
+		return apply_filters( 'ymfseo_print_head_scripts', $should_print, $only_visitors );
 	}
 
 	/**
@@ -143,33 +188,72 @@ class YMFSEO_Checker {
 		return empty(
 			array_diff(
 				[ 'svg', 'ico', 'png' ],
-				array_map( fn ( $format ) => strtolower( $format ), Imagick::queryFormats() )
+				array_map( fn ( $format ) => strtolower( $format ), \Imagick::queryFormats() )
 			)
 		);
 	}
 
+	/**
+	 * Retrieves `true` if `llms.txt` enabled.
+	 * 
+	 * @since 4.1.0
+	 * 
+	 * @return bool
+	 */
+	public static function is_llms_txt_enabled () : bool {
+		return Settings::get_option( 'enable_llms_txt' );
+	}
+
+
+	/**
+	 * Compares two strings for similarity.
+	 * 
+	 * @since 4.1.0
+	 * 
+	 * @param string $firsts First string.
+	 * @param string $second Second string.
+	 * @param int    $length How many first characters will be compared.
+	 * 
+	 * @return bool `true` if strings similar.
+	 */
+	public static function are_strings_similar ( string $firsts, string $second, int $length = 30 ) {
+		$firsts = mb_strtolower( $firsts, 'UTF-8' );
+		$second = mb_strtolower( $second, 'UTF-8' );
+
+		$firsts_substr = mb_substr( $firsts, 0, $length, 'UTF-8' );
+		$second_substr = mb_substr( $second, 0, $length, 'UTF-8' );
+
+		return $firsts_substr === $second_substr;
+	}
+
+	
 	/**
 	 * Checks post SEO status.
 	 * 
 	 * @since 3.0.0 Is YMFSEO_Checker method.
 	 * @since 4.0.0 Adds title parts if needed.
 	 * 
-	 * @param WP_Post|WP_Term $object Post or Term object.
+	 * @param \WP_Post|\WP_Term $object Post or Term object.
 	 * 
-	 * @return array Check result data.
+	 * @return array {
+	 * 		Check result data.
+	 * 
+	 * 		@type string   $status Check status. May be `good`, `bad`, `alert`, `noindex`.
+	 * 		@type string[] $notes  Check notes.
+	 * }
 	 */
-	public static function check_seo ( WP_Post|WP_Term $object ) : array {
+	public static function check_seo ( \WP_Post|\WP_Term $object ) : array {
 		$status = 'good';
 		$notes  = [];
 
-		$meta_fields = new YMFSEO_Meta_Fields( $object );
+		$meta_fields = new MetaFields( $object );
 
 		// Adds title parts if not hidden via settings.
-		if ( ! YMFSEO_Settings::get_option( 'hide_title_parts' ) ) {
+		if ( ! Settings::get_option( 'hide_title_parts' ) ) {
 			$meta_fields->title = implode( ' ', [
 				$meta_fields->title,
-				YMFSEO::get_separator(),
-				( $object instanceof WP_Post && $object->ID == get_option( 'page_on_front' ) ) ? get_bloginfo( 'description' ) : get_bloginfo( 'name' ),
+				Core::get_separator(),
+				( $object instanceof \WP_Post && $object->ID == get_option( 'page_on_front' ) ) ? get_bloginfo( 'description' ) : get_bloginfo( 'name' ),
 			]);
 		}
 
@@ -177,15 +261,16 @@ class YMFSEO_Checker {
 		$description_length = mb_strlen( $meta_fields->description );
 
 		// Too short title.
-		if ( $title_length < YMFSEO_Checker::$meta_lengths[ 'title' ][ 'min' ] ) {
+		if ( $title_length < Checker::$meta_lengths[ 'title' ][ 'min' ] ) {
 			$status = 'bad';
 			/* translators: %d: Number of symbols */
 			$notes[] = sprintf( __( 'The title is too short (%d).', 'ym-fast-seo' ),
 				esc_html( $title_length ),
 			);
 		}
+
 		// Too long title.
-		if ( $title_length > YMFSEO_Checker::$meta_lengths[ 'title' ][ 'max' ] ) {
+		if ( $title_length > Checker::$meta_lengths[ 'title' ][ 'max' ] ) {
 			$status = 'alert';
 			/* translators: %d: Number of symbols */
 			$notes[] = sprintf( __( 'The title is too long (%d).', 'ym-fast-seo' ),
@@ -195,11 +280,11 @@ class YMFSEO_Checker {
 
 		// No description.
 		if ( empty( $meta_fields->description ) ) {
-			$status = 'bad';
+			$status  = 'bad';
 			$notes[] = __( 'No description.', 'ym-fast-seo' );
 		} else {
 			// Too short description.
-			if ( $description_length < YMFSEO_Checker::$meta_lengths[ 'description' ][ 'min' ] ) {
+			if ( $description_length < Checker::$meta_lengths[ 'description' ][ 'min' ] ) {
 				$status = 'bad';
 				/* translators: %d: Number of symbols */
 				$notes[] = sprintf( __( 'The description is too short (%d).', 'ym-fast-seo' ),
@@ -208,7 +293,7 @@ class YMFSEO_Checker {
 			}
 
 			// Too long description.
-			if ( $description_length > YMFSEO_Checker::$meta_lengths[ 'description' ][ 'max' ] ) {
+			if ( $description_length > Checker::$meta_lengths[ 'description' ][ 'max' ] ) {
 				$status = 'alert';
 				/* translators: %d: Number of symbols */
 				$notes[] = sprintf( __( 'The description is too long (%d).', 'ym-fast-seo' ),
@@ -217,18 +302,18 @@ class YMFSEO_Checker {
 			}
 		}
 
-		if ( $object instanceof WP_Post ) {
+		if ( $object instanceof \WP_Post ) {
 			// Not public.
 			if ( 'publish' !== get_post_status( $object ) ) {
-				$status = 'noindex';
+				$status  = 'noindex';
 				$notes[] = __( 'Post status is "not published".', 'ym-fast-seo' );
 			}
 		}
 
-		if ( $object instanceof WP_Post || $object instanceof WP_Term ) {
+		if ( $object instanceof \WP_Post || $object instanceof \WP_Term ) {
 			// Noindex.
 			if ( $meta_fields->noindex ) {
-				$status = 'noindex';
+				$status  = 'noindex';
 				$notes[] = __( 'Indexing has been disallowed.', 'ym-fast-seo' );
 			}
 		}
