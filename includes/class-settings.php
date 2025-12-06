@@ -614,7 +614,7 @@ class Settings {
 				'additional',
 				'checkbox',
 				[
-					'label' => __( 'Do not insert head scripts for logged-in users', 'ym-fast-seo' ),
+					'label' => __( 'Do not include head scripts for logged-in users', 'ym-fast-seo' ),
 				],
 			);
 			Settings::register_option(
