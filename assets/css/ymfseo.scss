@@ -257,6 +257,12 @@
 		scroll-behavior: smooth;
 	}
 
+	h1 {
+		@include wp-not-mobile {
+			margin-bottom: 10px;
+		}
+	}
+
 	/* Notice */
 	.notice {
 		border-radius: var( --ymfseo-border-radius );
@@ -268,7 +274,7 @@
 
 	/* Navigation */
 	.nav-tab-wrapper {
-		border-color: var( --ymfseo-settings-border );
+		border: none;
 
 		.nav-tab {
 			padding: 5px 12px 5px 6px;
@@ -286,9 +292,12 @@
 			}
 
 			&-active {
-				border-bottom-color: transparent;
-				
+				background-color: var( --ymfseo-settings-background );
 				color: var( --ymfseo-secondary );
+
+				@include wp-not-mobile {
+					border-bottom-color: transparent;
+				}
 			}
 
 			@include wp-mobile {
@@ -365,9 +374,12 @@
 		/* Section */
 		section {
 			background-color: var( --ymfseo-settings-background );
-			margin-top: var( --ymfseo-gap-primary );
 			border-radius: var( --ymfseo-border-radius );
 			border: 1px solid var( --ymfseo-settings-border );
+
+			@include wp-mobile {
+				margin-top: var( --ymfseo-gap-primary );
+			}
 
 			&:not( .active ) {
 				visibility: hidden;
