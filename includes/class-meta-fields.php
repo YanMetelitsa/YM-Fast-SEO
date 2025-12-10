@@ -129,7 +129,7 @@ class MetaFields {
 			// Taxonomies.
 			foreach ( Core::get_public_taxonomies() as $taxonomy ) {
 				if ( class_exists( 'WooCommerce' ) ) {
-					if ( in_array( $taxonomy, [ 'product_cat', 'product_brand' ] ) ) {
+					if ( \in_array( $taxonomy, [ 'product_cat', 'product_brand' ] ) ) {
 						break;
 					}
 				}
@@ -155,7 +155,7 @@ class MetaFields {
 			}
 
 			// Is public post type.
-			if ( ! in_array( $post_type, array_values( Core::get_public_post_types() ) ) ) {
+			if ( ! \in_array( $post_type, array_values( Core::get_public_post_types() ) ) ) {
 				return;
 			}
 
@@ -335,6 +335,7 @@ class MetaFields {
 				'good'    => 'yes-alt',
 				'bad'     => 'warning',
 				'alert'   => 'warning',
+				'archive' => 'archive',
 				'noindex' => 'shield-alt',
 				default   => 'info',
 			}),

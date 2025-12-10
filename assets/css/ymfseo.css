@@ -16,12 +16,6 @@
   width: 40px;
   text-align: center;
 }
-@media screen and (min-width: 782px) {
-  .wp-list-table td.column-ymfseo {
-    display: flex;
-    justify-content: center;
-  }
-}
 .wp-list-table td.column-ymfseo .dashicons {
   display: flex;
   align-items: center;
@@ -30,6 +24,7 @@
 }
 @media screen and (min-width: 782px) {
   .wp-list-table td.column-ymfseo .dashicons {
+    margin: auto;
     justify-content: center;
   }
 }

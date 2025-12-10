@@ -751,7 +751,7 @@ class Settings {
 		// Defines sanitize callback.
 		$sanitize_callback = 'sanitize_text_field';
 
-		if ( in_array( $slug, [ 'head_scripts', 'robots_txt' ] ) ) {
+		if ( \in_array( $slug, [ 'head_scripts', 'robots_txt' ] ) ) {
 			$sanitize_callback = function ( $value ) {
 				return wp_unslash( $value );
 			};

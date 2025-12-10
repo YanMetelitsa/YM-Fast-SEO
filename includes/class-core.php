@@ -19,6 +19,15 @@ class Core {
 	public static array $page_types = [];
 
 	/**
+	 * List of site Archive pages URLs.
+	 * 
+	 * @since 4.1.1
+	 * 
+	 * @var string[]
+	 */
+	public static array $archive_urls = [];
+
+	/**
 	 * Inits YM Fast SEO Plugin.
 	 */
 	public static function init () {
@@ -43,6 +52,11 @@ class Core {
 				/* translators: Web page type */
 				'SearchResultsPage' => __( 'Search Results Page', 'ym-fast-seo' ),
 			];
+
+			// Get Archive page URLs.
+			Core::$archive_urls = array_map( function ( \WP_Post_Type $post_type ) {
+				return get_post_type_archive_link( $post_type->name );
+			}, Core::get_post_types_with_archives() );
 
 			// Defines settings arguments.
 			Settings::$params = [
@@ -398,7 +412,7 @@ class Core {
 			}
 
 			return array_filter( $allowed_blocks, function ( ?string $block ) : bool {
-				return ! in_array( $block, [
+				return ! \in_array( $block, [
 					'core/heading',
 				]);
 			});
@@ -579,6 +593,13 @@ class Core {
 		return $public_post_types;
 	}
 
+	/**
+	 * Retrieves list of Post Types with Archive pages.
+	 * 
+	 * @since 4.1.0
+	 * 
+	 * @return array<string|\WP_Post_Type>
+	 */
 	public static function get_post_types_with_archives () : array {
 		$post_types = get_post_types( [], 'objects' );
 

@@ -37,6 +37,28 @@ class Checker {
 
 
 	/**
+	 * Compares two strings for similarity.
+	 * 
+	 * @since 4.1.0
+	 * 
+	 * @param string $firsts First string.
+	 * @param string $second Second string.
+	 * @param int    $length How many first characters will be compared.
+	 * 
+	 * @return bool `true` if strings similar.
+	 */
+	public static function are_strings_similar ( string $firsts, string $second, int $length = 30 ) {
+		$firsts = mb_strtolower( $firsts, 'UTF-8' );
+		$second = mb_strtolower( $second, 'UTF-8' );
+
+		$firsts_substr = mb_substr( $firsts, 0, $length, 'UTF-8' );
+		$second_substr = mb_substr( $second, 0, $length, 'UTF-8' );
+
+		return $firsts_substr === $second_substr;
+	}
+
+
+	/**
 	 * Retrieves `true` if current site is not `noindex`.
 	 * 
 	 * @return bool
@@ -123,7 +145,24 @@ class Checker {
 	 * @return bool
 	 */
 	public static function is_post_type_public ( int $post_id ) : bool {
-		return in_array( get_post_type( $post_id ), Core::get_public_post_types() );
+		return \in_array( get_post_type( $post_id ), Core::get_public_post_types() );
+	}
+
+	/**
+	 * Retrieves `true` if page is an Archive.
+	 * 
+	 * @since 4.1.1
+	 * 
+	 * @param \WP_Post $page Page object.
+	 * 
+	 * @return bool
+	 */
+	public static function is_page_an_archive ( \WP_Post $page ) : bool {
+		if ( \in_array( get_the_permalink( $page ), Core::$archive_urls ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -134,7 +173,7 @@ class Checker {
 	 * @return bool
 	 */
 	public static function is_taxonomy_public ( string $taxonomy ) : bool {
-		return in_array( $taxonomy, Core::get_public_taxonomies() );
+		return \in_array( $taxonomy, Core::get_public_taxonomies() );
 	}
 
 	/**
@@ -150,28 +189,6 @@ class Checker {
 		return Settings::get_option( "ymfseo_taxonomy_noindex_{$taxonomy}" );
 	}
 
-
-	/**
-	 * Retrieves `true` if site icon is SVG format.
-	 * 
-	 * @since 4.0.0
-	 * 
-	 * @return bool
-	 */
-	public static function is_svg_favicon () : bool {
-		return '.svg' == substr( get_site_icon_url(), -4 );
-	}
-
-	public static function should_print_head_scripts () : bool {
-		$should_print  = true;
-		$only_visitors = Settings::get_option( 'head_scripts_only_visitors' );
-
-		if ( $only_visitors && is_user_logged_in() ) {
-			$should_print = false;
-		}
-
-		return apply_filters( 'ymfseo_print_head_scripts', $should_print, $only_visitors );
-	}
 
 	/**
 	 * Retrieves `true` if Imagick enabled.
@@ -194,6 +211,35 @@ class Checker {
 	}
 
 	/**
+	 * Retrieves `true` if site icon is SVG format.
+	 * 
+	 * @since 4.0.0
+	 * 
+	 * @return bool
+	 */
+	public static function is_svg_favicon () : bool {
+		return '.svg' == substr( get_site_icon_url(), -4 );
+	}
+
+	/**
+	 * Retrieves `true` if head scripts should be printed.
+	 * 
+	 * @since 4.1.0
+	 * 
+	 * @return bool
+	 */
+	public static function should_print_head_scripts () : bool {
+		$should_print  = true;
+		$only_visitors = Settings::get_option( 'head_scripts_only_visitors' );
+
+		if ( $only_visitors && is_user_logged_in() ) {
+			$should_print = false;
+		}
+
+		return apply_filters( 'ymfseo_print_head_scripts', $should_print, $only_visitors );
+	}
+
+	/**
 	 * Retrieves `true` if `llms.txt` enabled.
 	 * 
 	 * @since 4.1.0
@@ -205,28 +251,6 @@ class Checker {
 	}
 
 
-	/**
-	 * Compares two strings for similarity.
-	 * 
-	 * @since 4.1.0
-	 * 
-	 * @param string $firsts First string.
-	 * @param string $second Second string.
-	 * @param int    $length How many first characters will be compared.
-	 * 
-	 * @return bool `true` if strings similar.
-	 */
-	public static function are_strings_similar ( string $firsts, string $second, int $length = 30 ) {
-		$firsts = mb_strtolower( $firsts, 'UTF-8' );
-		$second = mb_strtolower( $second, 'UTF-8' );
-
-		$firsts_substr = mb_substr( $firsts, 0, $length, 'UTF-8' );
-		$second_substr = mb_substr( $second, 0, $length, 'UTF-8' );
-
-		return $firsts_substr === $second_substr;
-	}
-
-	
 	/**
 	 * Checks post SEO status.
 	 * 
@@ -245,6 +269,15 @@ class Checker {
 	public static function check_seo ( \WP_Post|\WP_Term $object ) : array {
 		$status = 'good';
 		$notes  = [];
+
+		if ( $object instanceof \WP_Post && Checker::is_page_an_archive( $object ) ) {
+			return [
+				'status' => 'archive',
+				'notes'  => [
+					__( 'This is an Archive page.', 'ym-fast-seo' ),
+				],
+			];
+		}
 
 		$meta_fields = new MetaFields( $object );
 

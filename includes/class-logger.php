@@ -57,7 +57,7 @@ class Logger {
 	 */
 	public static function write ( string $file, array $entry ) : bool {
 		// Is file name allowed.
-		if ( ! in_array( $file, Logger::$allowed_files ) ) {
+		if ( ! \in_array( $file, Logger::$allowed_files ) ) {
 			return false;
 		}
 		
@@ -102,7 +102,7 @@ class Logger {
 	 */
 	public static function read ( string $file, int $slice = 20 ) : bool|array {
 		// Is file name allowed.
-		if ( ! in_array( $file, Logger::$allowed_files ) ) {
+		if ( ! \in_array( $file, Logger::$allowed_files ) ) {
 			return false;
 		}
 

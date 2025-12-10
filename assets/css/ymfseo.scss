@@ -33,11 +33,6 @@
 		text-align: center;
 	}
 	td.column-ymfseo {
-		@include wp-not-mobile {
-			display: flex;
-			justify-content: center;
-		}
-
 		.dashicons {
 			display: flex;
 			align-items: center;
@@ -46,6 +41,8 @@
 			color: var( --ymfseo-blue );
 
 			@include wp-not-mobile {
+				margin: auto;
+				
 				justify-content: center;
 			}
 

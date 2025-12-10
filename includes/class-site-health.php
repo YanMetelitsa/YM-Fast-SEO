@@ -81,6 +81,7 @@ class SiteHealth {
 			include YMFSEO_ROOT_DIR . 'parts/site-health-seo-tab.php';
 		});
 
+		
 		SiteHealth::register_test( 'is-indexing-available', function () : SiteHealth {
 			// Default.
 			$is_passed   = 'yes';

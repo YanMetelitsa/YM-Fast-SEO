@@ -31,7 +31,7 @@
 	<div class="action-buttons site-icon-action-buttons">
 		<?php printf( '<button type="button" id="%s" class="%s" %s>%s</button>',
 			esc_attr( "{$args[ 'label_for' ]}-upload-button" ),
-			esc_attr( 'button-add-site-icon' ),
+			esc_attr( 'upload-button button-hero button' ),
 			esc_attr( $ymfseo_image_uri ? 'hidden' : '' ),
 			esc_html__( 'Choose an Image', 'ym-fast-seo' ),
 		); ?>
