@@ -1,7 +1,7 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimization
-Stable tag: 4.1.0
+Stable tag: 4.1.1
 Requires PHP: 7.4
 Requires at least: 6.0
 Tested up to: 6.9
