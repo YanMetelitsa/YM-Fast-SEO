@@ -16,7 +16,7 @@ YM Fast SEO enhances your website with powerful, intuitive, and user-friendly SE
 
 With YM Fast SEO, you can easily manage important aspects of search optimization without unnecessary complexity. Unlike bulky alternatives, this lightweight plugin is efficient, flexible, and easy to extend, allowing you to keep full control over your website’s performance.
 
-= Features =
+=== Features ===
 
 * Lightweight & Extendable
 * Meta Tag Fields for Posts and Taxonomies
