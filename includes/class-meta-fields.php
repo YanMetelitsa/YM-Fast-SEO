@@ -100,7 +100,7 @@ class MetaFields {
 	 */
 	public static function init () {
 		// Manages custom SEO column.
-		add_action( 'setup_theme', function () {
+		add_action( 'init', function () {
 			if ( ! Checker::is_current_user_can_edit_metas() ) {
 				return;
 			}
@@ -111,7 +111,7 @@ class MetaFields {
 					$columns[ 'ymfseo' ] = __( 'SEO', 'ym-fast-seo' );
 					
 					return $columns;
-				});
+				}, 20 );
 				add_action( "manage_{$post_type}_posts_custom_column" , function ( string $column, int $post_id ) {
 					if ( 'ymfseo' === $column ) {
 						MetaFields::print_custom_seo_column( get_post( $post_id ) );
@@ -123,7 +123,7 @@ class MetaFields {
 						\printf( '<input name="ymfseo-page-type-value"   value="%s" hidden disabled>', esc_attr( $meta_fields->page_type ) );
 						\printf( '<input name="ymfseo-noindex-value"     value="%d" hidden disabled>', esc_attr( $meta_fields->noindex ? 1 : 0 ) );
 					}
-				}, 10, 2 );
+				}, 20, 2 );
 			}
 
 			// Taxonomies.
@@ -141,7 +141,7 @@ class MetaFields {
 					if ( 'ymfseo' === $column ) {
 						MetaFields::print_custom_seo_column( get_term( $term_id ) );
 					}
-				}, 10, 3 );
+				}, 20, 3 );
 			}
 		}, 30 );
 

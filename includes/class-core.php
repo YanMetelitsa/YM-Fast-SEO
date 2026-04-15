@@ -598,12 +598,11 @@ class Core {
 	 */
 	public static function get_public_post_types ( string $output = 'names' ) : array {
 		$public_post_types = get_post_types( [ 'publicly_queryable' => true ], $output );
-
-		$page_post_type = get_post_types( [ 'name' => 'page' ], $output );
-
-		array_splice( $public_post_types, 1, 0, $page_post_type );
+		$page_post_type    = get_post_types( [ 'name' => 'page' ], $output );
 
 		unset( $public_post_types[ 'attachment' ] );
+
+		$public_post_types = array_merge( $page_post_type, $public_post_types );
 
 		return $public_post_types;
 	}
