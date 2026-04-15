@@ -3,7 +3,7 @@
 namespace YMFSEO;
 
 // Exits if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Initializes the plugin and provides common methods.
@@ -73,7 +73,7 @@ class Core {
 				'%tagline%'   => get_bloginfo( 'description' ),
 				'%sep%'       => Core::get_separator(),
 			]);
-		});
+		}, 20 );
 
 
 		// Creates SEO Editor role and adds caps.
@@ -134,15 +134,20 @@ class Core {
 
 		// Adds links to plugin's card on 'Plugins' page.
 		add_filter( 'plugin_action_links_' . YMFSEO_BASENAME, function ( array $links ) : array {
+			array_unshift( $links, \sprintf( '<a href="%s" target="_blank">%s</a>',
+				esc_url( 'https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation' ),
+				__( 'Documentation', 'ym-fast-seo' ),
+			));
+
 			if ( Checker::is_current_user_can_view_site_health() ) {
-				array_unshift( $links, sprintf( '<a href="%s">%s</a>',
+				array_unshift( $links, \sprintf( '<a href="%s">%s</a>',
 					admin_url( 'site-health.php?tab=ymfseo' ),
-					__( 'SEO Health', 'ym-fast-seo' ),
+					__( 'Health', 'ym-fast-seo' ),
 				));
 			}
 
 			if ( Checker::is_current_user_can_manage_options() ) {
-				array_unshift( $links, sprintf( '<a href="%s">%s</a>',
+				array_unshift( $links, \sprintf( '<a href="%s">%s</a>',
 					menu_page_url( 'ymfseo', false ),
 					__( 'Settings', 'ym-fast-seo' ),
 				));
@@ -210,7 +215,7 @@ class Core {
 
 			$wp_admin_bar->add_menu([
 				'id'     => 'ymfseo',
-				'title'  => sprintf(
+				'title'  => \sprintf(
 					'<span class="ab-icon dashicons-welcome-view-site" style="top: 2px;"></span><span class="ab-label">%s</span>',
 					__( 'SEO', 'ym-fast-seo' )
 				),
@@ -432,7 +437,7 @@ class Core {
 			// ];
 
 			// foreach ( $redirects_option as $item ) {
-			// 	$redirects[] = sprintf( '%s %d %s %s',
+			// 	$redirects[] = \sprintf( '%s %d %s %s',
 			// 		esc_html( $item[ 'is_regex' ] ? 'RedirectMatch' : 'Redirect' ),
 			// 		esc_html( $item[ 'type' ] ),
 			// 		esc_html( $item[ 'from' ] ),
@@ -459,7 +464,7 @@ class Core {
 			if ( Checker::is_subdir_multisite() ) {
 				foreach ( get_sites() as $site ) {
 					if ( get_main_site_id() != intval( $site->blog_id ) ) {
-						$output .= sprintf(
+						$output .= \sprintf(
 							"Sitemap: %s\n",
 							esc_url( get_home_url( $site->blog_id, 'wp-sitemap.xml' ) )
 						);
@@ -513,6 +518,16 @@ class Core {
 		
 			return $provider;
 		}, 10, 2 );
+
+		// Removes users REST API endpoint.
+		add_filter( 'rest_endpoints', function ( array $endpoints ) : array {
+			if ( Settings::get_option( 'disable_users_rest_api' ) ) {
+				unset( $endpoints[ '/wp/v2/users' ] );
+				unset( $endpoints[ '/wp/v2/users/(?P<id>[\d]+)' ] );
+			}
+
+			return $endpoints;
+		});
 
 		// Removes `noindex` pages from the sitemap.
 		add_filter( 'wp_sitemaps_posts_query_args', function ( array $args ) : array {
@@ -579,7 +594,7 @@ class Core {
 	 * 
 	 * @param string $output Output type. Default 'names'.
 	 * 
-	 * @return string[]|\WP_Post[] Public post types.
+	 * @return string[]|\WP_Post_Type[] Public post types.
 	 */
 	public static function get_public_post_types ( string $output = 'names' ) : array {
 		$public_post_types = get_post_types( [ 'publicly_queryable' => true ], $output );

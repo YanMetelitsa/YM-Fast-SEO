@@ -3,7 +3,7 @@
 namespace YMFSEO;
 
 // Exits if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * YMFSEO IndexNow class.

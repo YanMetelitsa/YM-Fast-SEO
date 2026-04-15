@@ -11,6 +11,20 @@
   --ymfseo-gap-primary: 20px;
 }
 
+/* Admin Bar menu item */
+#wpadminbar #wp-admin-bar-ymfseo {
+  display: block !important;
+}
+@media screen and (max-width: 782px) {
+  #wpadminbar #wp-admin-bar-ymfseo .ab-icon::before {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: normal 31px/1 dashicons;
+  }
+}
+
 /* Columns */
 .wp-list-table th.column-ymfseo {
   width: 40px;

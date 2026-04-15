@@ -2,7 +2,7 @@
 	namespace YMFSEO;
 
 	// Exits if accessed directly.
-	if ( ! \defined( 'ABSPATH' ) ) exit;
+	\defined( 'ABSPATH' ) || exit;
 ?>
 
 <fieldset class="inline-edit-col-right">
@@ -10,7 +10,7 @@
 		<?php esc_html_e( 'SEO', 'ym-fast-seo' ); ?>
 	</legend>
 
-	<div class="inline-edit-col">
+	<div class="inline-edit-col fields" hidden>
 		<!-- Title -->
 		<label>
 			<span class="title">
@@ -81,5 +81,16 @@
 				<?php esc_html_e( 'Disallow indexing', 'ym-fast-seo' ); ?>
 			</span>
 		</label>
+	</div>
+
+	<div class="inline-edit-col archive" hidden>
+		<p>
+			<?php wp_kses_post(
+				/* translators: %s: Settings page URL */
+				\sprintf( __( 'You can edit archive meta tags on the <a href="%s">SEO settings page</a>.', 'ym-fast-seo' ),
+					esc_url( admin_url( 'options-general.php?page=ymfseo#archives' ) ),
+				)
+			); ?>
+		</p>
 	</div>
 </fieldset>

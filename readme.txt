@@ -1,7 +1,7 @@
 === YM Fast SEO ===
 Contributors: yanmetelitsa
 Tags: seo, search, optimization
-Stable tag: 4.1.1
+Stable tag: 4.1.2
 Requires PHP: 7.4
 Requires at least: 6.0
 Tested up to: 6.9
@@ -29,6 +29,10 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * `Robots.txt` Editor
 * Other Useful Tools & Improvements
 
+=== Documentation ===
+
+See [the official documentation](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation) for a description of actions and filters.
+
 == Screenshots ==
 
 1. Gutenberg meta fields box.
@@ -38,6 +42,10 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 5. Site SEO Health screen.
 
 == Changelog ==
+
+= 4.1.2 =
+* New: `Remove Users REST API` settings option
+* Fix: Small improvements and minor fixes
 
 = 4.1.0 =
 * New: Meta tags for Archive pages

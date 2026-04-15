@@ -3,7 +3,7 @@
 namespace YMFSEO;
 
 // Exits if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * YMFSEO Meta Fields class.
@@ -100,7 +100,7 @@ class MetaFields {
 	 */
 	public static function init () {
 		// Manages custom SEO column.
-		add_action( 'init', function () {
+		add_action( 'setup_theme', function () {
 			if ( ! Checker::is_current_user_can_edit_metas() ) {
 				return;
 			}
@@ -118,20 +118,18 @@ class MetaFields {
 
 						$meta_fields = new MetaFields( get_post( $post_id ), false );
 
-						printf( '<input name="ymfseo-title-value"       value="%s" hidden disabled>', esc_attr( $meta_fields->title ) );
-						printf( '<input name="ymfseo-description-value" value="%s" hidden disabled>', esc_attr( $meta_fields->description ) );
-						printf( '<input name="ymfseo-page-type-value"   value="%s" hidden disabled>', esc_attr( $meta_fields->page_type ) );
-						printf( '<input name="ymfseo-noindex-value"     value="%d" hidden disabled>', esc_attr( $meta_fields->noindex ? 1 : 0 ) );
+						\printf( '<input name="ymfseo-title-value"       value="%s" hidden disabled>', esc_attr( $meta_fields->title ) );
+						\printf( '<input name="ymfseo-description-value" value="%s" hidden disabled>', esc_attr( $meta_fields->description ) );
+						\printf( '<input name="ymfseo-page-type-value"   value="%s" hidden disabled>', esc_attr( $meta_fields->page_type ) );
+						\printf( '<input name="ymfseo-noindex-value"     value="%d" hidden disabled>', esc_attr( $meta_fields->noindex ? 1 : 0 ) );
 					}
 				}, 10, 2 );
 			}
 
 			// Taxonomies.
 			foreach ( Core::get_public_taxonomies() as $taxonomy ) {
-				if ( class_exists( 'WooCommerce' ) ) {
-					if ( \in_array( $taxonomy, [ 'product_cat', 'product_brand' ] ) ) {
-						break;
-					}
+				if ( class_exists( 'WooCommerce' ) && \in_array( $taxonomy, [ 'product_cat', 'product_brand' ] ) ) {
+					continue;
 				}
 
 				add_filter( "manage_edit-{$taxonomy}_columns", function ( array $columns ) : array {
@@ -146,6 +144,15 @@ class MetaFields {
 				}, 10, 3 );
 			}
 		}, 30 );
+
+		// Adds custom classes to List Table Post rows.
+		add_filter( 'post_class', function ( array $classes, array $css_class, int $post_id ) : array {
+			if ( Checker::is_page_an_archive( get_post( $post_id ) ) ) {
+				$classes[] = 'ymfseo-is-archive';
+			}
+
+			return $classes;
+		}, 10, 3 );
 
 		// Adds posts quick edit fields.
 		add_action( 'quick_edit_custom_box', function ( string $column_name, string $post_type ) {
@@ -174,30 +181,35 @@ class MetaFields {
 						// `Quick Edit` click.
 						$( document ).on( 'click', '.editinline', function () {
 							// Get post row.
-							const tr = $( this ).closest( 'tr' );
+							const tr     = $( this ).closest( 'tr' );
+							const editTr = $( `tr#${tr.attr( 'id' ).replace( 'post', 'edit' )}` );
 
-							const title       = tr.find( 'input[ name="ymfseo-title-value" ]' ).val();
-							const description = tr.find( 'input[ name="ymfseo-description-value" ]' ).val();
-							const pageType    = tr.find( 'input[ name="ymfseo-page-type-value" ]' ).val();
-							const isNoindex   = parseInt( tr.find( 'input[ name="ymfseo-noindex-value" ]' ).val() );
+							if ( tr.hasClass( 'ymfseo-is-archive' ) ) {
+								editTr.find( '.inline-edit-col.archive' ).removeAttr( 'hidden' );
+							} else {
+								const title       = tr.find( 'input[ name="ymfseo-title-value" ]' ).val();
+								const description = tr.find( 'input[ name="ymfseo-description-value" ]' ).val();
+								const pageType    = tr.find( 'input[ name="ymfseo-page-type-value" ]' ).val();
+								const isNoindex   = parseInt( tr.find( 'input[ name="ymfseo-noindex-value" ]' ).val() );
+	
+								const indicators = editTr.find( '.ymfseo-length-indicator' );
+	
+								indicators.each( ( index, indicator ) => {
+									indicator.classList.remove( 'initialized' );
+								});
+	
+								// Set values.
+								$( 'input[ name="ymfseo-title" ]', '.inline-edit-row' ).attr( 'data-post-id', tr.attr( 'id' ).replace( 'post-', '' ) );
+	
+								$( 'input[ name="ymfseo-title" ]',          '.inline-edit-row' ).val( title );
+								$( 'textarea[ name="ymfseo-description" ]', '.inline-edit-row' ).val( description );
+								$( 'select[ name="ymfseo-page-type" ]',     '.inline-edit-row' ).val( pageType );
+								$( 'input[ name="ymfseo-noindex" ]',        '.inline-edit-row' ).prop( 'checked', 1 == isNoindex );
+	
+								YMFSEO.initInputLengthIndicators();
 
-							// Get edit row.
-							const editTr     = $( `tr#${tr.attr( 'id' ).replace( 'post', 'edit' )}` )
-							const indicators = editTr.find( '.ymfseo-length-indicator' );
-
-							indicators.each( ( index, indicator ) => {
-								indicator.classList.remove( 'initialized' );
-							});
-
-							// Set values.
-							$( 'input[ name="ymfseo-title" ]', '.inline-edit-row' ).attr( 'data-post-id', tr.attr( 'id' ).replace( 'post-', '' ) );
-
-							$( 'input[ name="ymfseo-title" ]',          '.inline-edit-row' ).val( title );
-							$( 'textarea[ name="ymfseo-description" ]', '.inline-edit-row' ).val( description );
-							$( 'select[ name="ymfseo-page-type" ]',     '.inline-edit-row' ).val( pageType );
-							$( 'input[ name="ymfseo-noindex" ]',        '.inline-edit-row' ).prop( 'checked', 1 == isNoindex );
-
-							YMFSEO.initInputLengthIndicators();
+								editTr.find( '.inline-edit-col.fields' ).removeAttr( 'hidden' );
+							}
 						});
 					});
 				</script>
@@ -323,14 +335,14 @@ class MetaFields {
 	}
 
 	/**
-	 * Prints SEO check dot.
+	 * Prints SEO check column dot.
 	 * 
 	 * @param \WP_Post|\WP_Term $check_object Object for checking.
 	 */
 	public static function print_custom_seo_column ( \WP_Post|\WP_Term $check_object ) {
 		$check = Checker::check_seo( $check_object );
 
-		printf( '<span class="dashicons dashicons-%s %s" title="%s"></span> <ul><li>%s</li></ul>',
+		\printf( '<span class="dashicons dashicons-%s %s" title="%s"></span> <ul><li>%s</li></ul>',
 			esc_attr( match ( $check[ 'status' ] ) {
 				'good'    => 'yes-alt',
 				'bad'     => 'warning',
@@ -615,7 +627,7 @@ class MetaFields {
 	private function format_fields ( array &$meta_fields, string $title, string $description, string $settings_mask, array $tags ) {
 		// Sets title.
 		if ( empty( $meta_fields[ 'title' ] ) ) {
-			$settings_title = Settings::get_option( sprintf( $settings_mask, 'title' ) );
+			$settings_title = Settings::get_option( \sprintf( $settings_mask, 'title' ) );
 
 			if ( ! empty( $settings_title ) ) {
 				foreach ( $tags as $tag => $value ) {
@@ -631,7 +643,7 @@ class MetaFields {
 		// Sets description.
 		if ( empty( $meta_fields[ 'description' ] ) ) {
 			if ( empty( $description ) ) {
-				$settings_description = Settings::get_option( sprintf( $settings_mask, 'description' ) );
+				$settings_description = Settings::get_option( \sprintf( $settings_mask, 'description' ) );
 	
 				if ( ! empty( $settings_description ) ) {
 					foreach ( $tags as $tag => $value ) {
@@ -661,7 +673,7 @@ class MetaFields {
 			$default_preview_image_id = Settings::get_option( 'preview_image_id' );
 
 			if ( $default_preview_image_id ) {
-				$meta_fields[ 'image_uri' ] = sprintf( '%s?v=%s',
+				$meta_fields[ 'image_uri' ] = \sprintf( '%s?v=%s',
 					wp_get_attachment_image_url( $default_preview_image_id, 'full' ),
 					wp_get_theme()->Version,
 				);

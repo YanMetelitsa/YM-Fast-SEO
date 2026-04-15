@@ -3,7 +3,7 @@
 namespace YMFSEO;
 
 // Exits if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Provides site SEO health validation functionality.
@@ -156,14 +156,14 @@ class SiteHealth {
 				$is_passed     = 'warning';
 				$title         = __( 'Site icon could not be converted', 'ym-fast-seo' );
 				/* translators: %1$s: Imagick, %2$s: File formats list */
-				$description[] = sprintf( __( 'To install the site icon correctly, %1$s must be installed and support the following file formats: %2$s.', 'ym-fast-seo' ),
+				$description[] = \sprintf( __( 'To install the site icon correctly, %1$s must be installed and support the following file formats: %2$s.', 'ym-fast-seo' ),
 					'Imagick',	
 					implode( ', ', [ 'SVG', 'PNG', 'ICO' ] )
 				);
 				$links = array_merge(
 					[
 						/* translators: %s: Imagick */
-						sprintf( __( 'About %s', 'ym-fast-seo' ), 'Imagick' ) => 'https://www.php.net/manual/book.imagick.php',
+						\sprintf( __( 'About %s', 'ym-fast-seo' ), 'Imagick' ) => 'https://www.php.net/manual/book.imagick.php',
 					],
 					$links,
 				);
@@ -215,14 +215,14 @@ class SiteHealth {
 			$title       = __( 'IndexNow is active', 'ym-fast-seo' );
 			$description = [
 				__( 'YM Fast SEO sends a notification request to search engines after creating, modifying, or deleting posts and terms to inform them of changes on your site.', 'ym-fast-seo' ),
-				sprintf(
+				\sprintf(
 					/* translators: %1$s: 10, %2$s: 200, %3$s: 202 */
 					__( 'The last %1$s requests are shown below. Status %2$s indicates that the search engines have successfully processed the request. Status %3$s is allowed for the first request and shows that the request was successfully sent, but search engines are still verifying the API key.', 'ym-fast-seo' ),
 					'<strong>10</strong>',
 					'<strong>200</strong>',
 					'<strong>202</strong>',
 				),
-				sprintf(
+				\sprintf(
 					/* translators: %s: Number of minutes */
 					__( 'The request will not be sent if the URL was already sent less than %s minutes ago.', 'ym-fast-seo' ),
 					'<strong>' . IndexNow::$delay . '</strong>',
@@ -270,7 +270,7 @@ class SiteHealth {
 				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
 					$datetime = Logger::parse_datetime( $item[ 'date' ] );
 
-					$format = sprintf( '%s (%s)', 
+					$format = \sprintf( '%s (%s)', 
 						get_option( 'date_format' ),
 						get_option( 'time_format' ),
 					);
@@ -312,11 +312,11 @@ class SiteHealth {
 			$title       = __( 'Site is optimized for AI crawlers', 'ym-fast-seo' );
 			$description = [
 				/* translators: %s: llms.txt */
-				sprintf( __( 'The %s file is an automatically generated index designed to help large language models (LLMs) discover and access structured content from a website, such as recent posts and pages.', 'ym-fast-seo' ),
+				\sprintf( __( 'The %s file is an automatically generated index designed to help large language models (LLMs) discover and access structured content from a website, such as recent posts and pages.', 'ym-fast-seo' ),
 					wp_kses_post( '<code>llms.txt</code>' ),
 				),
 				/* translators: %s: llms.txt */
-				sprintf( __( 'Here is a list of the most recent requests made to the %s file.', 'ym-fast-seo' ),
+				\sprintf( __( 'Here is a list of the most recent requests made to the %s file.', 'ym-fast-seo' ),
 					wp_kses_post( '<code>llms.txt</code>' ),
 				),
 			];
@@ -343,7 +343,7 @@ class SiteHealth {
 				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
 					$datetime = Logger::parse_datetime( $item[ 'date' ] );
 
-					$format = sprintf( '%s (%s)', 
+					$format = \sprintf( '%s (%s)', 
 						get_option( 'date_format' ),
 						get_option( 'time_format' ),
 					);

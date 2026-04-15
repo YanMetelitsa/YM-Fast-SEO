@@ -3,7 +3,7 @@
 namespace YMFSEO;
 
 // Exits if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) exit;
+\defined( 'ABSPATH' ) || exit;
 
 // Gets meta data.
 $ymfseo_queried_object = get_queried_object();
@@ -89,18 +89,20 @@ if ( $ymfseo_next_page_url ) {
 if ( $ymfseo_meta_fields->image_uri ) {
 	$ymfseo_image_size = getimagesize( $ymfseo_meta_fields->image_uri );
 
-	\printf( '<meta property="og:image" content="%s">', esc_url( $ymfseo_meta_fields->image_uri ) );
-	if ( $ymfseo_image_size ) {
-		\printf( '<meta property="og:image:type"   content="%s">', esc_attr( $ymfseo_image_size[ 'mime' ] ) );
-		\printf( '<meta property="og:image:width"  content="%s">', esc_attr( $ymfseo_image_size[ 0 ] ) );
-		\printf( '<meta property="og:image:height" content="%s">', esc_attr( $ymfseo_image_size[ 1 ] ) );
-	}
-
-	\printf( '<meta name="twitter:image" content="%s">', esc_url( $ymfseo_meta_fields->image_uri ) );
-	if ( $ymfseo_image_size ) {
-		\printf( '<meta name="twitter:image:type"   content="%s">', esc_attr( $ymfseo_image_size[ 'mime' ] ) );
-		\printf( '<meta name="twitter:image:width"  content="%s">', esc_attr( $ymfseo_image_size[ 0 ] ) );
-		\printf( '<meta name="twitter:image:height" content="%s">', esc_attr( $ymfseo_image_size[ 1 ] ) );
+	if ( \is_array( $ymfseo_image_size ) ) {
+		\printf( '<meta property="og:image" content="%s">', esc_url( $ymfseo_meta_fields->image_uri ) );
+		if ( $ymfseo_image_size ) {
+			\printf( '<meta property="og:image:type"   content="%s">', esc_attr( $ymfseo_image_size[ 'mime' ] ) );
+			\printf( '<meta property="og:image:width"  content="%s">', esc_attr( $ymfseo_image_size[ 0 ] ) );
+			\printf( '<meta property="og:image:height" content="%s">', esc_attr( $ymfseo_image_size[ 1 ] ) );
+		}
+	
+		\printf( '<meta name="twitter:image" content="%s">', esc_url( $ymfseo_meta_fields->image_uri ) );
+		if ( $ymfseo_image_size ) {
+			\printf( '<meta name="twitter:image:type"   content="%s">', esc_attr( $ymfseo_image_size[ 'mime' ] ) );
+			\printf( '<meta name="twitter:image:width"  content="%s">', esc_attr( $ymfseo_image_size[ 0 ] ) );
+			\printf( '<meta name="twitter:image:height" content="%s">', esc_attr( $ymfseo_image_size[ 1 ] ) );
+		}
 	}
 }
 

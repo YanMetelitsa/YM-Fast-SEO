@@ -17,7 +17,15 @@ With YM Fast SEO, you can easily manage important aspects of search optimization
 * `Robots.txt` Editor
 * Other Useful Tools & Improvements
 
+## Documentation
+
+See [the official documentation](https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation) for a description of actions and filters.
+
 # Changelog
+
+## 4.1.2
+* New: `Remove Users REST API` settings option
+* Fix: Small improvements and minor fixes
 
 ## 4.1.0
 * New: Meta tags for Archive pages

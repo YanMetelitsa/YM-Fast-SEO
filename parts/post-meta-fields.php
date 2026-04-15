@@ -2,7 +2,7 @@
 	namespace YMFSEO;
 
 	// Exits if accessed directly.
-	if ( ! \defined( 'ABSPATH' ) ) exit;
+	\defined( 'ABSPATH' ) || exit;
 	
 	global $current_screen;
 

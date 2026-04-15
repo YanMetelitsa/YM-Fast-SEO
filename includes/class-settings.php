@@ -3,7 +3,7 @@
 namespace YMFSEO;
 
 // Exits if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * Provides plugin settings functionality.
@@ -28,6 +28,7 @@ class Settings {
 		'title_separator'            => '|',
 		'clear_excerpts'             => true,
 		'hide_users_sitemap'         => true,
+		'disable_users_rest_api'     => true,
 		'post_type_page_type_page'   => 'WebPage',
 		'preview_image_id'           => 0,
 		'preview_size'               => 'summary_large_image',
@@ -88,7 +89,7 @@ class Settings {
 			/* translators: Settings section name */
 			Settings::add_section( 'general', __( 'General', 'ym-fast-seo' ), 'dashicons-admin-settings', [
 				/* translators: %s: Link to general settings page */
-				'description' => sprintf( wp_kses_post( __( 'To update the site name and description, navigate to the <a href="%s">general settings page</a>.', 'ym-fast-seo' ) ),
+				'description' => \sprintf( wp_kses_post( __( 'To update the site name and description, navigate to the <a href="%s">general settings page</a>.', 'ym-fast-seo' ) ),
 					esc_url( get_admin_url( null, 'options-general.php' ) ),
 				),
 			]);
@@ -113,7 +114,7 @@ class Settings {
 				[
 					'options'     => [ '|', '-', '–', '—', ':', '/', '·', '•', '⋆', '~', '«', '»', '<', '>' ],
 					
-					'description' => sprintf(
+					'description' => \sprintf(
 						/* translators: %s: Separator tag name */
 						__( 'Specify the separator used in titles and %s tag.', 'ym-fast-seo' ),
 						'<code>%sep%</code>',
@@ -143,6 +144,17 @@ class Settings {
 					'label' => __( 'Exclude the users page from the sitemap', 'ym-fast-seo' ),
 				],
 			);
+			Settings::register_option(
+				'disable_users_rest_api',
+				/* translators: Verb */
+				__( 'Remove Users REST API', 'ym-fast-seo' ),
+				'boolean',
+				'general',
+				'checkbox',
+				[
+					'label' => __( 'Remove the ability to retrieve a list of site users via the REST API', 'ym-fast-seo' ),
+				],
+			);
 
 			/**
 			 * Post Types section.
@@ -152,7 +164,7 @@ class Settings {
 			Settings::add_section( 'post-types', __( 'Post Types', 'ym-fast-seo' ), 'dashicons-admin-post', [
 				'description' => implode( "</p><p>",[
 					__( 'The default title and page type values for single post pages.', 'ym-fast-seo' ),
-					sprintf(
+					\sprintf(
 						/* translators: %s: List of available tags */
 						__( 'Available tags: %s.', 'ym-fast-seo' ),
 						implode( ', ',[
@@ -178,7 +190,7 @@ class Settings {
 					[
 						'placeholder' => '%post_title%',
 						'menu_icon'   => $post_type->menu_icon,
-						'description' => $post_type_tags ? sprintf(
+						'description' => $post_type_tags ? \sprintf(
 							/* translators: %s: List of available tags */
 							__( 'Custom tags: %s.', 'ym-fast-seo' ),
 							implode( ', ', $post_type_tags ),
@@ -242,7 +254,7 @@ class Settings {
 			Settings::add_section( 'taxonomies', __( 'Taxonomies', 'ym-fast-seo' ), 'dashicons-tag', [
 				'description' => implode( "</p><p>",[
 					__( 'The default title and description values for taxonomy term pages.', 'ym-fast-seo' ),
-					sprintf(
+					\sprintf(
 						/* translators: %s: List of available tags */
 						__( 'Available tags: %s.', 'ym-fast-seo' ),
 						implode( ', ',[
@@ -277,7 +289,7 @@ class Settings {
 					'textarea',
 					[
 						'class'       => 'sub-field',
-						'description' => $taxonomy_tags ? sprintf(
+						'description' => $taxonomy_tags ? \sprintf(
 							/* translators: %s: List of available tags */
 							__( 'Custom tags: %s.', 'ym-fast-seo' ),
 							implode( ', ', $taxonomy_tags ),
@@ -311,7 +323,7 @@ class Settings {
 				'preview',
 				'image',
 				[
-					'description' => sprintf(
+					'description' => \sprintf(
 						/* translators: %s: Size in pixels */
 						__( 'The image link will be added to the meta tags if no post/page thumbnail is set. The recommended size is %s pixels.', 'ym-fast-seo' ),
 						'<code>1200 × 630</code>',
@@ -493,7 +505,7 @@ class Settings {
 
 			/* translators: Settings section name */
 			Settings::add_section( 'integrations', __( 'Integrations', 'ym-fast-seo' ), 'dashicons-rest-api', [
-				'description' => sprintf(
+				'description' => \sprintf(
 					/* translators: %s: <meta> tag `content` attribute name */
 					__( 'Enter the verification codes for the required services. They are usually found in the %s attribute of the verification meta tag.', 'ym-fast-seo' ),
 					'<code>content</code>',
@@ -501,7 +513,7 @@ class Settings {
 			]);
 			Settings::register_option(
 				'google_search_console_key',
-				sprintf( '<a href="https://search.google.com/search-console" target="_blank">%s</a>',
+				\sprintf( '<a href="https://search.google.com/search-console" target="_blank">%s</a>',
 					/* translators: Service name (probably doesn't translate) */
 					__( 'Google Search Console', 'ym-fast-seo' ),
 				),
@@ -514,7 +526,7 @@ class Settings {
 			);
 			Settings::register_option(
 				'bing_webmaster_tools_key',
-				sprintf( '<a href="https://www.bing.com/webmasters" target="_blank">%s</a>',
+				\sprintf( '<a href="https://www.bing.com/webmasters" target="_blank">%s</a>',
 					/* translators: Service name (probably doesn't translate) */
 					__( 'Bing Webmaster Tools', 'ym-fast-seo' ),
 				),
@@ -527,7 +539,7 @@ class Settings {
 			);
 			Settings::register_option(
 				'yandex_webmaster_key',
-				sprintf( '<a href="https://webmaster.yandex.ru/" target="_blank">%s</a>',
+				\sprintf( '<a href="https://webmaster.yandex.ru/" target="_blank">%s</a>',
 					/* translators: Service name (probably doesn't translate) */
 					__( 'Yandex Webmaster', 'ym-fast-seo' ),
 				),
@@ -561,7 +573,7 @@ class Settings {
 				[
 					'label'       => __( 'Enable IndexNow sending', 'ym-fast-seo' ),
 					'description' => implode([
-						sprintf( Checker::is_site_public()
+						\sprintf( Checker::is_site_public()
 							? ''
 							/* translators: %s: Link to settings page */
 							: '<span class="dashicons dashicons-warning"></span> ' . __( 'The site is configured to <a href="%s">discourage indexing</a>, IndexNow is disabled regardless of this option.', 'ym-fast-seo' ),
@@ -600,7 +612,7 @@ class Settings {
 				[
 					'rows'        => 8,
 					'codemirror'  => true,
-					'description' => sprintf(
+					'description' => \sprintf(
 						/* translators: %s: <head> tag name */
 						__( 'Here you can insert analytics counters code and other scripts. The code will be printed inside the %s tag.', 'ym-fast-seo' ),
 						'<code>&lt;head&gt;</code>',
@@ -619,7 +631,7 @@ class Settings {
 			);
 			Settings::register_option(
 				'robots_txt',
-				sprintf(
+				\sprintf(
 					/* translators: %s: robots.txt */
 					__( 'Edit %s', 'ym-fast-seo' ),
 					'robots.txt',
@@ -631,7 +643,7 @@ class Settings {
 			Settings::register_option(
 				'enable_llms_txt',
 				/* translators: %s: llms.txt */
-				sprintf( __( 'Enable %s', 'ym-fast-seo' ), 
+				\sprintf( __( 'Enable %s', 'ym-fast-seo' ), 
 					esc_html( 'llms.txt' ),
 				),
 				'boolean',
@@ -640,7 +652,7 @@ class Settings {
 				[
 					'label' => __( 'Enable generation', 'ym-fast-seo' ),
 					/* translators: %1$s: llms.txt, %2$s: llms-full.txt */
-					'description' => sprintf( __( 'Creates automatically generated %1$s and %2$s files used by AI crawlers.', 'ym-fast-seo' ),
+					'description' => \sprintf( __( 'Creates automatically generated %1$s and %2$s files used by AI crawlers.', 'ym-fast-seo' ),
 						wp_kses_post( '<code>llms.txt</code>' ),
 						wp_kses_post( '<code>llms-full.txt</code>' ),
 					),
@@ -676,11 +688,11 @@ class Settings {
 			Settings::$params[ 'page_slug' ],
 			[
 				'after_section' => implode( ' ', [
-					sprintf( '<div class="ymfseo-submit"><button class="%s">%s</button></div>',
+					\sprintf( '<div class="ymfseo-submit"><button class="%s">%s</button></div>',
 						esc_attr( 'button button-primary' ),
 						esc_attr__( 'Save Changes', 'ym-fast-seo' ),
 					),
-					sprintf( '</section><section>' ),
+					\sprintf( '</section><section>' ),
 				]),
 				...$args,
 			]
@@ -767,7 +779,7 @@ class Settings {
 					}
 				}
 
-				if ( ! is_array( $value ) ) {
+				if ( ! \is_array( $value ) ) {
 					return [];
 				}
 
@@ -807,7 +819,7 @@ class Settings {
 
 		// Adds field.
 		add_settings_field( "ymfseo_{$slug}",
-			sprintf( '%s %s',
+			\sprintf( '%s %s',
 				$menu_icon ? "<span class=\"dashicons {$menu_icon}\"></span>" : '',
 				$title,
 			),

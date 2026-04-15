@@ -3,7 +3,7 @@
 namespace YMFSEO;
 
 // Exits if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) exit;
+\defined( 'ABSPATH' ) || exit;
 
 /**
  * YMFSEO Checker class.
@@ -297,7 +297,7 @@ class Checker {
 		if ( $title_length < Checker::$meta_lengths[ 'title' ][ 'min' ] ) {
 			$status = 'bad';
 			/* translators: %d: Number of symbols */
-			$notes[] = sprintf( __( 'The title is too short (%d).', 'ym-fast-seo' ),
+			$notes[] = \sprintf( __( 'The title is too short (%d).', 'ym-fast-seo' ),
 				esc_html( $title_length ),
 			);
 		}
@@ -306,7 +306,7 @@ class Checker {
 		if ( $title_length > Checker::$meta_lengths[ 'title' ][ 'max' ] ) {
 			$status = 'alert';
 			/* translators: %d: Number of symbols */
-			$notes[] = sprintf( __( 'The title is too long (%d).', 'ym-fast-seo' ),
+			$notes[] = \sprintf( __( 'The title is too long (%d).', 'ym-fast-seo' ),
 				esc_html( $title_length ),
 			);
 		}
@@ -320,7 +320,7 @@ class Checker {
 			if ( $description_length < Checker::$meta_lengths[ 'description' ][ 'min' ] ) {
 				$status = 'bad';
 				/* translators: %d: Number of symbols */
-				$notes[] = sprintf( __( 'The description is too short (%d).', 'ym-fast-seo' ),
+				$notes[] = \sprintf( __( 'The description is too short (%d).', 'ym-fast-seo' ),
 					esc_html( $description_length ),
 				);
 			}
@@ -329,7 +329,7 @@ class Checker {
 			if ( $description_length > Checker::$meta_lengths[ 'description' ][ 'max' ] ) {
 				$status = 'alert';
 				/* translators: %d: Number of symbols */
-				$notes[] = sprintf( __( 'The description is too long (%d).', 'ym-fast-seo' ),
+				$notes[] = \sprintf( __( 'The description is too long (%d).', 'ym-fast-seo' ),
 					esc_html( $description_length ),
 				);
 			}

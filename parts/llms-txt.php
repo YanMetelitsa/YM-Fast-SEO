@@ -3,7 +3,7 @@
 namespace YMFSEO;
 
 // Exits if accessed directly.
-if ( ! \defined( 'ABSPATH' ) ) exit;
+\defined( 'ABSPATH' ) || exit;
 
 $ymfseo_is_full_type = 'full' == $llms_txt_type;
 
@@ -96,7 +96,7 @@ foreach ( $ymfseo_public_post_types as $ymfseo_post_type_slug ) {
 
 				$ymfseo_custom_fields = apply_filters( "ymfseo_{$ymfseo_post_type_slug}_posts_llms_txt_custom_fields", [], get_the_ID() );
 				
-				if ( is_array( $ymfseo_custom_fields ) && ! empty( $ymfseo_custom_fields ) ) {
+				if ( \is_array( $ymfseo_custom_fields ) && ! empty( $ymfseo_custom_fields ) ) {
 					// Custom fields.
 					foreach ( $ymfseo_custom_fields as $ymfseo_key => $ymfseo_value ) {
 						\printf( '%s: %s',
@@ -139,7 +139,7 @@ foreach ( $ymfseo_public_post_types as $ymfseo_post_type_slug ) {
 				);
 
 				/* translators: %s: Post URL */
-				\printf( esc_html__( 'URL: %s', 'ym-fast-seo' ), sprintf( "[%1\$s](%1\$s)\n\n",
+				\printf( esc_html__( 'URL: %s', 'ym-fast-seo' ), \sprintf( "[%1\$s](%1\$s)\n\n",
 					esc_url( get_the_permalink() ),
 				));
 			} else {
