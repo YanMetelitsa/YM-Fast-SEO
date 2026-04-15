@@ -521,7 +521,7 @@ class Core {
 
 		// Removes users REST API endpoint.
 		add_filter( 'rest_endpoints', function ( array $endpoints ) : array {
-			if ( Settings::get_option( 'disable_users_rest_api' ) ) {
+			if ( ! current_user_can( 'list_users' ) && Settings::get_option( 'disable_users_rest_api' ) ) {
 				unset( $endpoints[ '/wp/v2/users' ] );
 				unset( $endpoints[ '/wp/v2/users/(?P<id>[\d]+)' ] );
 			}
