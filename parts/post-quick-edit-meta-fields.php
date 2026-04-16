@@ -85,7 +85,7 @@
 
 	<div class="inline-edit-col archive" hidden>
 		<p>
-			<?php wp_kses_post(
+			<?php echo wp_kses_post(
 				/* translators: %s: Settings page URL */
 				\sprintf( __( 'You can edit archive meta tags on the <a href="%s">SEO settings page</a>.', 'ym-fast-seo' ),
 					esc_url( admin_url( 'options-general.php?page=ymfseo#archives' ) ),
