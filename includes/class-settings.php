@@ -147,12 +147,12 @@ class Settings {
 			Settings::register_option(
 				'disable_users_rest_api',
 				/* translators: Verb */
-				__( 'Remove Users REST API', 'ym-fast-seo' ),
+				__( 'Hide Users REST API', 'ym-fast-seo' ),
 				'boolean',
 				'general',
 				'checkbox',
 				[
-					'label' => __( 'Remove the ability to retrieve a list of site users via the REST API', 'ym-fast-seo' ),
+					'label' => __( 'Disable the ability to retrieve a list of site users via the REST API', 'ym-fast-seo' ),
 				],
 			);
 

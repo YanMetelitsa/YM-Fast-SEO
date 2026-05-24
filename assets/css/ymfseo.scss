@@ -301,6 +301,10 @@
 			align-items: center;
 			gap: 6px;
 
+			&:first-of-type {
+				margin-left: 0;
+			}
+
 			&:hover {
 				background-color: var( --ymfseo-settings-background );
 			}
@@ -391,6 +395,10 @@
 			border-radius: var( --ymfseo-border-radius );
 			border: 1px solid var( --ymfseo-settings-border );
 
+			@include wp-not-mobile {
+				border-top-left-radius: 0;
+			}
+
 			@include wp-mobile {
 				margin-top: var( --ymfseo-gap-primary );
 			}
@@ -425,6 +433,10 @@
 
 			/* Description */
 			> p {
+				&:empty {
+					display: none;
+				}
+				
 				&:not( .submit ) {
 					padding: 0 var( --ymfseo-gap-primary ) var( --ymfseo-gap-primary ) var( --ymfseo-gap-primary );
 					margin: 0;

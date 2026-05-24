@@ -241,6 +241,9 @@ html:has(.ymfseo-settings-page) {
   align-items: center;
   gap: 6px;
 }
+.ymfseo-settings-page .nav-tab-wrapper .nav-tab:first-of-type {
+  margin-left: 0;
+}
 .ymfseo-settings-page .nav-tab-wrapper .nav-tab:hover {
   background-color: var(--ymfseo-settings-background);
 }
@@ -318,6 +321,11 @@ html:has(.ymfseo-settings-page) {
   border-radius: var(--ymfseo-border-radius);
   border: 1px solid var(--ymfseo-settings-border);
 }
+@media screen and (min-width: 782px) {
+  .ymfseo-settings-page form section {
+    border-top-left-radius: 0;
+  }
+}
 @media screen and (max-width: 782px) {
   .ymfseo-settings-page form section {
     margin-top: var(--ymfseo-gap-primary);
@@ -350,6 +358,9 @@ html:has(.ymfseo-settings-page) {
 }
 .ymfseo-settings-page form section {
   /* Description */
+}
+.ymfseo-settings-page form section > p:empty {
+  display: none;
 }
 .ymfseo-settings-page form section > p:not(.submit) {
   padding: 0 var(--ymfseo-gap-primary) var(--ymfseo-gap-primary) var(--ymfseo-gap-primary);
