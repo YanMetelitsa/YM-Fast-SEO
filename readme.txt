@@ -44,7 +44,7 @@ See [the official documentation](https://yanmet.com/blog/ym-fast-seo-wordpress-p
 == Changelog ==
 
 = 4.1.2 =
-* New: `Remove Users REST API` settings option
+* New: `Hide Users REST API` settings option
 * Fix: Small improvements and minor fixes
 
 = 4.1.0 =
