@@ -7,7 +7,7 @@
  * Version:           4.1.2
  * Requires PHP:      7.4
  * Requires at least: 5.5.1
- * Tested up to:      7.0
+ * Tested up to:      7.1
  * Author:            Yan Metelitsa
  * Author URI:        https://yanmet.com/
  * License:           GPLv3

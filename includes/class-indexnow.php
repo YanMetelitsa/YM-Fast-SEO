@@ -211,7 +211,7 @@ class IndexNow {
 		]));
 
 		// Parses response status code.
-		$response_code = intval( $response[ 'response' ][ 'code' ] );
+		$response_code = \intval( $response[ 'response' ][ 'code' ] );
 
 		// Writes logs entry.
 		Logger::write( 'IndexNow', [

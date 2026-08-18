@@ -463,7 +463,7 @@ class Core {
 			// Checks multisite sitemaps.
 			if ( Checker::is_subdir_multisite() ) {
 				foreach ( get_sites() as $site ) {
-					if ( get_main_site_id() != intval( $site->blog_id ) ) {
+					if ( get_main_site_id() != \intval( $site->blog_id ) ) {
 						$output .= \sprintf(
 							"Sitemap: %s\n",
 							esc_url( get_home_url( $site->blog_id, 'wp-sitemap.xml' ) )

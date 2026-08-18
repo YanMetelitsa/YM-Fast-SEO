@@ -196,7 +196,7 @@ class SiteHealth {
 			];
 
 			// Get data.
-			$preview_image_id = intval( Settings::get_option( 'preview_image_id' ) );
+			$preview_image_id = \intval( Settings::get_option( 'preview_image_id' ) );
 
 			// Check.
 			if ( 0 == $preview_image_id ) {
@@ -249,7 +249,7 @@ class SiteHealth {
 			if ( $logs ) {
 				// Check statuses.
 				foreach ( $logs as $i => $entry ) {
-					switch ( intval( $entry[ 'status' ] ) ) {
+					switch ( \intval( $entry[ 'status' ] ) ) {
 						case 200:
 							// Silence is golden.
 							break;
