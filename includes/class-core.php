@@ -51,6 +51,12 @@ class Core {
 				'CheckoutPage'      => __( 'Checkout Page', 'ym-fast-seo' ),
 				/* translators: Web page type */
 				'SearchResultsPage' => __( 'Search Results Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'ProfilePage'       => __( 'Profile Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'MedicalWebPage'    => __( 'Medical Page', 'ym-fast-seo' ),
+				/* translators: Web page type */
+				'RealEstateListing' => __( 'Real Estate Listing Page', 'ym-fast-seo' ),
 			];
 
 			// Get Archive page URLs.
@@ -460,7 +466,7 @@ class Core {
 				return $settings_robots_txt;
 			}
 
-			// Checks multisite sitemaps.
+			// Adds multisite sitemaps.
 			if ( Checker::is_subdir_multisite() ) {
 				foreach ( get_sites() as $site ) {
 					if ( get_main_site_id() != \intval( $site->blog_id ) ) {
@@ -564,6 +570,64 @@ class Core {
 		
 			return $taxonomies;
 		});
+
+		// Adds Archive URLs to sitemaps.
+		add_filter( 'wp_sitemaps_posts_pre_url_list', function ( ?array $url_list, string $post_type, int $page_num ) : ?array {
+			// Check sitemap number.
+			if ( 1 !== $page_num ) {
+				return $url_list;
+			}
+
+			// Get and check Post Type.
+			$post_type_object = get_post_type_object( $post_type );
+
+			if ( ! $post_type_object || ! $post_type_object->public || ! $post_type_object->has_archive ) {
+				return $url_list;
+			}
+
+			// Get and check Archive URL.
+			$archive_url = get_post_type_archive_link( $post_type );
+
+			if ( ! $archive_url ) {
+				return $url_list;
+			}
+
+			// Recreate the standard WordPress Post sitemap entries.
+			$url_list = [];
+			
+			$newest_post = get_posts([
+				'post_type'      => $post_type,
+				'posts_per_page' => 1,
+				'orderby'        => 'post_date',
+				'order'          => 'ASC',
+			]);
+
+			// Add archive URL first.
+			$url_list[] = [
+				'loc'     => $archive_url,
+				'lastmod' => ! empty( $newest_post[ 0 ] ) ? wp_date( DATE_W3C, strtotime( $newest_post[ 0 ]->post_modified_gmt ) ) : '',
+			];
+
+			// Add Posts.
+			$query = new \WP_Query([
+				'post_type'              => $post_type,
+				'post_status'            => 'publish',
+				'posts_per_page'         => wp_sitemaps_get_max_urls( 'posts' ),
+				'paged'                  => $page_num,
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			]);
+
+			foreach ( $query->posts as $post ) {
+				$url_list[] = [
+					'loc'     => get_permalink( $post ),
+					'lastmod' => wp_date( DATE_W3C, strtotime( $post->post_modified_gmt ) ),
+				];
+			}
+
+			return $url_list;
+		}, 10, 3 );
 	}
 
 	/**

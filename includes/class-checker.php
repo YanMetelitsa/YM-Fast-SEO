@@ -286,7 +286,9 @@ class Checker {
 			$meta_fields->title = implode( ' ', [
 				$meta_fields->title,
 				Core::get_separator(),
-				( $object instanceof \WP_Post && $object->ID == get_option( 'page_on_front' ) ) ? get_bloginfo( 'description' ) : get_bloginfo( 'name' ),
+				( $object instanceof \WP_Post && $object->ID == get_option( 'page_on_front' ) )
+					? get_bloginfo( 'description' )
+					: get_bloginfo( 'name' ),
 			]);
 		}
 
@@ -296,18 +298,22 @@ class Checker {
 		// Too short title.
 		if ( $title_length < Checker::$meta_lengths[ 'title' ][ 'min' ] ) {
 			$status = 'bad';
-			/* translators: %d: Number of symbols */
-			$notes[] = \sprintf( __( 'The title is too short (%d).', 'ym-fast-seo' ),
+			/* translators: 1: Number of symbols, 2: Min length, 3: Max length */
+			$notes[] = \sprintf( __( 'Short title – %1$d (%2$d-%3$d).', 'ym-fast-seo' ),
 				esc_html( $title_length ),
+				esc_html( Checker::$meta_lengths[ 'title' ][ 'min' ] ),
+				esc_html( Checker::$meta_lengths[ 'title' ][ 'max' ] ),
 			);
 		}
 
 		// Too long title.
 		if ( $title_length > Checker::$meta_lengths[ 'title' ][ 'max' ] ) {
 			$status = 'alert';
-			/* translators: %d: Number of symbols */
-			$notes[] = \sprintf( __( 'The title is too long (%d).', 'ym-fast-seo' ),
+			/* translators: 1: Number of symbols, 2: Min length, 3: Max length */
+			$notes[] = \sprintf( __( 'Long title – %1$d (%2$d-%3$d).', 'ym-fast-seo' ),
 				esc_html( $title_length ),
+				esc_html( Checker::$meta_lengths[ 'title' ][ 'min' ] ),
+				esc_html( Checker::$meta_lengths[ 'title' ][ 'max' ] ),
 			);
 		}
 
@@ -319,18 +325,22 @@ class Checker {
 			// Too short description.
 			if ( $description_length < Checker::$meta_lengths[ 'description' ][ 'min' ] ) {
 				$status = 'bad';
-				/* translators: %d: Number of symbols */
-				$notes[] = \sprintf( __( 'The description is too short (%d).', 'ym-fast-seo' ),
+				/* translators: 1: Number of symbols, 2: Min length, 3: Max length */
+				$notes[] = \sprintf( __( 'Short description – %1$d (%2$d-%3$d).', 'ym-fast-seo' ),
 					esc_html( $description_length ),
+					esc_html( Checker::$meta_lengths[ 'description' ][ 'min' ] ),
+					esc_html( Checker::$meta_lengths[ 'description' ][ 'max' ] ),
 				);
 			}
 
 			// Too long description.
 			if ( $description_length > Checker::$meta_lengths[ 'description' ][ 'max' ] ) {
 				$status = 'alert';
-				/* translators: %d: Number of symbols */
-				$notes[] = \sprintf( __( 'The description is too long (%d).', 'ym-fast-seo' ),
+				/* translators: 1: Number of symbols, 2: Min length, 3: Max length */
+				$notes[] = \sprintf( __( 'Long description – %1$d (%2$d-%3$d).', 'ym-fast-seo' ),
 					esc_html( $description_length ),
+					esc_html( Checker::$meta_lengths[ 'description' ][ 'min' ] ),
+					esc_html( Checker::$meta_lengths[ 'description' ][ 'max' ] ),
 				);
 			}
 		}
@@ -339,7 +349,7 @@ class Checker {
 			// Not public.
 			if ( 'publish' !== get_post_status( $object ) ) {
 				$status  = 'noindex';
-				$notes[] = __( 'Post status is "not published".', 'ym-fast-seo' );
+				$notes[] = __( 'Post status is "Not published".', 'ym-fast-seo' );
 			}
 		}
 

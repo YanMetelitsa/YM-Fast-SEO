@@ -429,12 +429,17 @@ class MetaFields {
 		$meta_fields = MetaFields::$default_values;
 
 		// Gets queried object.
-		if ( is_null( $queried_object ) ) {
+		if ( \is_null( $queried_object ) ) {
 			$queried_object = get_queried_object();
 		}
 
+		// Additional check for WooCommerce Product Archive.
+		if ( class_exists( 'WooCommerce' ) && is_post_type_archive( 'product' ) ) {
+			$queried_object = get_post_type_object( 'product' );
+		}
+
 		// Does if object queried.
-		if ( ! is_null( $queried_object ) ) {
+		if ( ! \is_null( $queried_object ) ) {
 			// Gets queried object data.
 			$queried_object_type = get_class( $queried_object );
 			$queried_object_id   = match ( $queried_object_type ) {
@@ -454,9 +459,9 @@ class MetaFields {
 
 			// Does if no cache found.
 			switch ( $queried_object_type ) {
-				// Posts/Pages.
+				// Posts / Pages.
 				case 'WP_Post':
-					// Gets post meta data.
+					// Gets Post meta data.
 					$post_meta = get_post_meta( $queried_object_id, 'ymfseo_fields', true );
 
 					if ( ! empty( $post_meta ) ) {
@@ -465,7 +470,7 @@ class MetaFields {
 					
 					$meta_fields[ 'image_uri' ] = get_the_post_thumbnail_url( $queried_object_id, 'full' );
 
-					// Sets post/page meta title and description.
+					// Sets Post / Page meta title and description.
 					if ( $format ) {
 						// Plugin excerpt data.
 						$plugin_excerpt_length = MetaFields::get_excerpt_length();
@@ -475,7 +480,7 @@ class MetaFields {
 						$theme_excerpt_length  = apply_filters( 'excerpt_length', 55 );         // phpcs:ignore
 						$theme_excerpt_more    = apply_filters( 'excerpt_more', '[&hellip;]' ); // phpcs:ignore
 
-						// Rewrite excerpt data..
+						// Rewrite excerpt data.
 						add_filter( 'excerpt_length', fn () : int    => $plugin_excerpt_length, PHP_INT_MAX );
 						add_filter( 'excerpt_more',   fn () : string => $plugin_excerpt_more,   PHP_INT_MAX );
 
@@ -512,7 +517,7 @@ class MetaFields {
 
 				// Post Types.
 				case 'WP_Post_Type':
-					// Sets post type meta title and description.
+					// Sets Post Type meta title and description.
 					if ( $format ) {
 						if ( empty( $meta_fields[ 'title' ] ) ) {
 							$settings_title = settings::get_option( "archive_title_{$queried_object->name}" );
@@ -531,16 +536,16 @@ class MetaFields {
 
 					break;
 
-				// Taxonomies/Terms.
+				// Taxonomies / Terms.
 				case 'WP_Term':
-					// Gets term meta data.
+					// Gets Term meta data.
 					$term_meta = get_term_meta( $queried_object_id, 'ymfseo_fields', true );
 
 					if ( ! empty( $term_meta ) ) {
 						$meta_fields = wp_parse_args( $term_meta, $meta_fields );
 					}
 
-					// Sets term meta title and description.
+					// Sets Term meta title and description.
 					if ( $format ) {
 						// Get data.
 						$term_title       = $queried_object->name;
@@ -742,14 +747,14 @@ class MetaFields {
 	public function get_schema_org ( $queried_object = null ) : array {
 		global $wp;
 
-		if ( is_null( $queried_object ) ) {
+		if ( \is_null( $queried_object ) ) {
 			$queried_object = get_queried_object();
 		}
 
 		// Sets object data template.
 		$schema_org_blank = [
 			'WebPage' => [
-				'@type'      => $this->page_type,
+				'@type'      => is_search() ? 'SearchResultsPage' : $this->page_type,
 				'@id'        => '#webpage',
 				'url'        => home_url( $wp->request ),
 				'name'       => wp_get_document_title(),

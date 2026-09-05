@@ -91,7 +91,7 @@ class YMFSEO {
 		indicator.style.setProperty( '--ymfseo-indicator-width', `${( inputLength / max ) * 100}%` );
 
 		if ( inputLength > 0 ) {
-			indicator.title = inputLength;
+			indicator.title = `${inputLength} (${min}-${max})`;
 		} else {
 			indicator.title = '';
 		}
