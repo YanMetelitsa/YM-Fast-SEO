@@ -24,7 +24,6 @@ See [the official documentation](https://yanmet.com/blog/ym-fast-seo-wordpress-p
 # Changelog
 
 ## 4.2.0
-* Required WordPress version increased to 5.9.0
 * New: Added Archive URLs to corresponding Post Type sitemaps
 * Fix: Small improvements and minor fixes
 

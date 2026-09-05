@@ -3,7 +3,7 @@ Contributors: yanmetelitsa
 Tags: seo, search, optimization
 Stable tag: 4.2.0
 Requires PHP: 7.4
-Requires at least: 5.9.0
+Requires at least: 5.5.1
 Tested up to: 7.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -44,7 +44,6 @@ See [the official documentation](https://yanmet.com/blog/ym-fast-seo-wordpress-p
 == Changelog ==
 
 = 4.2.0 =
-* Required WordPress version increased to 5.9.0
 * New: Added Archive URLs to corresponding Post Type sitemaps
 * Fix: Small improvements and minor fixes
 

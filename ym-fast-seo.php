@@ -6,7 +6,7 @@
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
  * Version:           4.2.0
  * Requires PHP:      7.4
- * Requires at least: 5.9.0
+ * Requires at least: 5.5.1
  * Tested up to:      7.1
  * Author:            Yan Metelitsa
  * Author URI:        https://yanmet.com/
