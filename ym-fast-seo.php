@@ -2,8 +2,8 @@
 
 /*
  * Plugin Name:       YM Fast SEO
- * Plugin URI:        https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation
  * Description:       Enhance your website with powerful, intuitive, and user-friendly SEO tools.
+ * Plugin URI:        https://yanmet.com/blog/ym-fast-seo-wordpress-plugin-documentation
  * Version:           4.2.1
  * Requires PHP:      7.4
  * Requires at least: 5.5.1

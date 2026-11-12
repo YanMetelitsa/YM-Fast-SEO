@@ -264,7 +264,7 @@ See [the official documentation](https://yanmet.com/blog/ym-fast-seo-wordpress-p
 *Added*
 
 * "Clear Excerpts" option
-* Additional"`Save" settings page button
+* Additional "Save" settings page button
 * Version of the current theme now appends to the preview image URL
 
 = 2.2.0 =
