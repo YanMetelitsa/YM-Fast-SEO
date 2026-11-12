@@ -64,8 +64,24 @@ class IndexNow {
 				return;
 			}
 
-			// Is new post status 'publish'.
+			// Is post status 'publish'.
 			if ( 'publish' !== $post->post_status ) {
+				return;
+			}
+
+			// Checks nonce.
+			if ( ! isset( $_POST[ 'ymfseo_post_nonce' ] ) ) {
+				return;
+			}
+
+			$nonce = sanitize_key( wp_unslash( $_POST[ 'ymfseo_post_nonce' ] ) );
+
+			if ( ! wp_verify_nonce( $nonce, YMFSEO_BASENAME ) ) {
+				return;
+			}
+
+			// Is post not `noindex`.
+			if ( isset( $_POST[ 'ymfseo-noindex' ] ) && sanitize_text_field( wp_unslash( $_POST[ 'ymfseo-noindex' ] ) ) ) {
 				return;
 			}
 

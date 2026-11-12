@@ -270,12 +270,11 @@ class SiteHealth {
 				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
 					$datetime = Logger::parse_datetime( $item[ 'date' ] );
 
-					$format = \sprintf( '%s (%s)', 
-						get_option( 'date_format' ),
-						get_option( 'time_format' ),
+					// translators: 1: Date, 2: Time
+					$item[ 'date' ] = \sprintf( __( '%1$s at %2$s', 'ym-fast-seo' ), 
+						$datetime->format( get_option( 'date_format' ) ),
+						$datetime->format( get_option( 'time_format' ) ),
 					);
-
-					$item[ 'date' ] = $datetime->format( $format );
 
 					return $item;
 				}, $logs );
@@ -343,12 +342,11 @@ class SiteHealth {
 				$content[ 'table' ][ 'body' ] = array_map( function ( $item ) {
 					$datetime = Logger::parse_datetime( $item[ 'date' ] );
 
-					$format = \sprintf( '%s (%s)', 
-						get_option( 'date_format' ),
-						get_option( 'time_format' ),
+					// translators: 1: Date, 2: Time
+					$item[ 'date' ] = \sprintf( __( '%1$s at %2$s', 'ym-fast-seo' ), 
+						$datetime->format( get_option( 'date_format' ) ),
+						$datetime->format( get_option( 'time_format' ) ),
 					);
-
-					$item[ 'date' ] = $datetime->format( $format );
 
 					return $item;
 				}, $logs );

@@ -745,6 +745,7 @@ class Settings {
 
 			// Checks is setting allowed by mask.
 			foreach ( $allowed as $allowed_item => $default_value ) {
+				// str_contains( $slug, $allowed_item )
 				if ( strpos( $slug, $allowed_item ) !== false ) {
 					$break   = false;
 					$default = $default_value;
@@ -793,6 +794,7 @@ class Settings {
 		];
 		
 		foreach ( $tagged_options as $option_slug ) {
+			// str_contains( $slug, $option_slug )
 			if ( strpos( $slug, $option_slug ) !== false ) {
 				$sanitize_callback = [ '\YMFSEO\Core', 'sanitize_text_field' ];
 			}
@@ -804,6 +806,7 @@ class Settings {
 		if ( isset( $args[ 'menu_icon' ] ) ) {
 			$menu_icon = $args[ 'menu_icon' ];
 
+			// ! str_contains( $menu_icon, 'dashicons-' )
 			if ( strpos( $menu_icon, 'dashicons-' ) === false ) {
 				$menu_icon = false;
 			}
